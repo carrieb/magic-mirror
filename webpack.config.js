@@ -2,22 +2,25 @@ const path = require('path');
 module.exports = [{
   context: path.join(__dirname, 'web'),
   entry: {
-    index: 'index-entry.js'
+    index: 'index-entry.js',
+    mirror: 'mirror.js'
   },
   output: {
     path: path.join(__dirname, '/public/scripts'),
-    filename: 'bundle.js'
+    filename: '[name]-bundle.js'
   },
-  loaders: [
-    {
-      test: /\.js$/,
-      exclude: /(node_modules|bower_components)/,
-      loader: 'babel-loader',
-      query: {
-        presets: ['es2015']
+  module: {
+    loaders: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        loader: 'babel-loader',
+        query: {
+          presets: ['es2015', 'react']
+        }
       }
-    }
-  ],
+    ]
+  },
   resolve: {
    extensions: ['', '.js', '.jsx'],
    root: [path.join(__dirname, 'web')],
