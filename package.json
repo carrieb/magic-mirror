@@ -17,6 +17,17 @@
   },
   "homepage": "https://github.com/carrieb/magic-mirror#readme",
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "googleapis": "^16.1.0",
+    "react": "^15.4.2",
+    "sharp": "^0.17.0",
+    "tesseract.js": "^1.0.10",
+    "webpack": "^1.14.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-loader": "^6.2.10",
+    "babel-preset-es2015": "^6.18.0",
+    "webpack": "^1.14.0"
   }
 }
