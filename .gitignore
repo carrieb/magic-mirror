@@ -1,3 +1,6 @@
+# tessaract trained data
+eng.traineddata
+
 # Logs
 logs
 *.log

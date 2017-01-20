@@ -20,15 +20,15 @@
     </script>
   </head>
   <body>
-    <div class="container-fluid">
+    <div class="container-fluid upload-receipt-container">
+      <!-- TODO: style this page so that it's mobile friendly  -->
       <div class="text-center">
         <h3>Directions:</h3>
         <h2>Turn on flash, take picture of only food items on receipt on white background.</h2>
         <form method="post" action="/receipt" enctype="multipart/form-data">
-          <label for="receipt" class="custom-file-upload">Upload Receipt</label>
+          <label for="receipt" class="btn btn-default btn-lg btn-block">Upload Receipt</label>
           <input class="hidden-file-input" id="receipt" name="receipt" type="file" accept="image/*" id="capture" capture="camera" onchange="readImage(this)"/>
-          <br/>
-          <input type="submit">
+          <input type="submit" class="btn btn-primary btn-block">
         </form>
         <img id="image-result"/>
       </div>
