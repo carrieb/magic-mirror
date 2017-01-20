@@ -2,7 +2,6 @@ const path = require('path');
 module.exports = [{
   context: path.join(__dirname, 'web'),
   entry: {
-    index: 'index-entry.js',
     mirror: 'mirror.js'
   },
   output: {
