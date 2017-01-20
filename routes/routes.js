@@ -29,7 +29,7 @@ router.post('/receipt', upload.single('receipt'), function (req, res, next) {
   console.log(req.file);
   const items = ReceiptProcessor.extractItems(req.file);
   res.redirect('/upload-receipt');
-})
+});
 
 router.get('/', (req, res) => {
   res.sendFile(dir + '/views/index.html');
