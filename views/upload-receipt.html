@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="/scripts/upload-receipt-bundle.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="/styles/style.css"/>
+    <script>
+    function readImage(input) {
+      if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+              const image = document.getElementById('image-result');
+              image.setAttribute('src', e.target.result);
+              image.setAttribute('width', 400);
+              image.setAttribute('height', 650);
+          };
+          reader.readAsDataURL(input.files[0]);
+      }
+    }
+    </script>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="text-center">
+        <h3>Directions:</h3>
+        <h2>Turn on flash, take picture of only food items on receipt on white background.</h2>
+        <form method="post" action="/receipt" enctype="multipart/form-data">
+          <label for="receipt" class="custom-file-upload">Upload Receipt</label>
+          <input class="hidden-file-input" id="receipt" name="receipt" type="file" accept="image/*" id="capture" capture="camera" onchange="readImage(this)"/>
+          <br/>
+          <input type="submit">
+        </form>
+        <img id="image-result"/>
+      </div>
+    </div>
+  </body>
+</html>
