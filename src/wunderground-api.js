@@ -6,10 +6,15 @@ var properties = PropertiesReader('/Users/carolyn/projects/magic-mirror/config/w
 const hostname = 'api.wunderground.com'
 const api_path = `/api/${properties.get('key.id')}`
 const conditions_path = `/conditions/q/${properties.get('default.state')}/${properties.get('default.city')}.json`
+const forecast_path = `/forecast/q/${properties.get('default.state')}/${properties.get('default.city')}.json`
 
 const WundergroundApi = {
   getCurrentWeather(done, err) {
     RequestWrapper.getJSON(hostname, api_path + conditions_path, done, err, false);
+  },
+
+  getForecast(done, err) {
+    RequestWrapper.getJSON(hostname, api_path + forecast_path, done, err, false);
   }
 }
 

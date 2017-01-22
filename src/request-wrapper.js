@@ -1,10 +1,11 @@
 const http = require('http')
 const https = require('https')
 
-const options = (hostname, path) => {
+const options = (hostname, path, headers = {}) => {
   return {
-    hostname: hostname,
-    path: path
+    hostname,
+    path,
+    headers
   };
 }
 
@@ -34,7 +35,7 @@ const handleJSONResponse = (callback) => {
     res.on('end', () => {
       try {
         let parsedData = JSON.parse(rawData);
-        console.log(parsedData);
+        //console.log(parsedData);
         callback(parsedData);
       } catch (e) {
         console.log(e.message);
@@ -44,10 +45,10 @@ const handleJSONResponse = (callback) => {
 }
 
 const RequestWrapper = {
-  getJSON(hostname, path, done, err, isHttps=true) {
+  getJSON(hostname, path, done, err, isHttps=true, headers={}) {
     const handler = isHttps ? https : http;
     const req = handler.request(
-      options(hostname, path),
+      options(hostname, path, headers),
       handleJSONResponse(done)
     );
 

@@ -7,11 +7,11 @@ var properties = PropertiesReader('/Users/carolyn/projects/magic-mirror/config/w
 
 const hostname = 'www.wanikani.com'
 const api_path = `/api/user/${properties.get('api.key')}`
-const user_info_path = '/user-information'
+const study_queue_path = '/study-queue'
 
 const WanikaniApi = {
-  getUserInfo(done, err) {
-    RequestWrapper.getJSON(hostname, api_path + user_info_path, done, err);
+  getStudyQueue(done, err) {
+    RequestWrapper.getJSON(hostname, api_path + study_queue_path, done, err);
   }
 }
 
