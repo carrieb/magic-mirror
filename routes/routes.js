@@ -15,8 +15,24 @@ const storage = multer.diskStorage({
 });
 var upload = multer({ storage });
 
-const ReceiptProcessor = require('../src/receipt-processor');
+// GOOGLE
 
+const CalendarApi = require('../src/calendar-api');
+
+router.get('/google-auth', (req, res) => {
+  res.redirect(CalendarApi.generateAuthUrl());
+});
+
+router.get('/google-auth-callback', (req, res) => {
+  CalendarApi.getNewToken(req.query.code, () => {
+    CalendarApi.retrieveCalendarsAndEvents();
+    res.redirect('/');
+  });
+});
+
+// RECEIPTS
+
+const ReceiptProcessor = require('../src/receipt-processor');
 
 router.get('/upload-receipt', (req, res) => {
   // TODO: this won't work, update __dirname
