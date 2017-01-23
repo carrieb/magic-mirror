@@ -2,6 +2,10 @@ import React from 'react';
 
 import ApiWrapper from '../util/api-wrapper';
 
+const listOrder = ["Today", "Tonight", "Tomorrow", "Week", "Weekend"];
+
+import sortBy from 'lodash/sortBy';
+
 const Wunderlist = React.createClass({
   getInitialState() {
     return {
@@ -12,9 +16,10 @@ const Wunderlist = React.createClass({
 
   componentWillMount() {
     ApiWrapper.getWunderlist((lists) => {
+      const sorted = sortBy(lists, (l) => { return listOrder.indexOf(l.title); });
       this.setState({
         loaded: true,
-        lists
+        lists: sorted
       });
     });
   },

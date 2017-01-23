@@ -19,10 +19,10 @@ router.get('/forecast', (req, res) => {
   );
 });
 
-router.get('/wanikani-queue', (req, res) => {
-  WanikaniApi.getStudyQueue(
-    (queue) => res.json(queue),
-    (err) => res.status(500).send('Failed to get wanikani study queue.')
+router.get('/wanikani', (req, res) => {
+  WanikaniApi.getCombinedData(
+    (data) => res.json(data),
+    (err) => res.status(500).send('Failed to get wanikani combined data.')
   );
 });
 

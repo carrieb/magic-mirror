@@ -19,10 +19,10 @@ const ApiWrapper = {
       });
   },
 
-  getWanikaniStudyQueue(callback) {
-    $.ajax('/api/wanikani-queue')
+  getWanikaniData(callback) {
+    $.ajax('/api/wanikani')
       .done((res) => {
-        console.log('/wanikani-queue response', res);
+        console.log('/wanikani response', res);
         callback(res);
       });
   },

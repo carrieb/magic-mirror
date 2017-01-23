@@ -7,31 +7,34 @@ const Wanikani = React.createClass({
     return {
       user: null,
       studyQueue: null,
+      recentUnlock: null,
       loaded: false
     };
   },
 
   componentWillMount() {
-    ApiWrapper.getWanikaniStudyQueue((res) => {
+    ApiWrapper.getWanikaniData((res) => {
       this.setState({
         user: res.user_information,
-        studyQueue: res.requested_information,
+        studyQueue: res.study_queue,
+        recentUnlock: res.recent_unlock,
         loaded: true
       });
-    })
+    });
   },
 
   render() {
     let level;
     if (this.state.loaded) {
       level = (
-        <div className="row">
-          <div className="col-xs-2 vertical-center">
-            <span className="in-circle">{this.state.user.level}</span>
-          </div>
-          <div className="col-xs-10">
-            <span>Lessons: {this.state.studyQueue.lessons_available}</span><br/>
-            <span>Reviews: {this.state.studyQueue.reviews_available}</span>
+        <div className="content">
+          <span className="in-circle pull-left level">{this.state.user.level}</span>
+          <span>Lessons: {this.state.studyQueue.lessons_available}</span><br/>
+          <span>Reviews: {this.state.studyQueue.reviews_available}</span>
+          <div className="recent-unlock text-center">
+            <span className="character">{ this.state.recentUnlock.character }</span><br/>
+            <span className="description">{ this.state.recentUnlock.meaning }</span><br/>
+            <span className="kana">{this.state.recentUnlock.kana }</span>
           </div>
         </div>
       );

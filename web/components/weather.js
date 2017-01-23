@@ -11,6 +11,7 @@ const isNight = () => {
 const iconForWeather = (weather, switchByTime=false) => {
   let icon;
   const showNightIcon = switchByTime && isNight()
+  console.log(weather);
   switch (weather) {
     case 'Mostly Cloudy':
       icon = 'wi-cloudy';
@@ -71,30 +72,43 @@ const Weather = React.createClass({
           </div>
         );
       });
-      let warningMsg = ""
-      if (this.state.forecast[0].qpf_allday.in > 0) {
-          warningMsg += "It's going to rain today. Grab an umbrella.\n"
-      }
-      if (this.state.forecast[0].low.fahrenheit < 50) {
-        warningMsg += "It's going to get chilly today.\n"
-      } else if (this.state.forecast[0].low.fahrenheit < 60) {
-        warningMsg += "It's going to get cold today.\n"
-      }
       forecastContent = (
         <div className="forcasts-container">
-          { warningMsg }
           <div className="row">
-
              { forecastEls }
           </div>
         </div>
       );
     }
     if (this.state.conditionsLoaded) {
+      let todaysForecast;
+      let warningMsg = "";
+      if (this.state.forecastLoaded) {
+        const forecast = this.state.forecast[0];
+        todaysForecast = (
+          <div>
+            <span>{forecast.low.fahrenheit}</span><span>{forecast.high.fahrenheit}</span>
+          </div>
+        );
+
+        if (forecast.qpf_allday.in > 0) {
+            warningMsg += "It's going to rain today. Grab an umbrella.\n"
+        }
+        if (forecast.low.fahrenheit < 50) {
+          warningMsg += "It's going to get chilly today.\n"
+        } else if (forecast.low.fahrenheit < 60) {
+          warningMsg += "It's going to get cold today.\n"
+        }
+      }
+
       conditionsContent = (
         <div className="current-conditions-container">
-          { iconForWeather(this.state.conditions.weather) }
-          It's <b>{ this.state.conditions.temp_f }°F</b> outisde right now.
+          <div className="pull-left text-center left-image">
+            { iconForWeather(this.state.conditions.weather) }
+            { todaysForecast }
+          </div>
+          It's <b>{ this.state.conditions.temp_f }°F</b> outisde right now.<br/>
+          <span className="warning">{ warningMsg }</span>
         </div>
       );
     }
