@@ -5,6 +5,7 @@ import Header from './components/header';
 import Weather from './components/weather';
 import Wanikani from './components/wanikani';
 import Wunderlist from './components/wunderlist';
+import Calendar from './components/calendar';
 
 window.onload = function() {
   //console.log('hey');
@@ -16,6 +17,7 @@ window.onload = function() {
       <div className="col-xs-6">
         <Header/>
         <Weather/>
+        <Calendar/>
       </div>
       <div className="col-xs-3">
         <Wanikani/>

@@ -33,6 +33,14 @@ const ApiWrapper = {
         console.log('/wunderlist response', res);
         callback(res);
       });
+  },
+
+  getCalendars(callback) {
+    $.ajax('/api/calendars')
+     .done((res) => {
+       console.log('/calendars response', res);
+       callback(res);
+     });
   }
 }
 

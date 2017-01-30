@@ -37,7 +37,7 @@ const GoogleApi = {
     });
   },
 
-  retrieveCalendarsAndEvents() {
+  retrieveCalendarsAndEvents(done, err) {
     var calendar = google.calendar('v3');
     calendar.calendarList.list({
       auth: oauth2Client,
@@ -85,6 +85,7 @@ const GoogleApi = {
           });
           if (calendars.length === cals.length) {
             console.log(calendars);
+            done(calendars);
           }
         });
       });
