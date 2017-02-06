@@ -5,8 +5,9 @@ const googleAuth = require('google-auth-library');
 const moment = require('moment');
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
+const Config = require('../config');
 const PropertiesReader = require('properties-reader');
-const properties = PropertiesReader('/Users/carolyn/projects/magic-mirror/config/google.properties');
+const properties = PropertiesReader(Config.getConfigDir() + 'google.properties');
 
 const clientSecret = properties.get('client.secret');
 const clientId = properties.get('client.id');

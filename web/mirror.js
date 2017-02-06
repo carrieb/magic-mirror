@@ -6,6 +6,7 @@ import Weather from './components/weather';
 import Wanikani from './components/wanikani';
 import Wunderlist from './components/wunderlist';
 import Calendar from './components/calendar';
+import GuildWars from './components/guildwars';
 
 window.onload = function() {
   //console.log('hey');
@@ -21,6 +22,7 @@ window.onload = function() {
       </div>
       <div className="col-xs-3">
         <Wanikani/>
+        <GuildWars/>
       </div>
     </div>,
     document.getElementById("render-wrapper")

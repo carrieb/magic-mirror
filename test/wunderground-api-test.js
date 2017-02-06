@@ -1,4 +1,4 @@
-const WundergroundApi = require('../src/wunderground-api');
+const WundergroundApi = require('../src/api/wunderground-api');
 
 WundergroundApi.getCurrentWeather(
   (res) => console.log('result:', result),

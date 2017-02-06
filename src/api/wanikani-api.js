@@ -1,7 +1,8 @@
 const RequestWrapper = require('./request-wrapper')
 
+const Config = require('../config');
 var PropertiesReader = require('properties-reader');
-var properties = PropertiesReader('/Users/carolyn/projects/magic-mirror/config/wanikani.properties');
+var properties = PropertiesReader(Config.getConfigDir() + 'wanikani.properties');
 
 // Documentation: https://www.wanikani.com/api
 

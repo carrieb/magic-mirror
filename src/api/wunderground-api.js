@@ -1,7 +1,8 @@
 const RequestWrapper = require('./request-wrapper')
 
+const Config = require('../config');
 var PropertiesReader = require('properties-reader');
-var properties = PropertiesReader('/Users/carolyn/projects/magic-mirror/config/wunderground.properties');
+var properties = PropertiesReader(Config.getConfigDir() + 'wunderground.properties');
 
 const hostname = 'api.wunderground.com'
 const api_path = `/api/${properties.get('key.id')}`

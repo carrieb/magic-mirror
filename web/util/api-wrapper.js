@@ -41,6 +41,14 @@ const ApiWrapper = {
        console.log('/calendars response', res);
        callback(res);
      });
+  },
+
+  getGuildWarsData(callback) {
+    $.ajax('/api/guildwars')
+     .done((res) => {
+       console.log('/guildwars response', res);
+       callback(res);
+     });
   }
 }
 

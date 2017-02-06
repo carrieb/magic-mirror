@@ -1,4 +1,4 @@
-const GuildWars2Api = require('../src/gw2-api.js')
+const GuildWars2Api = require('../src/api/gw2-api.js')
 
 // GuildWars2Api.fetchCurrency(
 //   1,
@@ -11,7 +11,17 @@ const GuildWars2Api = require('../src/gw2-api.js')
 //   (err) => console.log('error', err)
 // );
 
-GuildWars2Api.fetchWalletWithMetadata(
-  (walletWithMeta) => console.log('walletWithMeta', walletWithMeta),
+// GuildWars2Api.fetchWalletWithMetadata(
+//   (walletWithMeta) => console.log('walletWithMeta', walletWithMeta),
+//   (err) => console.log('error', err)
+// );
+
+// GuildWars2Api.fetchDailyAchievementsWithMetadata(
+//   (achievements) => console.log('achievements', achievements),
+//   (err) => console.log('error', err)
+// );
+
+GuildWars2Api.fetchCombined(
+  (res) => console.log('combined res', res),
   (err) => console.log('error', err)
 );

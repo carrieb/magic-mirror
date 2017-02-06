@@ -1,7 +1,8 @@
 const RequestWrapper = require('./request-wrapper')
 
+const Config = require('../config');
 const PropertiesReader = require('properties-reader');
-const properties = PropertiesReader('/Users/carolyn/projects/magic-mirror/config/wunderlist.properties');
+const properties = PropertiesReader(Config.getConfigDir() + 'wunderlist.properties');
 
 const headers = {
   'X-Access-Token': properties.get('access.token'),

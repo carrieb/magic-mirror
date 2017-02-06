@@ -11,7 +11,7 @@ const isNight = () => {
 const iconForWeather = (weather, switchByTime=false) => {
   let icon;
   const showNightIcon = switchByTime && isNight()
-  console.log(weather);
+  //console.log(weather);
   switch (weather) {
     case 'Mostly Cloudy':
       icon = 'wi-cloudy';
@@ -22,7 +22,14 @@ const iconForWeather = (weather, switchByTime=false) => {
     case 'Overcast':
       icon = showNightIcon ? 'wi-day-sunny-overcast' : 'wi-night-cloudy-high';
       break;
+    case 'Chance of Rain':
+      icon = showNightIcon ? 'wi-night-showers' : 'wi-day-showers';
+      break;
+    case 'Chance of a Thunderstorm':
+      icon = showNightIcon ? 'wi-night-storm-showers' : 'wi-day-storm-showers';
+      break;
     default:
+      console.log('unknown weather', weather);
       icon = 'wi-day-sunny'
       break;
   }
@@ -32,19 +39,19 @@ const iconForWeather = (weather, switchByTime=false) => {
 
 const Weather = React.createClass({
   componentWillMount() {
-    ApiWrapper.getCurrentTemp((conditions) => {
-      this.setState({
-        conditions,
-        conditionsLoaded: true
-      });
-    });
-
-    ApiWrapper.getForecast((forecast) => {
-      this.setState({
-        forecast,
-        forecastLoaded: true
-      });
-    })
+    // ApiWrapper.getCurrentTemp((conditions) => {
+    //   this.setState({
+    //     conditions,
+    //     conditionsLoaded: true
+    //   });
+    // });
+    //
+    // ApiWrapper.getForecast((forecast) => {
+    //   this.setState({
+    //     forecast,
+    //     forecastLoaded: true
+    //   });
+    // })
   },
 
   getInitialState() {

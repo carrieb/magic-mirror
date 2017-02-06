@@ -1,4 +1,4 @@
-const WanikaniApi = require('../src/wanikani-api');
+const WanikaniApi = require('../src/api/wanikani-api');
 
 WanikaniApi.getCombinedData(
   (json) => console.log('success', json),

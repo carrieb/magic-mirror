@@ -1,4 +1,4 @@
-const GuildWars2Api = require('../src/gw2-api')
+const GuildWars2Api = require('../src/api/gw2-api')
 
 GuildWars2Api.fetchWallet(
   (wallet) => {},
