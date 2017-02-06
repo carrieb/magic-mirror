@@ -1,4 +1,4 @@
-const RequestWrapper = require('./request-wrapper')
+const RequestWrapper = require('../request-wrapper')
 
 const Config = require('../config');
 const PropertiesReader = require('properties-reader')
@@ -26,14 +26,14 @@ const GuildWars2Api = {
   },
 
   fetchAchievementsData(ids, done, err) {
-    console.log(achievements_path(ids));
+    //console.log(achievements_path(ids));
     RequestWrapper.getJSON(hostname, achievements_path(ids), done, err);
   },
 
   fetchDailyAchievementsWithMetadata(done, err) {
     this.fetchDailyAchievements((achievements) => {
       const ids = new Set(achievements.pve.map((achievement) => achievement.id));
-      console.log(achievements.pve);
+      //console.log(achievements.pve);
       let achievementIndex = {}
       let numUpdated = 0;
       achievements.pve.forEach((achievement) => achievementIndex[achievement.id] = achievement);
@@ -45,7 +45,7 @@ const GuildWars2Api = {
           achievementIndex[id] = assign(achievementIndex[id], meta);
           //console.log(achievementIndex);
           numUpdated++;
-          console.log(ids, numUpdated, ids.size);
+          //console.log(ids, numUpdated, ids.size);
           if (numUpdated === ids.size) {
             const res = Object.keys(achievementIndex).map((key) => achievementIndex[key]);
             done(res);
@@ -56,7 +56,7 @@ const GuildWars2Api = {
   },
 
   fetchCurrencies(ids, done, err) {
-    console.log(currencies_path(ids))
+    //console.log(currencies_path(ids))
     RequestWrapper.getJSON(hostname, currencies_path(ids), done, err);
   },
 
@@ -106,7 +106,7 @@ const GuildWars2Api = {
     this.fetchDailyAchievementsWithMetadata((achievements) => {
       achievementsLoaded = true;
       res.achievements = achievements;
-      console.log(achievementsLoaded, walletLoaded);
+      //console.log(achievementsLoaded, walletLoaded);
       if (achievementsLoaded && walletLoaded) {
         done(res);
       }
@@ -114,7 +114,7 @@ const GuildWars2Api = {
     this.fetchWalletWithMetadata((wallet) => {
       walletLoaded = true;
       res.wallet = wallet;
-      console.log(achievementsLoaded, walletLoaded);
+      //console.log(achievementsLoaded, walletLoaded);
       if (achievementsLoaded && walletLoaded) {
         done(res);
       }

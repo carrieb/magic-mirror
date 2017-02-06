@@ -117,3 +117,11 @@ input[type=file].hidden-file-input {
   height: 35px;
   margin-left: 15px;
 }
+
+.calendar > .title {
+  font-size: 16px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-transform: capitalize;
+}

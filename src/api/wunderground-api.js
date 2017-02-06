@@ -1,4 +1,4 @@
-const RequestWrapper = require('./request-wrapper')
+const RequestWrapper = require('../request-wrapper')
 
 const Config = require('../config');
 var PropertiesReader = require('properties-reader');
@@ -8,6 +8,8 @@ const hostname = 'api.wunderground.com'
 const api_path = `/api/${properties.get('key.id')}`
 const conditions_path = `/conditions/q/${properties.get('default.state')}/${properties.get('default.city')}.json`
 const forecast_path = `/forecast/q/${properties.get('default.state')}/${properties.get('default.city')}.json`
+
+// TODO: build combined 'daily' request.
 
 const WundergroundApi = {
   getCurrentWeather(done, err) {

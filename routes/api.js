@@ -5,7 +5,7 @@ const WundergroundApi = require('../src/api/wunderground-api')
 const WanikaniApi = require('../src/api/wanikani-api')
 const WunderlistApi = require('../src/api/wunderlist-api')
 const CalendarApi = require('../src/api/calendar-api')
-const GuildWars2Api = require('../src/gw2-api')
+const GuildWars2Api = require('../src/api/gw2-api')
 
 router.get('/weather', (req, res) => {
   WundergroundApi.getCurrentWeather(
@@ -37,7 +37,7 @@ router.get('/wunderlist', (req, res) => {
 
 router.get('/calendars', (req, res) => {
   CalendarApi.retrieveCalendarsAndEvents(
-    (calendars) => res.json(calendars),
+    (calendarsWithEvents) => res.json(calendarsWithEvents),
     (err) => res.status(500).send('Failed to get calendars.')
   );
 });

@@ -29,9 +29,12 @@ const Header = React.createClass({
   },
 
   render() {
+    const now = moment()
     return (
       <div className="header-container">
         <h1>{ this.getGreeting() }, { this.props.name }!</h1>
+        <p>It's { now.format('dddd, MMMM Do') }.</p>
+        <p> { now.format('LT') }</p>
       </div>
     );
   }

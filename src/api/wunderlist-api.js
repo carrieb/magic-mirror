@@ -1,4 +1,4 @@
-const RequestWrapper = require('./request-wrapper')
+const RequestWrapper = require('../request-wrapper')
 
 const Config = require('../config');
 const PropertiesReader = require('properties-reader');

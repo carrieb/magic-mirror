@@ -17,7 +17,7 @@ var upload = multer({ storage });
 
 // GOOGLE
 
-const CalendarApi = require('../src/calendar-api');
+const CalendarApi = require('../src/api/calendar-api');
 
 router.get('/google-auth', (req, res) => {
   res.redirect(CalendarApi.generateAuthUrl());
@@ -25,7 +25,7 @@ router.get('/google-auth', (req, res) => {
 
 router.get('/google-auth-callback', (req, res) => {
   CalendarApi.getNewToken(req.query.code, () => {
-    CalendarApi.retrieveCalendarsAndEvents();
+    //CalendarApi.retrieveCalendarsAndEvents();
     res.redirect('/');
   });
 });

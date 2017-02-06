@@ -14,11 +14,11 @@ window.onload = function() {
     <div className="row mirror-container">
       <div className="col-xs-3">
         <Wunderlist/>
+        <Calendar/>
       </div>
       <div className="col-xs-6">
         <Header/>
         <Weather/>
-        <Calendar/>
       </div>
       <div className="col-xs-3">
         <Wanikani/>
