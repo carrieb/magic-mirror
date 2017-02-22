@@ -90,7 +90,7 @@ const GoogleApi = {
               kind: event.kind,
               location: event.location,
               start: event.start.dateTime || event.start.date,
-              end: event.end.dateTime || event.start.end
+              end: event.end.dateTime || event.end.date
             }
           });
         }
