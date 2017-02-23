@@ -7,6 +7,8 @@ const WunderlistApi = require('../src/api/wunderlist-api')
 const CalendarApi = require('../src/api/calendar-api')
 const GuildWars2Api = require('../src/api/gw2-api')
 
+const GuildWars2DB = require('../src/gw2-db')
+
 router.get('/weather', (req, res) => {
   WundergroundApi.getCurrentWeather(
     (weather) => res.json(weather),
@@ -46,6 +48,13 @@ router.get('/guildwars', (req, res) => {
   GuildWars2Api.fetchCombined(
     (result) => res.json(result),
     (err) => res.status(500).send('Failed to get gw2 result.')
+  );
+});
+
+router.get('/guildwars/wallet', (req, res) => {
+  GuildWars2DB.getLast7DaysOfWallet(
+    (result) => res.json(result),
+    (err) => res.status(500).send('Failed to get gw2 wallet history.')
   );
 });
 

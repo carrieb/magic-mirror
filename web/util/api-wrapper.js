@@ -49,6 +49,14 @@ const ApiWrapper = {
        console.log('/guildwars response', res);
        callback(res);
      });
+  },
+
+  getGuildWarsWalletHistory(callback) {
+    $.ajax('/api/guildwars/wallet')
+    .done((res) => {
+      console.log('/guildwars/wallet response', res);
+      callback(res);
+    });
   }
 }
 

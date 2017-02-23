@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 module.exports = [{
   context: path.join(__dirname, 'web'),
   entry: {
@@ -11,6 +12,10 @@ module.exports = [{
   module: {
     loaders: [
       {
+        include: /\.json$/,
+        loaders: ["json-loader"]
+      },
+      {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         loader: 'babel-loader',
@@ -20,6 +25,9 @@ module.exports = [{
       }
     ]
   },
+  plugins: [
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+  ],
   resolve: {
    extensions: ['', '.js', '.jsx'],
    root: [path.join(__dirname, 'web')],
