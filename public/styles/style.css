@@ -7,10 +7,6 @@ input[type=file].hidden-file-input {
   display: none;
 }
 
-.upload-receipt-container label {
-  margin-bottom: 15px;
-}
-
 .weather-container span + span {
   padding-left: 5px;
 }

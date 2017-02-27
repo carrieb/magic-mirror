@@ -114,7 +114,7 @@ const GuildWars = React.createClass({
         <div className="header"><b>GUILD WARS</b></div>
         { achievements }
         { wallet }
-        <canvas width="400" height="400" ref={this.handleCanvasRef}></canvas>
+        <canvas width="400" height="200" ref={this.handleCanvasRef}></canvas>
       </div>
     )
   }

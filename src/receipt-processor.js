@@ -9,8 +9,10 @@ const HebParser = require('./heb-parser');
 const jsonfile = require('jsonfile')
 const fs = require('fs')
 
+const Config = require('./config');
+
 const saveTessaractOutput = (filename, obj) => {
-  const outputPath = '/Users/carolyn/projects/magic-mirror/tmp/tesseract-output/' + filename + '.json';
+  const outputPath = path.join(Config.getBaseDir(), 'tmp', 'tesseract-output', filename + '.json');
   jsonfile.writeFile(outputPath, obj.lines.map((line) => {
     return {
       text: line.text.trim()
@@ -21,7 +23,7 @@ const saveTessaractOutput = (filename, obj) => {
 }
 
 const extractText = (filename) => {
-  // TODO: look up these dirs from somewhere 
+  // TODO: look up these dirs from somewhere
   const fullPath = '/Users/carolyn/projects/magic-mirror/tmp/processed-images/' + filename;
   const jsonPath = '/Users/carolyn/projects/magic-mirror/tmp/tesseract-output/' + filename + '.json';
   fs.stat(jsonPath, (err, stats) => {
@@ -40,8 +42,7 @@ const extractText = (filename) => {
         HebParser.parseTextObj(obj);
       });
     }
-  })
-
+  });
 }
 
 const prepareImage = (file) => {
@@ -62,6 +63,43 @@ const ReceiptProcessor = {
     console.log('extracting..');
     prepareImage(file);
     return [];
+  },
+
+  cropAndProcess(filename, x, y, width, height) {
+    const inputPath = path.join(Config.getBaseDir(), 'tmp', 'images', filename);
+    const outputPath = path.join(Config.getBaseDir(), 'tmp', 'processed-images', filename);
+    sharp(inputPath)
+      .extract({left: x, top: y, width, height})
+      .resize(600)
+      .rotate()
+      .threshold(79)
+      .toFile(outputPath, (err, info) => {
+        console.log(err);
+      });
+  },
+
+  extractText(filename, callback) {
+    const inputPath = path.join(Config.getBaseDir(), 'tmp', 'processed-images', filename);
+    const jsonOutputPath = path.join(Config.getBaseDir(), 'tmp', 'tesseract-output', filename + '.json');
+    fs.stat(jsonOutputPath, (err, stats) => {
+      console.log(err, stats);
+      if (err) {
+        // output doesn't already exist, do processing
+        Tesseract.recognize(inputPath)
+        .then((result) => {
+          saveTessaractOutput(filename, result);
+          console.log('successfully got text with Tesseract');
+          const items = HebParser.parseTessaract(result);
+          callback(items);
+        });
+      } else {
+        // read file and parse
+        jsonfile.readFile(jsonOutputPath, (err, obj) => {
+          const items = HebParser.parseTextObj(obj);
+          callback(items);
+        });
+      }
+    });
   }
 }
 

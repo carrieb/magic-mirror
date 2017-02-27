@@ -3,7 +3,8 @@ const webpack = require('webpack');
 module.exports = [{
   context: path.join(__dirname, 'web'),
   entry: {
-    mirror: 'mirror.js'
+    mirror: 'mirror.js',
+    receipts: 'receipts.js'
   },
   output: {
     path: path.join(__dirname, '/public/scripts'),

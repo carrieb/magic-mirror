@@ -9,6 +9,9 @@ app.use('/api', api);
 app.use('/', routes);
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'tmp', 'images')));
+app.use('/processed-images', express.static(path.join(__dirname, 'tmp', 'processed-images')));
+app.use('/dist', express.static(path.join(__dirname, 'semantic', 'dist')));
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')

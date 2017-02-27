@@ -41,15 +41,16 @@ const processLines = (lines) => {
     }
   }
   console.log(items);
+  return items;
 }
 
 const HebParser = {
   parseTessaract(tesseractResult) {
-    processLines(tesseractResult.lines);
+    return processLines(tesseractResult.lines);
   },
 
   parseTextObj(linesObj) {
-    processLines(linesObj);
+    return processLines(linesObj);
   }
 }
 

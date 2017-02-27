@@ -1,5 +1,7 @@
 import $ from 'jquery';
 
+import assign from 'lodash/assign';
+
 let lastWeatherResponse = null;
 
 const ApiWrapper = {
@@ -55,6 +57,28 @@ const ApiWrapper = {
     $.ajax('/api/guildwars/wallet')
     .done((res) => {
       console.log('/guildwars/wallet response', res);
+      callback(res);
+    });
+  },
+
+  submitCrop(filename, crop, callback) {
+    let data = { filename };
+    data = assign(data, crop);
+    $.ajax('/crop', {
+      type: 'POST',
+      data: JSON.stringify(data),
+      contentType: 'application/json; charset=utf-8'
+    })
+    .done((res) => {
+      console.log('/crop response', res);
+      callback(res);
+    });
+  },
+
+  extractText(filename, callback) {
+    $.ajax('/extract', { data: { filename }})
+    .done((res) => {
+      console.log('/extract response', res);
       callback(res);
     });
   }

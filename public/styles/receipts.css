@@ -1,0 +1,16 @@
+.receipt-processor-container .uploader-wrapper label {
+  margin-bottom: 15px;
+}
+
+.receipt-processor-container {
+  margin-top: 20px;
+}
+
+.verifier-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+input[type=file].hidden-file-input {
+  display: none;
+}
