@@ -65,14 +65,14 @@ const ReceiptProcessor = {
     return [];
   },
 
-  cropAndProcess(filename, x, y, width, height) {
+  cropAndProcess(filename, x, y, width, height, rotate) {
     const inputPath = path.join(Config.getBaseDir(), 'tmp', 'images', filename);
     const outputPath = path.join(Config.getBaseDir(), 'tmp', 'processed-images', filename);
     sharp(inputPath)
+      .rotate(rotate)
       .extract({left: x, top: y, width, height})
       .resize(600)
-      .rotate()
-      .threshold(79)
+      //.threshold(79)
       .toFile(outputPath, (err, info) => {
         console.log(err);
       });

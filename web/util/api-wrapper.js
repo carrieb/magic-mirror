@@ -81,6 +81,14 @@ const ApiWrapper = {
       console.log('/extract response', res);
       callback(res);
     });
+  },
+
+  submitItems(items, callback) {
+    $.ajax('/items', { data: JSON.stringify({ items }), type: 'POST', contentType: 'application/json; charset=utf-8'})
+    .done((res) => {
+      console.log('/items response', res);
+      callback(res);
+    });
   }
 }
 

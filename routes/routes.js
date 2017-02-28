@@ -23,6 +23,7 @@ const jsonParser = bodyParser.json();
 // GOOGLE
 
 const CalendarApi = require('../src/api/calendar-api');
+const FoodDb = require('../src/food-db.js');
 
 router.get('/google-auth', (req, res) => {
   res.redirect(CalendarApi.generateAuthUrl());
@@ -36,10 +37,6 @@ router.get('/google-auth-callback', (req, res) => {
 });
 
 // RECEIPTS
-
-router.get('/dist/react-image-crop.css', (req, res) => {
-  res.sendFile(path.join(Config.getBaseDir(), 'node_modules', 'react-image-crop', 'dist', 'ReactCrop.css'));
-});
 
 const ReceiptProcessor = require('../src/receipt-processor');
 
@@ -59,13 +56,20 @@ router.post('/receipt', upload.single('receipt'), function (req, res, next) {
 router.post('/crop', jsonParser, (req, res) => {
   console.log(req.body);
   // TODO: get image, crop using req.body, rotate right, save in tmp/processed-images
-  ReceiptProcessor.cropAndProcess(req.body.filename, req.body.x, req.body.y, req.body.width, req.body.height);
+  ReceiptProcessor.cropAndProcess(req.body.filename, req.body.x, req.body.y, req.body.width, req.body.height, req.body.rotate);
   res.send('OK');
 });
 
 router.get('/extract', (req, res) => {
   ReceiptProcessor.extractText(req.query.filename, (items) => {
     res.send(items);
+  });
+});
+
+router.post('/items', jsonParser, (req, res) => {
+  // TODO: store new things into DB
+  FoodDb.storeNewItems(req.body.items, () => {
+    res.send('OK');
   });
 });
 
