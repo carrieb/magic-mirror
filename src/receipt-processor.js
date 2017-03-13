@@ -27,7 +27,6 @@ const extractText = (filename) => {
   const fullPath = '/Users/carolyn/projects/magic-mirror/tmp/processed-images/' + filename;
   const jsonPath = '/Users/carolyn/projects/magic-mirror/tmp/tesseract-output/' + filename + '.json';
   fs.stat(jsonPath, (err, stats) => {
-    console.log(err, stats);
     if (err) {
       // doesn't exist, do processing
       Tesseract.recognize(fullPath)
@@ -65,32 +64,46 @@ const ReceiptProcessor = {
     return [];
   },
 
-  cropAndProcess(filename, x, y, width, height, rotate) {
+  cropAndProcess(filename, x, y, width, height, rotate, callback, error) {
     const inputPath = path.join(Config.getBaseDir(), 'tmp', 'images', filename);
     const outputPath = path.join(Config.getBaseDir(), 'tmp', 'processed-images', filename);
-    sharp(inputPath)
-      .rotate(rotate)
-      .extract({left: x, top: y, width, height})
-      .resize(600)
-      //.threshold(79)
-      .toFile(outputPath, (err, info) => {
-        console.log(err);
-      });
+    fs.stat(inputPath, (err, stats) => {
+      if (err) error();
+      else {
+        sharp(inputPath)
+          .rotate(rotate)
+          .extract({left: x, top: y, width, height})
+          .resize(600)
+          //.threshold(79)
+          .toFile(outputPath, (err, info) => {
+            console.log(err);
+            if (err) error();
+            else {
+              callback();
+            }
+          });
+      }
+    });
   },
 
-  extractText(filename, callback) {
+  extractText(filename, callback, error) {
     const inputPath = path.join(Config.getBaseDir(), 'tmp', 'processed-images', filename);
     const jsonOutputPath = path.join(Config.getBaseDir(), 'tmp', 'tesseract-output', filename + '.json');
     fs.stat(jsonOutputPath, (err, stats) => {
-      console.log(err, stats);
       if (err) {
         // output doesn't already exist, do processing
-        Tesseract.recognize(inputPath)
-        .then((result) => {
-          saveTessaractOutput(filename, result);
-          console.log('successfully got text with Tesseract');
-          const items = HebParser.parseTessaract(result);
-          callback(items);
+        // ensure that processed image exists first
+        fs.stat(inputPath, (err, stats) => {
+          if (err) error();
+          else {
+            Tesseract.recognize(inputPath)
+            .then((result) => {
+              saveTessaractOutput(filename, result);
+              console.log('successfully got text with Tesseract');
+              const items = HebParser.parseTessaract(result);
+              callback(items);
+            });
+          }
         });
       } else {
         // read file and parse

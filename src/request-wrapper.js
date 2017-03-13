@@ -1,12 +1,41 @@
 const http = require('http')
 const https = require('https')
 
-const options = (hostname, path, headers = {}) => {
+const options = (hostname, path, headers = {}, method='GET') => {
   return {
     hostname,
     path,
-    headers
+    headers,
+    method
   };
+}
+
+const handleResponse = (callback, error) => {
+  return (res) => {
+    const statusCode = res.statusCode;
+    const contentType = res.headers['content-type'];
+    console.log(statusCode);
+    let err;
+    if (statusCode !== 200) {
+      err = new Error(`Request Failed.\n` +
+        `Status Code: ${statusCode}`);
+    }
+    if (err) {
+      console.log(error.message);
+      // consume response data to free up memory
+      res.resume();
+      error();
+      return;
+    }
+
+    res.setEncoding('utf8');
+    let rawData = '';
+    res.on('data', (chunk) => rawData += chunk);
+    res.on('end', () => {
+      console.log('end', rawData);
+      callback(rawData);
+    });
+  }
 }
 
 const handleJSONResponse = (callback) => {
@@ -56,6 +85,28 @@ const RequestWrapper = {
       err(e)
     });
 
+    req.end()
+  },
+
+  post(hostname, path, data, done, err, headers={}, isHttps=true) {
+    //console.log(hostname, path, data, headers, isHttps);
+    const opts = options(hostname, path, headers, 'POST');
+    console.log('options', opts);
+    const handler = isHttps ? https : http;
+    const req = handler.request(
+      opts,
+      handleResponse(done, err)
+    );
+
+    const postData = JSON.stringify(data);
+    console.log(postData);
+
+    req.on('error', (e) => {
+      console.log(e);
+      err(e)
+    });
+
+    req.write(postData);
     req.end()
   }
 }

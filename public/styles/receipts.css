@@ -6,9 +6,36 @@
   margin-top: 20px;
 }
 
+.receipt-processor-container .steps {
+  margin-top: 75px;
+}
+
+.receipt-processor-container .uploader-wrapper form {
+  margin-bottom: 25px;
+}
+
+.verifier-wrapper {
+  margin-bottom: 100px;
+}
+
+.verifier-wrapper .right.floated {
+  margin-left: 10px;
+}
+
 .verifier-wrapper img {
   max-width: 100%;
   max-height: 100%;
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 20px;
+}
+
+.verifier-wrapper input.right-aligned {
+  text-align: right;
+}
+
+.verifier-wrapper button[type=submit] {
+  margin-bottom: 20px;
 }
 
 input[type=file].hidden-file-input {
@@ -20,10 +47,17 @@ input[type=file].hidden-file-input {
 }
 
 .image-editor {
-  height: 80vh;
+  height: 70vh;
+  margin-bottom: 20px;
 }
 
-.uploader-wrapper img {
+.cropper-container {
+  inherit: none;
+}
+
+.uploader-wrapper img.image {
   max-width: 100%;
   max-height: 100%;
+  margin-bottom: 20px;
+  display: none;
 }

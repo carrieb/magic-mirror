@@ -19,13 +19,48 @@ const FoodDb = {
     MongoClient.connect(url, (err, db) => {
       if (err) error(err);
       const coll = db.collection('items');
-      coll.insertMany(items.map((item) => {
-        const itemWithDate = assign(item, { date: now });
-        return itemWithDate;
-      }), (err, r) => {
+      const batch = coll.initializeUnorderedBulkOp();
+      // redo this; just insert a new document for this item/price/quantity
+      // later we'll add a completed date to each item
+      // can query there to see what's good
+      // then we should have another coll for info? (expiration, image etc.)
+      items.forEach((item) => {
+        batch
+          .find({ description: item.description })
+          .upsert()
+          .updateOne({
+            "$inc": { "quantity": 1 },
+            "$push": { "prices": item.price, "importDates" : moment().format('MM/DD/YYYY')}
+          });
+      });
+      batch.execute((err, result) => {
         if (err) error(err);
-        //console.log(r);
-        callback();
+        else callback(result);
+      });
+      // check if item (=description) already exists
+      // coll.updateMany({
+      //   "description": {"$in" : items.map((item) => item.description) }
+      // }, {
+      //   $set: {description:  }
+      // })
+      // coll.insertMany(items.map((item) => {
+      //   const itemWithDate = assign(item, { date: now });
+      //   return itemWithDate;
+      // }), (err, r) => {
+      //   if (err) error(err);
+      //   //console.log(r);
+      //   callback();
+      // });
+    });
+  },
+
+  getKitchen(done, error=noop) {
+    MongoClient.connect(url, (err, db) => {
+      if (err) error(err);
+      const coll = db.collection('items');
+      coll.find().toArray((err, docs) => {
+        if (err) error(err);
+        done(docs);
       });
     });
   }

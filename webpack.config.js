@@ -4,7 +4,8 @@ module.exports = [{
   context: path.join(__dirname, 'web'),
   entry: {
     mirror: 'mirror.js',
-    receipts: 'receipts.js'
+    receipts: 'receipts.js',
+    kitchen: 'kitchen.js'
   },
   output: {
     path: path.join(__dirname, '/public/scripts'),

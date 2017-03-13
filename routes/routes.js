@@ -1,5 +1,7 @@
 const express = require('express')
-const router = express.Router()
+const router = express.Router();
+
+const https = require('https');
 
 const Config = require('../src/config.js');
 
@@ -45,6 +47,10 @@ router.get(['/process-receipt', '/process-receipt/*'], (req, res) => {
   res.sendFile(dir + '/views/upload-receipt.html')
 });
 
+router.get('/kitchen', (req, res) => {
+  res.sendFile(dir + '/views/kitchen.html');
+});
+
 router.post('/receipt', upload.single('receipt'), function (req, res, next) {
   // req.file is the `avatar` file
   // req.body will hold the text fields, if there were any
@@ -56,13 +62,18 @@ router.post('/receipt', upload.single('receipt'), function (req, res, next) {
 router.post('/crop', jsonParser, (req, res) => {
   console.log(req.body);
   // TODO: get image, crop using req.body, rotate right, save in tmp/processed-images
-  ReceiptProcessor.cropAndProcess(req.body.filename, req.body.x, req.body.y, req.body.width, req.body.height, req.body.rotate);
-  res.send('OK');
+  ReceiptProcessor.cropAndProcess(req.body.filename, req.body.x, req.body.y, req.body.width, req.body.height, req.body.rotate, () => {
+    res.send('OK');
+  }, () => {
+    res.state(404).send(`Failed to crop ${req.query.filename}.`);
+  });
 });
 
 router.get('/extract', (req, res) => {
   ReceiptProcessor.extractText(req.query.filename, (items) => {
     res.send(items);
+  }, () => {
+    res.status(404).send(`A processed image for ${req.query.filename} not found.`);
   });
 });
 
@@ -70,6 +81,17 @@ router.post('/items', jsonParser, (req, res) => {
   // TODO: store new things into DB
   FoodDb.storeNewItems(req.body.items, () => {
     res.send('OK');
+  });
+});
+
+const AlertsApi = require('../src/api/alerts-api');
+
+router.post('/firebase-token', jsonParser, (req, res) => {
+  const deviceId = req.body.token;
+  AlertsApi.registerDevice(deviceId, (response) => {
+    res.send('OK');
+  }, (error) => {
+    res.status(500).send(`Something went wrong when registering your device.`);
   });
 });
 

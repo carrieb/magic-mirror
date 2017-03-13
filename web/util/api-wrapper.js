@@ -61,6 +61,14 @@ const ApiWrapper = {
     });
   },
 
+  getKitchen(callback) {
+    $.ajax('/api/kitchen')
+    .done((res) => {
+      console.log('/kitchen response', res);
+      callback(res);
+    });
+  },
+
   submitCrop(filename, crop, callback) {
     let data = { filename };
     data = assign(data, crop);
@@ -75,12 +83,13 @@ const ApiWrapper = {
     });
   },
 
-  extractText(filename, callback) {
+  extractText(filename, callback, error) {
     $.ajax('/extract', { data: { filename }})
     .done((res) => {
       console.log('/extract response', res);
       callback(res);
-    });
+    })
+    .fail(error);
   },
 
   submitItems(items, callback) {
@@ -88,6 +97,14 @@ const ApiWrapper = {
     .done((res) => {
       console.log('/items response', res);
       callback(res);
+    });
+  },
+
+  submitFirebaseToken(token) {
+    return $.ajax('/firebase-token', {
+      data: JSON.stringify({ token }),
+      type: 'POST',
+      contentType: 'application/json; charset=utf-8'
     });
   }
 }
