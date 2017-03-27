@@ -9,7 +9,7 @@ const path = require('path')
 const dir = path.dirname(require.main.filename);
 
 const multer  = require('multer')
-const storage = multer.diskStorage({
+const receiptStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, dir + '/tmp/images')
   },
@@ -17,7 +17,17 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
   }
 });
-var upload = multer({ storage });
+const receiptUpload = multer({ storage: receiptStorage });
+
+const foodImageStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, dir + '/tmp/food-images')
+  },
+  filename: (req, file, cb) => {
+    cb(null, req.body.filename + path.extname(file.originalname));
+  }
+});
+const foodImageUpload = multer({ storage: foodImageStorage })
 
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
@@ -47,16 +57,25 @@ router.get(['/process-receipt', '/process-receipt/*'], (req, res) => {
   res.sendFile(dir + '/views/upload-receipt.html')
 });
 
-router.get('/kitchen', (req, res) => {
+router.get(['/kitchen', '/kitchen/*'], (req, res) => {
   res.sendFile(dir + '/views/kitchen.html');
 });
 
-router.post('/receipt', upload.single('receipt'), function (req, res, next) {
+router.post('/receipt', receiptUpload.single('receipt'), function (req, res, next) {
   // req.file is the `avatar` file
   // req.body will hold the text fields, if there were any
   console.log(req.file);
   const items = ReceiptProcessor.extractItems(req.file);
   res.redirect(`/process-receipt/crop/${req.file.filename}`);
+});
+
+router.post('/food-image', foodImageUpload.single('image'), function (req, res, next) {
+  //console.log(req.file);
+  //console.log(req.body);
+  FoodDb.updateImage(req.body.filename, req.file.filename, () => {
+    res.send(req.file.filename);
+  });
+  // TODO: save name into db lookup using req.body.filename and set to req.file.filename
 });
 
 router.post('/crop', jsonParser, (req, res) => {

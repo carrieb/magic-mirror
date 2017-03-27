@@ -9,6 +9,7 @@ app.use('/api', api);
 app.use('/', routes);
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/food-images', express.static(path.join(__dirname, 'tmp', 'food-images')));
 app.use('/images', express.static(path.join(__dirname, 'tmp', 'images')));
 app.use('/processed-images', express.static(path.join(__dirname, 'tmp', 'processed-images')));
 app.use('/dist', express.static(path.join(__dirname, 'semantic', 'dist')));

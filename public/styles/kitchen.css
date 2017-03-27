@@ -1,3 +1,40 @@
 .kitchen-container {
   padding-top: 15px;
 }
+
+input[type=file].hidden-file-input {
+  display: none;
+}
+
+.kitchen-container .inline.fields .sixteen.wide.field {
+  padding-right: 0
+}
+
+input[type=number] {
+  text-align: right;
+}
+
+.food-editor-container img {
+  display: block;
+  margin: 0 auto;
+  max-height: 200px;
+}
+
+.food-item-card .image {
+  max-height: 200px;
+  max-width: 100px;
+  margin: 0 auto;
+}
+
+.food-item-card img {
+  padding: 5px 0;
+  background: white;
+}
+
+.food-item-row img {
+  max-height: 50px;
+}
+
+.ui.menu .icon-only.item i {
+  margin-right: 0;
+}

@@ -1,5 +1,7 @@
 import $ from 'jquery';
 
+const noop = () => {}
+
 import assign from 'lodash/assign';
 
 let lastWeatherResponse = null;
@@ -105,6 +107,29 @@ const ApiWrapper = {
       data: JSON.stringify({ token }),
       type: 'POST',
       contentType: 'application/json; charset=utf-8'
+    });
+  },
+
+  uploadFoodImage(form, onProgress=noop) {
+    return $.ajax({
+      url: '/food-image',
+      type: 'POST',
+      data: new FormData(form),
+      cache: false,
+      contentType: false,
+      processData: false,
+      xhr: () => {
+          var myXhr = $.ajaxSettings.xhr();
+          if (myXhr.upload) {
+              // For handling the progress of the upload
+              myXhr.upload.addEventListener('progress', (e) =>{
+                  if (e.lengthComputable) {
+                      onProgress(e.loaded, e.total);
+                  }
+              } , false);
+          }
+          return myXhr;
+      }
     });
   }
 }

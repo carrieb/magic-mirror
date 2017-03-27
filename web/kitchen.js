@@ -1,73 +1,127 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, browserHistory } from 'react-router';
+import { Router, Route, browserHistory, Link } from 'react-router';
 
-import moment from 'moment';
-
+import KitchenState from 'state/KitchenState';
 import MessagingUtil from 'util/messaging-util';
-import ApiWrapper from 'util/api-wrapper';
+
+import KitchenItemCard from 'components/kitchen/KitchenItemCard';
+import FoodEditorHandler from 'components/kitchen/FoodEditorHandler';
 
 const Kitchen = React.createClass({
   getInitialState() {
     return {
-      kitchen: []
+      kitchen: [],
+      selectedItem: null,
+      layout: 'block'
     }
   },
 
   componentWillMount() {
     MessagingUtil.subscribeDevice();
-    ApiWrapper.getKitchen((kitchen) => this.setState({ kitchen }));
+    KitchenState.getKitchen((kitchen) => this.setState({ kitchen }));
   },
 
-  onSettingsClick(idx) {
-    return (idx) => {
-      // TODO: display settings for that item..
+  showModal(idx) {
+    return () => {
+      const selectedItem = this.state.kitchen[idx];
+      this.setState({ selectedItem });
+      //$('.ui.modal').modal('show');
     };
+  },
+
+  componentDidUpdate() {
+    if (this.state.layout === 'table') {
+      $('table').tablesort();
+    }
   },
 
   render() {
     const lastRoute = this.props.routes[this.props.routes.length-1];
-    //console.log(lastRoute);
+    //console.log(lastRoute.path, lastRoute.path === '/kitchen');
+    let inventory = null;
+    let layoutOptions = null;
+    if (lastRoute.path === '/kitchen') {
+      if (this.state.layout === 'block') {
+        const itemCards = this.state.kitchen.map((foodItem, idx) => {
+          return (
+            <KitchenItemCard foodItem={foodItem} key={idx} onSettingsClick={this.showModal(idx)}/>
+          );
+        });
 
-    const itemCards = this.state.kitchen.map((foodItem, idx) => {
-      const lastImport = moment(foodItem.importDates[foodItem.importDates.length - 1], "MM/DD/YYYY")
-      return (
-        <div className="ui card" key={idx}>
-          <div className="content">
-            <i className="grey right floated link settings icon" onClick={this.onSettingsClick(idx)}></i>
-            <div className="header">{foodItem.description}</div>
-            <div className="meta">
-              <a>Fridge</a>
-            </div>
+        inventory = (
+          <div className="ui six doubling cards kitchen-inventory">
+            { itemCards }
           </div>
-          <div className="extra content">
-            <span>
-              <i className="cube icon"></i>
-              {foodItem.quantity}
-            </span>
-            <span className="right floated">
-              { `${lastImport.toNow(true)} old` }
-            </span>
-          </div>
-        </div>
-      );
-    });
+        );
+      }
 
+      if (this.state.layout === 'table') {
+        const itemRows = this.state.kitchen.map((foodItem, idx) => {
+          let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
+          return (
+            <tr key={idx} className="food-item-row">
+              <td><img src={imageUrl}/></td>
+              <td>{foodItem.description}</td>
+              <td>...</td>
+            </tr>
+          )
+        });
+        inventory = (
+          <table className="ui sortable unstackable table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              { itemRows }
+            </tbody>
+            <tfoot>
+              <tr><th>{this.state.kitchen.length} Items</th>
+              <th>2 Approved</th>
+              <th></th>
+            </tr></tfoot>
+          </table>
+        );
+      }
+
+      layoutOptions = [
+        <a className="item icon-only" key="block-layout" onClick={() => this.setState({ layout: 'block' }) }>
+          <i className="block layout icon"></i>
+        </a>,
+        <a className="item icon-only" key="list-layout" onClick={() => this.setState({ layout: 'table' }) }>
+          <i className="list layout icon"></i>
+        </a>
+      ];
+    }
+
+    // TODO: add ability to add any item custom
     return (
       <div className="ui container kitchen-container">
         <div className="ui secondary menu">
           <div className="header active item">
-            Kitchen
+            <Link to="/kitchen">Kitchen</Link>
           </div>
-          <a className="right floated item" href="/process-receipt">
-            <i className="upload icon"></i>
-            Upload
-          </a>
+          { layoutOptions }
+          <div className="right menu">
+            <a className="item">
+              <i className="plus icon"></i>
+              Add Items
+            </a>
+            <a className="item" href="/process-receipt">
+              <i className="icons icon">
+                <i className="shopping basket icon"></i>
+                <i className="inverted corner upload icon"></i>
+              </i>
+              Upload Receipt
+            </a>
+          </div>
         </div>
         { this.props.children }
-        <div className="ui six doubling cards kitchen-inventory">
-          { itemCards }
-        </div>
+        { inventory }
       </div>
     );
   }
@@ -78,6 +132,7 @@ window.onload = function() {
   ReactDOM.render(
     <Router history={browserHistory}>
       <Route path="/kitchen" component={Kitchen}>
+        <Route path="/kitchen/:foodName" component={FoodEditorHandler}/>
       </Route>
     </Router>,
     document.getElementById("render-wrapper")

@@ -54,6 +54,14 @@ const FoodDb = {
     });
   },
 
+  updateImage(foodName, imageUrl, done) {
+    MongoClient.connect(url, (err, db) => {
+      if (err) error(err);
+      const coll = db.collection('items');
+      coll.updateOne({ description: foodName }, { "$set": { img: imageUrl } }).then(() => done());
+    });
+  },
+
   getKitchen(done, error=noop) {
     MongoClient.connect(url, (err, db) => {
       if (err) error(err);
