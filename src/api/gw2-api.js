@@ -65,9 +65,6 @@ const GuildWars2Api = {
 
   fetchWallet(done, err) {
     RequestWrapper.getJSON(hostname, wallet_path, (wallet) => {
-      const gold = _find(wallet, (currency) => currency.id === 1)
-      console.log(moment().format('l') + ": logging entry with " + (gold.value / 10000) + "G")
-      this.saveWalletRecord(wallet);
       done(wallet);
     }, err);
   },
@@ -90,6 +87,9 @@ const GuildWars2Api = {
   },
 
   saveWalletRecord(wallet) {
+    const gold = _find(wallet, (currency) => currency.id === 1)
+    console.log(moment().format('l') + ": saving entry with " + (gold.value / 10000) + "G")
+
     MongoClient.connect(mongo_url, function(err, db) {
       assert.equal(null, err);
       const coll = db.collection('wallet-records');
