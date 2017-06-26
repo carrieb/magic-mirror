@@ -110,6 +110,14 @@ const ApiWrapper = {
     });
   },
 
+  updateFood(food) {
+    return $.ajax('/food-item', {
+      data: JSON.stringify({ item: food }),
+      type: 'PUT',
+      contentType: 'application/json; charset=utf-8'
+    });
+  },
+
   uploadFoodImage(form, onProgress=noop) {
     return $.ajax({
       url: '/food-image',

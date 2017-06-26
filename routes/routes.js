@@ -61,12 +61,21 @@ router.get(['/kitchen', '/kitchen/*'], (req, res) => {
   res.sendFile(dir + '/views/kitchen.html');
 });
 
+router.get(['/recipes', '/recipes/*'], (req, res) => {
+  res.sendFile(dir + '/views/recipes.html');
+});
+
 router.post('/receipt', receiptUpload.single('receipt'), function (req, res, next) {
   // req.file is the `avatar` file
   // req.body will hold the text fields, if there were any
   console.log(req.file);
   const items = ReceiptProcessor.extractItems(req.file);
   res.redirect(`/process-receipt/crop/${req.file.filename}`);
+});
+
+router.put('/food-item', jsonParser, (req, res) => {
+  console.log(req.body.item);
+  FoodDb.updateItem(req.body.item, () => res.send('OK'));
 });
 
 router.post('/food-image', foodImageUpload.single('image'), function (req, res, next) {

@@ -1,5 +1,9 @@
 import React from 'react';
 
+import ExpirationFormField from 'components/kitchen/item/form/ExpirationFormField.react';
+import ServingSizeFormField from 'components/kitchen/item/form/ServingSizeFormField.react';
+import QuantityFormField from 'components/kitchen/item/form/QuantityFormField.react';
+
 const ItemInputs = React.createClass({
   propTypes: {
     item: React.PropTypes.object.isRequired,
@@ -29,28 +33,23 @@ const ItemInputs = React.createClass({
     }
   },
 
+  onExpirationChange(expiration) {
+    console.log(expiration);
+    // TODO:
+  },
+
   render() {
     const item = this.props.item;
     let extraContent;
     if (!this.state.collapsed) {
       extraContent = (
-        <div className="ui grid">
-          <div className="five wide column">
-            <b>Expires in:</b>
-          </div>
-          <div className="eleven wide column">
-            <input type="number" placeholder="3" style={{ marginBottom: '10px'}}/>
-            <div className="ui fluid selection dropdown" ref={this.handleDropdownRef}>
-              <input type="hidden" name="expirationDelta"/>
-              <i className="dropdown icon"></i>
-              <div className="default text">Weeks</div>
-              <div className="menu">
-                <div className="item" data-value="days">Days</div>
-                <div className="item" data-value="weeks">Weeks</div>
-                <div className="item" data-value="months">Months</div>
-              </div>
-            </div>
-          </div>
+        <div className="ui grid" style={{ marginBottom: '15px' }}>
+          <div className="five wide column"><h5>Expiration</h5></div>
+          <ExpirationFormField className="eleven wide column" onChange={this.onExpirationChange}/>
+          <div className="five wide column"><h5>Serving Size</h5></div>
+          <ServingSizeFormField className="eleven wide column" onChange={this.onServingSizeChange}/>
+          <div className="five wide column"><h5>Quantity</h5></div>
+          <QuantityFormField className="eleven wide column" onChange={this.onQuantityChange}/>
         </div>
       );
     }

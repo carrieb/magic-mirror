@@ -7,6 +7,7 @@ import MessagingUtil from 'util/messaging-util';
 
 import KitchenItemCard from 'components/kitchen/KitchenItemCard';
 import FoodEditorHandler from 'components/kitchen/FoodEditorHandler';
+import AddItemsForm from 'components/kitchen/AddItemsForm.react';
 
 const Kitchen = React.createClass({
   getInitialState() {
@@ -30,6 +31,13 @@ const Kitchen = React.createClass({
     };
   },
 
+  showAddModal() {
+    let kitchen = this.state.kitchen;
+    kitchen.push({ description: 'new' });
+    const selectedItem = kitchen[kitchen.length -1]
+    this.setState({ selectedItem, kitchen });
+  },
+
   componentDidUpdate() {
     if (this.state.layout === 'table') {
       $('table').tablesort();
@@ -38,20 +46,23 @@ const Kitchen = React.createClass({
 
   render() {
     const lastRoute = this.props.routes[this.props.routes.length-1];
-    //console.log(lastRoute.path, lastRoute.path === '/kitchen');
+    console.log(lastRoute.path, lastRoute.path === '/kitchen');
     let inventory = null;
     let layoutOptions = null;
     if (lastRoute.path === '/kitchen') {
       if (this.state.layout === 'block') {
-        const itemCards = this.state.kitchen.map((foodItem, idx) => {
+        let itemCards = this.state.kitchen.map((foodItem, idx) => {
           return (
             <KitchenItemCard foodItem={foodItem} key={idx} onSettingsClick={this.showModal(idx)}/>
           );
         });
 
         inventory = (
-          <div className="ui six doubling cards kitchen-inventory">
-            { itemCards }
+          <div className="kitchen-inventory">
+            <div className="ui six doubling cards">
+              { itemCards }
+            </div>
+            <button className="ui fluid huge purple button" onClick={this.showAddModal}>Add Item</button>
           </div>
         );
       }
@@ -107,10 +118,10 @@ const Kitchen = React.createClass({
           </div>
           { layoutOptions }
           <div className="right menu">
-            <a className="item">
+            {lastRoute.path !== '/kitchen/unpack' && <a className="item">
               <i className="plus icon"></i>
               Add Items
-            </a>
+            </a>}
             <a className="item" href="/process-receipt">
               <i className="icons icon">
                 <i className="shopping basket icon"></i>
@@ -132,6 +143,7 @@ window.onload = function() {
   ReactDOM.render(
     <Router history={browserHistory}>
       <Route path="/kitchen" component={Kitchen}>
+        <Route path="/kitchen/unpack" component={AddItemsForm}/>
         <Route path="/kitchen/:foodName" component={FoodEditorHandler}/>
       </Route>
     </Router>,

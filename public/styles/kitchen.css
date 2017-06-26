@@ -20,6 +20,14 @@ input[type=number] {
   max-height: 200px;
 }
 
+.food-editor-container .dropdown {
+  width: 40%;
+}
+
+.food-editor-container .right.action.input input {
+  text-align: right;
+}
+
 .food-item-card .image {
   max-height: 200px;
   max-width: 100px;
@@ -37,4 +45,15 @@ input[type=number] {
 
 .ui.menu .icon-only.item i {
   margin-right: 0;
+}
+
+.item-inputs-wrapper h5 {
+  line-height: 38px;
+}
+
+.item-inputs-wrapper .ui.grid .column {
+  padding: 0;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-top: 15px;
 }

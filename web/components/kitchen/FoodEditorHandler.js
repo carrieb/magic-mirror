@@ -3,20 +3,24 @@ import React from 'react';
 import ApiWrapper from '../../util/api-wrapper';
 import KitchenState from '../../state/KitchenState';
 
+import DropdownOptions from '../common/dropdown-options';
+import InputDropdownGroup from '../common/input-dropdown-group.react';
+
+import ExpirationFormField from './item/form/ExpirationFormField.react';
+import ServingSizeFormField from './item/form/ServingSizeFormField.react';
+import QuantityFormField from './item/form/QuantityFormField.react';
+
 import uniqueId from 'lodash/uniqueId';
+import isEqual from 'lodash/isEqual';
 
 const FoodEditorHandler = React.createClass({
   componentWillMount() {
     this.reloadItem();
   },
 
-  componentDidUpdate() {
-    $('.ui.dropdown').dropdown();
-  },
-
   getInitialState() {
     return {
-      foodItem: null,
+      foodItem: {},
       id: uniqueId()
     };
   },
@@ -56,6 +60,30 @@ const FoodEditorHandler = React.createClass({
     }
   },
 
+  updateFields() {
+    const food = this.state.foodItem;
+    console.log(food);
+    ApiWrapper.updateFood(food);
+  },
+
+  onExpirationChange(expiration) {
+    const foodItem = this.state.foodItem;
+    foodItem.expiration = expiration;
+    this.setState({ foodItem });
+  },
+
+  onServingSizeChange(servingSize) {
+    const foodItem = this.state.foodItem;
+    foodItem.servingSize = servingSize;
+    this.setState({ foodItem });
+  },
+
+  onQuantityChange(quantity) {
+    const foodItem = this.state.foodItem;
+    foodItem.quantity = quantity;
+    this.setState({ foodItem });
+  },
+
   render() {
     const foodItem = this.state.foodItem;
     let content = null;
@@ -85,52 +113,18 @@ const FoodEditorHandler = React.createClass({
       content = (
         <div className="ui grid">
           <div className="five wide column"><h5>Quantity</h5></div>
-          <div className="eleven wide column">
-            <div className="ui fluid right action input">
-              <input type="number" placeholder="3" min="1" style={{ textAlign: 'right'}}/>
-              <div className="ui basic compact dropdown button" ref={this.handleDropdownRef}>
-                <div className="text">tbps</div>
-                <i className="dropdown icon"></i>
-                <div className="menu">
-                  <div className="item">tsps</div>
-                  <div className="item">tbps</div>
-                  <div className="item">quarter cup</div>
-                  <div className="item">cup</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <QuantityFormField className="eleven wide column"
+            quantity={this.state.foodItem.quantity}
+            onChange={this.onQuantityChange}/>
           <div className="five wide column"><h5>Serving Size</h5></div>
-          <div className="eleven wide column">
-            <div className="ui fluid right action input">
-              <input type="number" placeholder="3" min="1" style={{ textAlign: 'right'}}/>
-              <div className="ui basic compact dropdown button" ref={this.handleDropdownRef}>
-                <div className="text">tbps</div>
-                <i className="dropdown icon"></i>
-                <div className="menu">
-                  <div className="item">tsps</div>
-                  <div className="item">tbps</div>
-                  <div className="item">quarter cup</div>
-                  <div className="item">cup</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ServingSizeFormField className="eleven wide column"
+            servingSize={this.state.foodItem.servingSize}
+            onChange={this.onServingSizeChange}/>
           <div className="five wide column"><h5>Expiration</h5></div>
-          <div className="eleven wide column">
-            <div className="ui fluid right action input">
-              <input type="number" placeholder="3" min="1" style={{ textAlign: 'right'}}/>
-              <div className="ui basic compact dropdown button" ref={this.handleDropdownRef}>
-              <div className="text">weeks</div>
-              <i className="dropdown icon"></i>
-              <div className="menu">
-                <div className="item">days</div>
-                <div className="item">weeks</div>
-                <div className="item">months</div>
-              </div>
-              </div>
-            </div>
-          </div>
+          <ExpirationFormField className="eleven wide column"
+            expiration={this.state.foodItem.expiration}
+            onChange={this.onExpirationChange}/>
+          <div className="sixteen wide column"><button className="ui green fluid button" onClick={this.updateFields}>Submit</button></div>
         </div>
       );
     }

@@ -48,15 +48,19 @@ const KitchenItemCard = React.createClass({
         </div>
       </div>
     );
-    const lastImport = moment(foodItem.importDates[foodItem.importDates.length - 1], "MM/DD/YYYY")
+    let lastImport = null;
+    if (foodItem.importDates) {
+      const lastImportDate = moment(foodItem.importDates[foodItem.importDates.length - 1], "MM/DD/YYYY")
+      lastImport = `${lastImportDate.toNow(true)} old`
+    }
     extraContent = (
       <div className="extra content">
         <span>
           <i className="cube icon"></i>
-          {foodItem.quantity}
+
         </span>
         <span className="right floated">
-          { `${lastImport.toNow(true)} old` }
+          { lastImport }
         </span>
       </div>
     );

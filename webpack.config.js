@@ -5,25 +5,26 @@ module.exports = [{
   entry: {
     mirror: 'mirror.js',
     receipts: 'receipts.js',
-    kitchen: 'kitchen.js'
+    kitchen: 'kitchen.js',
+    recipes: 'recipes.js'
   },
   output: {
     path: path.join(__dirname, '/public/scripts'),
     filename: '[name]-bundle.js'
   },
   module: {
-    loaders: [
+    rules: [
       {
-        include: /\.json$/,
-        loaders: ["json-loader"]
+        test: /\.json$/,
+        use: [{ loader: 'json-loader'}]
       },
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['es2015', 'react']
-        }
+        use: [{
+          loader: 'babel-loader',
+          options: { presets: ['react', 'es2015']}
+        }]
       }
     ]
   },
@@ -31,11 +32,11 @@ module.exports = [{
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
   ],
   resolve: {
-   extensions: ['', '.js', '.jsx'],
-   root: [path.join(__dirname, 'web')],
-   modulesDirectories: ['node_modules'],
+   extensions: ['.js', '.jsx'],
+   modules: ['node_modules', path.join(__dirname, 'web')],
    alias: {
-     src: path.join(__dirname, 'src')
+     src: path.join(__dirname, 'src'),
+     components: path.join(__dirname, 'web', 'components')
    }
  }
 }];

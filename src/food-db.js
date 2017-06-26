@@ -13,6 +13,25 @@ const FoodDb = {
   // in food db
   // MVP: each item  { name, date, price }
   // eventually { name, date, quantity, size, expiration, type }
+
+  // TODO: upsert if doesn't exist
+  updateItem(item, callback, error=noop) {
+    MongoClient.connect(url, (err, db) => {
+      if (err) error(err);
+      const coll = db.collection('items');
+      // TODO: find by _id (encrypted version?)
+      coll.updateOne({
+        description: item.description
+      }, {
+        "$set": {
+          expiration: item.expiration,
+          servingSize: item.servingSize,
+          quantity: item.quantity
+        }
+      }).then(callback);
+    });
+  },
+
   storeNewItems(items, callback, error=noop) {
     const now = moment().tz('America/Chicago').format();
     console.log(items);

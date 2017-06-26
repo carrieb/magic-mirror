@@ -9,6 +9,9 @@ const mongo_url = 'mongodb://localhost:27017/gw2';
 
 const assign = require('lodash/assign')
 const assert = require('assert')
+const _find = require('lodash/find')
+
+const moment = require('moment')
 
 const hostname = 'api.guildwars2.com'
 const api_path = '/v2'
@@ -62,6 +65,8 @@ const GuildWars2Api = {
 
   fetchWallet(done, err) {
     RequestWrapper.getJSON(hostname, wallet_path, (wallet) => {
+      const gold = _find(wallet, (currency) => currency.id === 1)
+      console.log(moment().format('l') + ": logging entry with " + (gold.value / 10000) + "G")
       this.saveWalletRecord(wallet);
       done(wallet);
     }, err);
