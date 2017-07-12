@@ -28,10 +28,13 @@ const ChartUtil = {
       dateToWallet[dateKey] = amount;
     });
     console.log(dateToWallet);
+    const data = Object.keys(dateToWallet).map((date) => {
+      return dateToWallet[date];
+    });
     return [
       {
         label: 'Gold',
-        data: Object.values(dateToWallet),
+        data,
         borderColor: 'rgba(255, 215, 0, 0.8)',
         backgroundColor: 'rgba(255, 215, 0, 0.2)',
         spanGaps: true
