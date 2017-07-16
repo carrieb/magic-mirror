@@ -4,15 +4,19 @@ import ApiWrapper from '../util/api-wrapper';
 
 const listOrder = ["Today", "Tonight", "Tomorrow", "Week", "Weekend"];
 
+import HorizontalList from 'components/common/horizontal-list.react';
+
 import sortBy from 'lodash/sortBy';
 
-const Wunderlist = React.createClass({
-  getInitialState() {
-    return {
+class Wunderlist extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loaded: false,
       lists: [] /* an obj { title, tasks } */
     }
-  },
+  }
 
   componentWillMount() {
     ApiWrapper.getWunderlist((lists) => {
@@ -22,35 +26,28 @@ const Wunderlist = React.createClass({
         lists: sorted
       });
     });
-  },
+  }
 
   render() {
-    let lists;
+    let items = [];
     if (this.state.loaded) {
-      const listEls = this.state.lists.map((list) => {
+      items = this.state.lists.map((list) => {
+        const title = list.title;
         const tasks = list.tasks.map((task) => {
           return (
             <span key={task.id} className="task-container">{ task.title }<br/></span>
           );
         });
-        return [
-            <dt>{ list.title }</dt>,
-            <dd>{ tasks }</dd>
-        ];
+        return { title, content: tasks }
       });
-      lists = (
-        <dl className="lists-container dl-horizontal">
-          { listEls }
-        </dl>
-      );
     }
     return (
       <div className="wunderlist-container">
         <b>WUNDERLIST</b>
-        { lists }
+        <HorizontalList items={items}/>
       </div>
     )
   }
-});
+}
 
 export default Wunderlist;

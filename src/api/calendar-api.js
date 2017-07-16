@@ -107,13 +107,7 @@ const GoogleApi = {
             if (me && me.responseStatus === 'declined') {
               return null;
             }
-            return {
-              title: event.summary,
-              kind: event.kind,
-              location: event.location,
-              start: event.start.dateTime || event.start.date,
-              end: event.end.dateTime || event.end.date
-            }
+            return event;
           });
         }
 

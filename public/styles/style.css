@@ -129,3 +129,11 @@ input[type=file].hidden-file-input {
 .ui.statistics .statistic .label {
   color: white
 }
+
+.calendar dt {
+  width: 75px;
+}
+
+.calendar dd {
+  margin-left: 80px;
+}

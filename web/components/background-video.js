@@ -13,7 +13,7 @@ class BackgroundVideo extends React.Component {
       navigator.oGetUserMedia;
     if (navigator.getUserMedia) {
       navigator.getUserMedia({video: true}, (stream) => {
-        node.src = window.URL.createObjectURL(stream);
+        //node.src = window.URL.createObjectURL(stream);
       }, (error) => {
         console.log(error);
       });

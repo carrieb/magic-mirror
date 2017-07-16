@@ -97,7 +97,7 @@ const GuildWars = React.createClass({
         case 'Coin':
           return Math.floor(value/10000) + 'G';
         case 'Karma':
-          return Math.floor(value/1000) + 'K';
+          return Math.floor(value/10000)/100 + 'K';
         default:
           return value;
       }
@@ -112,7 +112,7 @@ const GuildWars = React.createClass({
             { formatCurrency(currency.name, currency.value) }
           </div>
           <div className="label">
-            { currency.name }
+            { currency.name === 'Unbound Magic' ? 'Magic' : currency.name }
           </div>
         </div>
       )
@@ -123,7 +123,7 @@ const GuildWars = React.createClass({
       <div className="guild-wars-container">
         <div className="header"><b>GUILD WARS</b></div>
         { achievements }
-        <div className="ui statistics">
+        <div className="ui tiny statistics">
           { wallet }
         </div>
         <canvas width="400" height="200" ref={this.handleCanvasRef}></canvas>
