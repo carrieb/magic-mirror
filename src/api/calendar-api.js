@@ -4,6 +4,7 @@ const google = require('googleapis');
 const googleAuth = require('google-auth-library');
 const moment = require('moment');
 const find = require('lodash/find');
+const _filter = require('lodash/filter');
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
 const Config = require('../config');
@@ -23,13 +24,13 @@ if (refreshToken && accessToken) {
   oauth2Client.credentials.refresh_token = refreshToken;
   oauth2Client.credentials.access_token = accessToken;
   oauth2Client.refreshAccessToken((err, tokens) => {
-  // your access_token is now refreshed and stored in oauth2Client
-  // store these new tokens in a safe place (e.g. database)
-  //properties.set('access.token', tokens.access_token);
-  //properties.set('refresh.token', tokens.refresh_token);
-  // TODO: more intelligent saving of tokens - above doesn't write file
-  // store expiration and use to determine when to refresh
-});
+    // your access_token is now refreshed and stored in oauth2Client
+    // store these new tokens in a safe place (e.g. database)
+    //properties.set('access.token', tokens.access_token);
+    //properties.set('refresh.token', tokens.refresh_token);
+    // TODO: more intelligent saving of tokens - above doesn't write file
+    // store expiration and use to determine when to refresh
+  });
 }
 
 const GoogleApi = {
@@ -135,7 +136,8 @@ const GoogleApi = {
       //console.log('calendar list', callback);
       this.getEventsForCalendars(calendars, (calendarsWithEvents) => {
         //console.log('events', callback);
-        callback(calendarsWithEvents);
+        const result = _filter(calendarsWithEvents, (cal) => cal != null && cal.events.length > 0)
+        callback(result);
       }, err);
     }, err);
   }

@@ -41,7 +41,7 @@ const Calendar = React.createClass({
         //console.log('grouped', groupedEvents);
         events = Object.keys(groupedEvents).map((group) => {
           const evs = groupedEvents[group].map((event) => {
-            console.log(event.start, event.end);
+            //console.log(event.start, event.end);
             const start = moment(event.start);
             const end = moment(event.end);
             const timeInfo = event.end ? (<span>{ start.format('h:mm a') }</span>) : null;

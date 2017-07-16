@@ -7,22 +7,26 @@ import Wanikani from './components/wanikani';
 import Wunderlist from './components/wunderlist';
 import Calendar from './components/calendar';
 import GuildWars from './components/guildwars';
+import BackgroundVideo from './components/background-video';
 
 window.onload = function() {
   //console.log('hey');
   render(
-    <div className="row mirror-container">
-      <div className="col-xs-3">
-        <Wunderlist/>
-        <Calendar/>
-      </div>
-      <div className="col-xs-6">
-        <Header/>
-        <Weather/>
-      </div>
-      <div className="col-xs-3">
-        <Wanikani/>
-        <GuildWars/>
+    <div className="mirror-container">
+      <BackgroundVideo/>
+      <div className="row">
+        <div className="col-xs-3">
+          <Wunderlist/>
+          <Calendar/>
+        </div>
+        <div className="col-xs-6">
+          <Header/>
+          <Weather/>
+        </div>
+        <div className="col-xs-3">
+          <Wanikani/>
+          <GuildWars/>
+        </div>
       </div>
     </div>,
     document.getElementById("render-wrapper")

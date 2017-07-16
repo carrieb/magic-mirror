@@ -16,7 +16,11 @@ module.exports = [{
     rules: [
       {
         test: /\.json$/,
-        use: [{ loader: 'json-loader'}]
+        use: ['json-loader']
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
       },
       {
         test: /\.js$/,
@@ -36,7 +40,8 @@ module.exports = [{
    modules: ['node_modules', path.join(__dirname, 'web')],
    alias: {
      src: path.join(__dirname, 'src'),
-     components: path.join(__dirname, 'web', 'components')
+     components: path.join(__dirname, 'web', 'components'),
+     styles: path.join(__dirname, 'public', 'styles')
    }
  }
 }];
