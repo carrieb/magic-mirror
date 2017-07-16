@@ -12,9 +12,25 @@ const properties = PropertiesReader(Config.getConfigDir() + 'google.properties')
 
 const clientSecret = properties.get('client.secret');
 const clientId = properties.get('client.id');
+const accessToken = properties.get('access.token');
+const refreshToken = properties.get('refresh.token');
 const redirectUrl = 'http://localhost:3000/google-auth-callback';
 const auth = new googleAuth();
 const oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
+
+if (refreshToken && accessToken) {
+  //console.log(refreshToken);
+  oauth2Client.credentials.refresh_token = refreshToken;
+  oauth2Client.credentials.access_token = accessToken;
+  oauth2Client.refreshAccessToken((err, tokens) => {
+  // your access_token is now refreshed and stored in oauth2Client
+  // store these new tokens in a safe place (e.g. database)
+  //properties.set('access.token', tokens.access_token);
+  //properties.set('refresh.token', tokens.refresh_token);
+  // TODO: more intelligent saving of tokens - above doesn't write file
+  // store expiration and use to determine when to refresh
+});
+}
 
 const GoogleApi = {
   generateAuthUrl() {
@@ -26,18 +42,23 @@ const GoogleApi = {
   },
 
   getNewToken(code, callback) {
-    oauth2Client.getToken(code, (err, token) => {
+    oauth2Client.getToken(code, (err, tokens) => {
       if (err) {
         console.log('error when retrieving google access token')
         return;
       }
-      // TODO: more intelligent saving of tokens.
-      oauth2Client.credentials = token;
+
+      //console.log(tokens.access_token, tokens.refresh_token);
+      //properties.set('access.token', tokens.access_token);
+      //properties.set('refresh.token', tokens.refresh_token);
+      // TODO: more intelligent saving of tokens - above doesn't write file
+      oauth2Client.credentials = tokens;
       callback();
     });
   },
 
   getCalendarList(callback, err) {
+    console.log(oauth2Client.credentials)
     const calendar = google.calendar('v3');
     calendar.calendarList.list({
       auth: oauth2Client,
@@ -71,7 +92,7 @@ const GoogleApi = {
           return;
         }
         let events = [];
-        console.log(cal.id, response.items);
+        //console.log(cal.id, response.items);
         if (response.items) {
           events = response.items.map((event) => {
             //console.log(event);
@@ -79,7 +100,7 @@ const GoogleApi = {
               return null;
             }
             const me = find(event.attendees, (attendee) => {
-              console.log(attendee);
+              //console.log(attendee);
               return attendee.email === 'carolyn@indeed.com';
             });
             if (me && me.responseStatus === 'declined') {
@@ -101,7 +122,7 @@ const GoogleApi = {
           events
         });
         if (result.length === calendars.length) {
-          console.log(result);
+          //console.log(result);
           callback(result);
         }
       });

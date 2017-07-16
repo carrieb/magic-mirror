@@ -47,14 +47,14 @@ router.get('/calendars', (req, res) => {
   );
 });
 
-router.get('/guildwars', (req, res) => {
+router.get('/guildwars', cache('1 day'), (req, res) => {
   GuildWars2Api.fetchCombined(
     (result) => res.json(result),
     (err) => res.status(500).send('Failed to get gw2 result.')
   );
 });
 
-router.get('/guildwars/wallet', (req, res) => {
+router.get('/guildwars/wallet', cache('1 day'), (req, res) => {
   GuildWars2DB.getLast7DaysOfWallet(
     (result) => res.json(result),
     (err) => res.status(500).send('Failed to get gw2 wallet history.')

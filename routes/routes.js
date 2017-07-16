@@ -38,7 +38,7 @@ const CalendarApi = require('../src/api/calendar-api');
 const FoodDb = require('../src/food-db.js');
 
 router.get('/google-auth', (req, res) => {
-  res.redirect(CalendarApi.generateAuthUrl());
+  res.redirect(CalendarApi.generateAuthUrl() + "&prompt=consent");
 });
 
 router.get('/google-auth-callback', (req, res) => {

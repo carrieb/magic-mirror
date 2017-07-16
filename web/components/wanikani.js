@@ -26,15 +26,17 @@ const Wanikani = React.createClass({
   render() {
     let level;
     if (this.state.loaded) {
+      const unlock = this.state.recentUnlock;
+      const reading = unlock.kana ? unlock.kana : (unlock.kunyomi + ' | ' + unlock.onyomi)
       level = (
         <div className="content">
           <span className="in-circle pull-left level">{this.state.user.level}</span>
           <span>Lessons: {this.state.studyQueue.lessons_available}</span><br/>
           <span>Reviews: {this.state.studyQueue.reviews_available}</span>
           <div className="recent-unlock text-center">
-            <span className="character">{ this.state.recentUnlock.character }</span><br/>
-            <span className="description">{ this.state.recentUnlock.meaning }</span><br/>
-            <span className="kana">{this.state.recentUnlock.kana }</span>
+            <span className="character">{ unlock.character }</span><br/>
+            <span className="description">{ unlock.meaning }</span><br/>
+            <span className="kana">{ reading }</span>
           </div>
         </div>
       );
