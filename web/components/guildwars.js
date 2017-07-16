@@ -51,7 +51,7 @@ const GuildWars = React.createClass({
         },
         options: {
           layout: {
-            padding: 20
+            padding: 0
           },
           legend: {
             display: false
@@ -68,8 +68,8 @@ const GuildWars = React.createClass({
             yAxes: [{
               type: 'linear',
               ticks: {
-                min: 0,
-                max: 4000000,
+                min: 5500000,
+                max: 6000000,
                 callback: ((value, index, values) => value/10000)
               }
             }],
@@ -105,7 +105,17 @@ const GuildWars = React.createClass({
     const wallet = this.state.wallet.filter((currency) => {
       return currencies.has(currency.name);
     }).map((currency) => {
-      return <div className="currency" key={currency.id}>{formatCurrency(currency.name, currency.value)}<img src={currency.icon}/></div>
+      return (
+        <div className="statistic" key={currency.id}>
+          <div className="value">
+            <img src={currency.icon} className="ui mini circular inline image"/>
+            { formatCurrency(currency.name, currency.value) }
+          </div>
+          <div className="label">
+            { currency.name }
+          </div>
+        </div>
+      )
     });
 
     // IDEA: Radar chart character for stats? :) :)
@@ -113,7 +123,9 @@ const GuildWars = React.createClass({
       <div className="guild-wars-container">
         <div className="header"><b>GUILD WARS</b></div>
         { achievements }
-        { wallet }
+        <div className="ui statistics">
+          { wallet }
+        </div>
         <canvas width="400" height="200" ref={this.handleCanvasRef}></canvas>
       </div>
     )

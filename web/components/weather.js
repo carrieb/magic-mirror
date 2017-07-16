@@ -39,19 +39,19 @@ const iconForWeather = (weather, switchByTime=false) => {
 
 const Weather = React.createClass({
   componentWillMount() {
-    // ApiWrapper.getCurrentTemp((conditions) => {
-    //   this.setState({
-    //     conditions,
-    //     conditionsLoaded: true
-    //   });
-    // });
-    //
-    // ApiWrapper.getForecast((forecast) => {
-    //   this.setState({
-    //     forecast,
-    //     forecastLoaded: true
-    //   });
-    // })
+    ApiWrapper.getCurrentTemp((conditions) => {
+      this.setState({
+        conditions,
+        conditionsLoaded: true
+      });
+    });
+
+    ApiWrapper.getForecast((forecast) => {
+      this.setState({
+        forecast,
+        forecastLoaded: true
+      });
+    })
   },
 
   getInitialState() {

@@ -75,6 +75,7 @@ const handleJSONResponse = (callback) => {
 
 const RequestWrapper = {
   getJSON(hostname, path, done, err, isHttps=true, headers={}) {
+    console.log(hostname, path);
     const handler = isHttps ? https : http;
     const req = handler.request(
       options(hostname, path, headers),

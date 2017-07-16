@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const apicache = require('apicache')
+let cache = apicache.middleware
 
 const WundergroundApi = require('../src/api/wunderground-api')
 const WanikaniApi = require('../src/api/wanikani-api')
@@ -10,14 +12,14 @@ const GuildWars2Api = require('../src/api/gw2-api')
 const GuildWars2DB = require('../src/gw2-db')
 const FoodDb = require('../src/food-db');
 
-router.get('/weather', (req, res) => {
+router.get('/weather', cache('1 day'), (req, res) => {
   WundergroundApi.getCurrentWeather(
     (weather) => res.json(weather),
     (err) => res.status(500).send('Failed to get weather.')
   );
 });
 
-router.get('/forecast', (req, res) => {
+router.get('/forecast', cache('1 day'), (req, res) => {
   WundergroundApi.getForecast(
     (forecast) => res.json(forecast),
     (err) => res.status(500).send('Failed to get forecast.')
