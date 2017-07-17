@@ -1,42 +1,35 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import ExpirationFormField from 'components/kitchen/item/form/ExpirationFormField.react';
 import ServingSizeFormField from 'components/kitchen/item/form/ServingSizeFormField.react';
 import QuantityFormField from 'components/kitchen/item/form/QuantityFormField.react';
 
-const ItemInputs = React.createClass({
-  propTypes: {
-    item: React.PropTypes.object.isRequired,
-    onChange: React.PropTypes.func.isRequired
-  },
-
-  getInitialState() {
-    return {
+class ItemInputs extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       collapsed: true
     };
-  },
+  }
 
   toggleCollapsed(ev) {
     this.setState({
       collapsed: !this.state.collapsed
     });
     ev.preventDefault();
-  },
-
-  handleDropdownRef(ref) {
-    this.dropdown = ref;
-  },
+  }
 
   componentDidUpdate() {
     if (!this.state.collapsed) {
       $(this.dropdown).dropdown();
     }
-  },
+  }
 
   onExpirationChange(expiration) {
     console.log(expiration);
     // TODO:
-  },
+  }
 
   render() {
     const item = this.props.item;
@@ -73,6 +66,11 @@ const ItemInputs = React.createClass({
       </div>
     );
   }
-});
+}
+
+ItemInputs.propTypes = {
+  item: PropTypes.object.isRequired,
+  onChange: PropTypes.func.isRequired
+};
 
 export default ItemInputs;

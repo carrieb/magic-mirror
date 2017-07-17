@@ -1,37 +1,34 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import InputDropdownGroup from 'components/common/input-dropdown-group.react';
 
 import uniqueId from 'lodash/uniqueId';
 import isEqual from 'lodash/isEqual';
 
-const ExpirationFormField = React.createClass({
-  propTypes: {
-    className: React.PropTypes.string,
-    onChange: React.PropTypes.func
-  },
-
-  getInitialState() {
-    return {
+class ExpirationFormField extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       length: null,
       delta: 'weeks'
     }
-  },
+  }
 
   onDeltaChange(value, text, choice) {
     this.setState({ delta: value });
-  },
+  }
 
   onLengthChange(ev) {
     const length = parseInt(ev.target.value);
     this.setState({ length });
-  },
+  }
 
   componentWillUpdate(newProps, newState) {
     if (!isEqual(this.state, newState)) {
       this.props.onChange(newState);
     }
-  },
+  }
 
   render() {
     return (
@@ -43,6 +40,11 @@ const ExpirationFormField = React.createClass({
       </InputDropdownGroup>
     );
   }
-});
+}
+
+ExpirationFormField.propTypes = {
+  className: PropTypes.string,
+  onChange: PropTypes.func
+}
 
 export default ExpirationFormField;

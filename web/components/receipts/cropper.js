@@ -5,10 +5,6 @@ import ApiWrapper from 'util/api-wrapper';
 import CropperJs from 'cropperjs';
 
 const Cropper = React.createClass({
-  // propTypes: {
-  //   imageUrl: React.PropTypes.string.isRequired
-  // },
-
   componentWillMount() {
     console.log(this.props.params.filename);
   },

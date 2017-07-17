@@ -21,13 +21,13 @@ const ChartUtil = {
     // 1 = coins
     let dateToWallet = {};
     dateLabels.forEach((label) => dateToWallet[label] = null);
-    console.log(dateToWallet);
+    //console.log(dateToWallet);
     docs.forEach((doc) => {
       const amount = find(doc.wallet, (currency) => currency.id === 1).value;
       const dateKey = moment(doc.date).format(format);
       dateToWallet[dateKey] = amount;
     });
-    console.log(dateToWallet);
+    //console.log(dateToWallet);
     const data = Object.keys(dateToWallet).map((date) => {
       return dateToWallet[date];
     });

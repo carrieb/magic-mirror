@@ -7,7 +7,18 @@ import ChartUtil from '../util/chart-util';
 
 import isEqual from 'lodash/isEqual';
 
-const GuildWars = React.createClass({
+class GuildWars extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      wallet: [],
+      achievements: [],
+      walletHistory: [],
+      chart: null
+    };
+  }
+
   componentWillMount() {
     ApiWrapper.getGuildWarsData((result) => {
       this.setState(result);
@@ -15,26 +26,13 @@ const GuildWars = React.createClass({
     ApiWrapper.getGuildWarsWalletHistory((result) => {
       this.setState({ walletHistory: result });
     });
-  },
-
-  getInitialState() {
-    return {
-      wallet: [],
-      achievements: [],
-      walletHistory: [],
-      chart: null
-    }
-  },
-
-  handleCanvasRef(ref) {
-    this.canvas = ReactDOM.findDOMNode(ref);
-  },
+  }
 
   componentDidUpdate(prevProps, prevState) {
     if (!isEqual(prevState.walletHistory, this.state.walletHistory)) {
       this.drawChart();
     }
-  },
+  }
 
   drawChart() {
     if (this.state.chart) {
@@ -42,7 +40,7 @@ const GuildWars = React.createClass({
     } else {
       const labels = ChartUtil.generateDateLabels(this.state.walletHistory);
       const datasets = ChartUtil.generateDatasets(this.state.walletHistory, labels);
-      console.log(labels, datasets);
+      //console.log(labels, datasets);
       const chart = new Chart(this.canvas, {
         type: 'line',
         data: {
@@ -82,7 +80,7 @@ const GuildWars = React.createClass({
         }
       });
     }
-  },
+  }
 
   render() {
     const achievements = this.state.achievements.filter((achievement) => {
@@ -126,10 +124,10 @@ const GuildWars = React.createClass({
         <div className="ui tiny statistics">
           { wallet }
         </div>
-        <canvas width="400" height="200" ref={this.handleCanvasRef}></canvas>
+        <canvas width="400" height="200" ref={(ref) => { this.canvas = ref }}></canvas>
       </div>
     )
   }
-});
+}
 
 export default GuildWars;

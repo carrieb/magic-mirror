@@ -1,31 +1,24 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import moment from 'moment';
 import uniqueId from 'lodash/uniqueId';
 
 import { Link } from 'react-router';
 
-const KitchenItemCard = React.createClass({
-  propTypes: {
-    foodItem: React.PropTypes.object.isRequired,
-    onSettingsClick: React.PropTypes.func
-  },
-
-  getInitialState() {
-    return {
+class KitchenItemCard extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       flipped: false,
       id: uniqueId()
     };
-  },
+  }
 
   // $(this.card).transition({
   //   animation: 'horizontal flip',
   //   onComplete: () => { this.setState({ flipped: !this.state.flipped }); }
   // }).transition('horizontal flip');
-
-  handleCardRef(ref) {
-    this.card = ref;
-  },
 
   render() {
     const foodItem = this.props.foodItem;
@@ -66,13 +59,18 @@ const KitchenItemCard = React.createClass({
     );
 
     return (
-      <div className="ui card food-item-card" ref={this.handleCardRef}>
+      <div className="ui card food-item-card" ref={(ref) => this.card = ref}>
         { image }
         { content }
         { extraContent }
       </div>
     );
   }
-});
+}
+
+KitchenItemCard.propTypes = {
+  foodItem: PropTypes.object.isRequired,
+  onSettingsClick: PropTypes.func
+};
 
 export default KitchenItemCard;

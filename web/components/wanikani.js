@@ -2,15 +2,17 @@ import React from 'react';
 
 import ApiWrapper from '../util/api-wrapper';
 
-const Wanikani = React.createClass({
-  getInitialState() {
-    return {
+class Wanikani extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       user: null,
       studyQueue: null,
       recentUnlock: null,
       loaded: false
     };
-  },
+  }
 
   componentWillMount() {
     ApiWrapper.getWanikaniData((res) => {
@@ -21,7 +23,7 @@ const Wanikani = React.createClass({
         loaded: true
       });
     });
-  },
+  }
 
   render() {
     let level;
@@ -48,6 +50,6 @@ const Wanikani = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default Wanikani;

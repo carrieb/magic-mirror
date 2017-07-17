@@ -10,7 +10,6 @@ import GuildWars from './components/guildwars';
 import BackgroundVideo from './components/background-video';
 
 window.onload = function() {
-  //console.log('hey');
   render(
     <div className="mirror-container">
       <BackgroundVideo/>

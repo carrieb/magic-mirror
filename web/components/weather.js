@@ -37,7 +37,17 @@ const iconForWeather = (weather, switchByTime=false) => {
   return (<i className={`wi ${icon}`}></i>);
 }
 
-const Weather = React.createClass({
+class Weather extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      conditions: null,
+      forecast: null,
+      conditionsLoaded: false,
+      forecastLoaded: false
+    };
+  }
   componentWillMount() {
     ApiWrapper.getCurrentTemp((conditions) => {
       this.setState({
@@ -52,16 +62,7 @@ const Weather = React.createClass({
         forecastLoaded: true
       });
     })
-  },
-
-  getInitialState() {
-    return {
-      conditions: null,
-      forecast: null,
-      conditionsLoaded: false,
-      forecastLoaded: false
-    }
-  },
+  }
 
   render() {
     let conditionsContent;
@@ -126,6 +127,6 @@ const Weather = React.createClass({
       </div>
     );
   }
-});
+};
 
 export default Weather;

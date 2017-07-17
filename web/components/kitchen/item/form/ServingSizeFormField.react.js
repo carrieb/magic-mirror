@@ -1,36 +1,34 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import InputDropdownGroup from 'components/common/input-dropdown-group.react';
 
 import isEqual from 'lodash/isEqual';
 
-const ServingSizeFormField = React.createClass({
-  propTypes: {
-    className: React.PropTypes.string,
-    onChange: React.PropTypes.func
-  },
+class ServingSizeFormField extends React.Component {
+  constructor(props) {
+    super(props);
 
-  getInitialState() {
-    return {
+    this.state = {
       amount: null,
       unit: 'quarter cup'
-    }
-  },
+    };
+  }
 
   onUnitChange(value, text, choice) {
     this.setState({ unit: value });
-  },
+  }
 
   onAmountChange(ev) {
     const amount = parseInt(ev.target.value);
     this.setState({ amount });
-  },
+  }
 
   componentWillUpdate(newProps, newState) {
     if (!isEqual(this.state, newState)) {
       this.props.onChange(newState);
     }
-  },
+  }
 
   render() {
     return (
@@ -42,6 +40,11 @@ const ServingSizeFormField = React.createClass({
       </InputDropdownGroup>
     );
   }
-});
+}
+
+ServingSizeFormField.propTypes = {
+  className: PropTypes.string,
+  onChange: PropTypes.func
+};
 
 export default ServingSizeFormField;

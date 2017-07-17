@@ -1,20 +1,25 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 
-const Header = React.createClass({
-  propTypes: {
-    name: React.PropTypes.string
-  },
+import 'styles/mirror/header.css';
 
-  getDefaultProps() {
-    return {
-      name: 'Carrie'
+class Header extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      time: moment()
     }
-  },
+  }
+
+  componentWillMount() {
+    setInterval(() => {
+      this.setState({ time: moment() });
+    }, 1000 * 60); // every minute update time
+  }
 
   getGreeting() {
-    const hour = moment().hour()
-    //console.log(hour)
+    const hour = this.state.time.hour();
     if (hour < 4) {
       return 'Good Night';
     } else if(hour < 12) {
@@ -26,10 +31,10 @@ const Header = React.createClass({
     } else {
       return 'Good Night';
     }
-  },
+  }
 
   render() {
-    const now = moment()
+    const now = this.state.time;
     return (
       <div className="header-container">
         <h1>{ this.getGreeting() }, { this.props.name }!</h1>
@@ -38,6 +43,14 @@ const Header = React.createClass({
       </div>
     );
   }
-});
+};
+
+Header.propTypes = {
+  name: PropTypes.string
+}
+
+Header.defaultProps = {
+  name: 'Carrie'
+}
 
 export default Header;

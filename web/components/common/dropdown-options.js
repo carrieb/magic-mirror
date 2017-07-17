@@ -1,10 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-const DropdownOptions = React.createClass({
-  propTypes: {
-    options: React.PropTypes.array.isRequired,
-  },
-
+class DropdownOptions extends React.Component {
   render() {
     let options = this.props.options.map((opt, idx) => {
       return (<div className="item" key={idx}>{opt}</div>);
@@ -15,6 +12,10 @@ const DropdownOptions = React.createClass({
       </div>
     );
   }
-});
+}
+
+DropdownOptions.propTypes = {
+  options: PropTypes.array.isRequired
+}
 
 export default DropdownOptions;
