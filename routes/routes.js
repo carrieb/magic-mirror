@@ -75,7 +75,13 @@ router.post('/receipt', receiptUpload.single('receipt'), function (req, res, nex
 
 router.put('/food-item', jsonParser, (req, res) => {
   console.log(req.body.item);
-  FoodDb.updateItem(req.body.item, () => res.send('OK'));
+  FoodDb.updateItem(req.body.item, (id) => res.send(id));
+});
+
+router.delete('/food-trash', jsonParser, (req, res) => {
+  console.log(req.query);
+  console.log(req.body);
+  FoodDb.removeItem(req.body.id, () => res.send('OK'));
 });
 
 router.post('/food-image', foodImageUpload.single('image'), function (req, res, next) {

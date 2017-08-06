@@ -57,3 +57,28 @@ input[type=number] {
   padding-left: 15px;
   margin-top: 15px;
 }
+
+.kitchen-container > button.ui.button {
+  margin-top: 25px;
+}
+
+.ui.transparent.input {
+  margin-left: .75rem;
+  font-weight: 700;
+  height: 23px;
+  max-width: 75px;
+}
+
+span[contenteditable=true] {
+  margin-left: .75rem;
+  margin-right: .75rem;
+  display: inline-block;
+  height: 23px;
+  line-height: 23px;
+}
+
+.error-text {
+  color: red;
+  text-align: center;
+  margin-bottom: 10px;
+}

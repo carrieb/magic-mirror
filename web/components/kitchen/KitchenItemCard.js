@@ -19,6 +19,11 @@ class KitchenItemCard extends React.Component {
   //   animation: 'horizontal flip',
   //   onComplete: () => { this.setState({ flipped: !this.state.flipped }); }
   // }).transition('horizontal flip');
+  handleTrashClick() {
+    if (this.props.delete) {
+      this.props.delete(this.props.foodItem._id);
+    }
+  }
 
   render() {
     const foodItem = this.props.foodItem;
@@ -34,7 +39,9 @@ class KitchenItemCard extends React.Component {
     content = (
       <div className="content">
         <i className="right floated large star icon"></i>
-        <Link to={`/kitchen/${foodItem.description}`}><i className="grey right floated large link setting icon"></i></Link>
+        <Link to={`/kitchen/${foodItem.description}`}>
+          <i className="grey right floated large link setting icon"></i>
+        </Link>
         <div className="header">{foodItem.description}</div>
         <div className="meta">
           <a>{area}</a>
@@ -50,10 +57,11 @@ class KitchenItemCard extends React.Component {
       <div className="extra content">
         <span>
           <i className="cube icon"></i>
-
+          { foodItem.quantity && `${foodItem.quantity.amount} ${foodItem.quantity.unit}` }
         </span>
         <span className="right floated">
           { lastImport }
+          <i className="trash icon" onClick={(ev) => this.handleTrashClick()}></i>
         </span>
       </div>
     );

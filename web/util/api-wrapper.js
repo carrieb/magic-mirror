@@ -118,6 +118,15 @@ const ApiWrapper = {
     });
   },
 
+  trashFood(id) {
+    console.log(id)
+    return $.ajax('/food-trash', {
+      data: JSON.stringify({ id }),
+      type: 'DELETE',
+      contentType: 'application/json; charset=utf-8'
+    });
+  },
+
   uploadFoodImage(form, onProgress=noop) {
     return $.ajax({
       url: '/food-image',

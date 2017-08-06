@@ -1,5 +1,6 @@
 const url = 'mongodb://localhost:27017/food';
-const MongoClient = require('mongodb').MongoClient;
+const mongo = require('mongodb');
+const MongoClient = mongo.MongoClient;
 const assert = require('assert');
 const moment = require('moment-timezone');
 
@@ -19,17 +20,43 @@ const FoodDb = {
     MongoClient.connect(url, (err, db) => {
       if (err) error(err);
       const coll = db.collection('items');
-      // TODO: find by _id (encrypted version?)
-      coll.updateOne({
-        description: item.description
-      }, {
-        "$set": {
-          expiration: item.expiration,
-          servingSize: item.servingSize,
-          quantity: item.quantity
-        }
-      }).then(callback);
-    });
+      // TODO: encrypted version of _id? (token)
+      if (item._id) {
+        // update
+        const o_id = new mongo.ObjectID(id);
+        coll.updateOne({
+          "_id": o_id
+        }, {
+          "$set": {
+            description: item.description,
+            expiration: item.expiration,
+            servingSize: item.servingSize,
+            quantity: item.quantity
+          }
+        })
+        .then(callback);
+      } else {
+        coll.insertOne(item)
+          .then((res) => {
+            callback(res.insertedId);
+          });
+      }
+    }); // end mongo connect
+  },
+
+  removeItem(id, callback, error=noop) {
+    MongoClient.connect(url, (err, db) => {
+      if (err) error(err);
+      const coll = db.collection('items');
+      if (id) {
+        const o_id = new mongo.ObjectID(id);
+        coll.remove({
+          "_id": o_id
+        }).then(callback);
+      } else {
+        error()
+      }
+    }); // end mongo connect
   },
 
   storeNewItems(items, callback, error=noop) {

@@ -35,8 +35,11 @@ class ExpirationFormField extends React.Component {
       <InputDropdownGroup className={this.props.className}
         options={['days', 'weeks', 'months']}
         defaultDropdownValue={this.props.expiration ? this.props.expiration.delta : 'weeks'}
-        onDropdownChange={this.onDeltaChange}>
-        <input value={this.props.expiration ? this.props.expiration.length : ''} type="number" placeholder="3" min="1" onChange={this.onLengthChange}/>
+        onDropdownChange={(val, text, choice) => this.onDeltaChange(val, text, choice)}>
+        <input value={this.props.expiration ? this.props.expiration.length : ''}
+          type="number"
+          placeholder="3"
+          min="1" onChange={(ev) => this.onLengthChange(ev)}/>
       </InputDropdownGroup>
     );
   }

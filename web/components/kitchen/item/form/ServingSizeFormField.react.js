@@ -35,8 +35,12 @@ class ServingSizeFormField extends React.Component {
       <InputDropdownGroup className={this.props.className}
         options={['tsp', 'tbsp', 'quarter cup', 'cup']}
         defaultDropdownValue={this.props.servingSize ? this.props.servingSize.unit : 'cup'}
-        onDropdownChange={this.onUnitChange}>
-        <input value={this.props.servingSize ? this.props.servingSize.amount : ''} type="number" placeholder="3" min="1" onChange={this.onAmountChange}/>
+        onDropdownChange={(value, text, choice) => this.onUnitChange(value, text, choice)}>
+        <input value={this.props.servingSize ? this.props.servingSize.amount : ''}
+          type="number"
+          placeholder="3"
+          min="1"
+          onChange={(ev) => this.onAmountChange(ev)}/>
       </InputDropdownGroup>
     );
   }

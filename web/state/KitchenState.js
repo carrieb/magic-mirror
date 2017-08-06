@@ -10,6 +10,14 @@ const loadKitchen = (callback) => {
   });
 }
 
+const deleteFood = (id, callback) => {
+  ApiWrapper.trashFood(id)
+    .done(() => {
+      loadedKitchen = loadedKitchen.filter((item) => item._id !== id);
+      callback(loadedKitchen);
+    });
+}
+
 const findFoodByName = (name) => {
   return find(loadedKitchen, (item) => item.description === name);
 }
@@ -33,6 +41,12 @@ const KitchenState = {
     executeWhenLoaded(() => {
       const foodItem = findFoodByName(foodName);
       callback(foodItem);
+    });
+  },
+
+  trashFood(id, callback) {
+    deleteFood(id, (kitchen) => {
+      callback(kitchen);
     });
   },
 
