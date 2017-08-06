@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import DropdownOptions from './dropdown-options';
 
 class InputDropdownGroup extends React.Component {
-  componetnDidMount() {
+  componentDidMount() {
     // TOOD: assign dropdownOptions
     $(this.dropdown).dropdown({
       onChange: this.props.onDropdownChange,
