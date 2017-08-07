@@ -6,6 +6,8 @@ import Chart from 'chart.js'
 import ChartUtil from '../util/chart-util';
 
 import isEqual from 'lodash/isEqual';
+import min from 'lodash/min';
+import max from 'lodash/max';
 
 class GuildWars extends React.Component {
   constructor(props) {
@@ -40,6 +42,7 @@ class GuildWars extends React.Component {
     } else {
       const labels = ChartUtil.generateDateLabels(this.state.walletHistory);
       const datasets = ChartUtil.generateDatasets(this.state.walletHistory, labels);
+      console.log(datasets);
       //console.log(labels, datasets);
       const chart = new Chart(this.canvas, {
         type: 'line',
@@ -58,7 +61,7 @@ class GuildWars extends React.Component {
             callbacks: {
               label: ((tooltipItem, data) => {
                 const val = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                return `${(val/10000).toFixed()}G`;
+                return `${val}G`;
               })
             }
           },
@@ -66,9 +69,9 @@ class GuildWars extends React.Component {
             yAxes: [{
               type: 'linear',
               ticks: {
-                min: 5500000,
-                max: 6000000,
-                callback: ((value, index, values) => value/10000)
+                min: Math.floor(min(datasets[0].data)/10) * 10,
+                max: Math.ceil(max(datasets[0].data)/10) * 10,
+                callback: ((value, index, values) => value)
               }
             }],
             xAxes: [{

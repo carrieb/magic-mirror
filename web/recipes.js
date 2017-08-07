@@ -5,6 +5,7 @@ import { Router, Route, browserHistory, Link } from 'react-router';
 import ApiRecipesList from 'components/recipes/ApiRecipesList.react';
 import ApiAddRecipeForm from 'components/recipes/ApiAddRecipeForm.react';
 
+import 'styles/recipes/recipes.css';
 
 class Recipes extends React.Component {
   constructor(props) {
@@ -17,7 +18,7 @@ class Recipes extends React.Component {
   render() {
     return (
       <div className="ui container">
-        <button className="ui fluid purple button"
+        <button className="ui fluid purple button add-recipe-button"
                 onClick={() => this.setState({ showAddRecipeForm: !this.state.showAddRecipeForm })}>
                 Add Recipe
         </button>

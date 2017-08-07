@@ -39,11 +39,16 @@ input[type=file].hidden-file-input {
   font-size: 1.5rem;
 }
 
+.wanikani-container .status {
+  margin-bottom: 20px;
+}
+
 .in-circle {
   border-radius: 50%;
   text-align: center;
   border: 3px solid grey;
   padding: 10px;
+  width: fit-content;
 }
 
 .vertical-center {
@@ -82,14 +87,20 @@ input[type=file].hidden-file-input {
 
 .wanikani-container .recent-unlock .character {
   font-size: 3rem;
+  line-height: 3rem;
+  margin: 10px;
 }
 
 .wanikani-container .recent-unlock .description {
   font-size: 2rem;
+  line-height: 2rem;
+  margin: 10px;
 }
 
 .wanikani-container .recent-unlock .kana {
   font-size: 1.5rem;
+  line-height: 1.5rem;
+  margin: 10px;
 }
 
 .wanikani-container .content {

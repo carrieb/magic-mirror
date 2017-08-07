@@ -41,7 +41,8 @@ module.exports = [{
    alias: {
      src: path.join(__dirname, 'src'),
      components: path.join(__dirname, 'web', 'components'),
-     styles: path.join(__dirname, 'public', 'styles')
+     styles: path.join(__dirname, 'public', 'styles'),
+     state: path.join(__dirname, 'web', 'state')
    }
  }
 }];

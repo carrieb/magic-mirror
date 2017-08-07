@@ -32,13 +32,17 @@ class Wanikani extends React.Component {
       const reading = unlock.kana ? unlock.kana : (unlock.kunyomi + ' | ' + unlock.onyomi)
       level = (
         <div className="content">
-          <span className="in-circle pull-left level">{this.state.user.level}</span>
-          <span>Lessons: {this.state.studyQueue.lessons_available}</span><br/>
-          <span>Reviews: {this.state.studyQueue.reviews_available}</span>
+          <div className="status" style={{ overflow: 'auto' }}>
+            <div className="in-circle pull-left level">{this.state.user.level}</div>
+            <div>
+              <span>Lessons: {this.state.studyQueue.lessons_available}</span><br/>
+              <span>Reviews: {this.state.studyQueue.reviews_available}</span>
+            </div>
+          </div>
           <div className="recent-unlock text-center">
-            <span className="character">{ unlock.character }</span><br/>
-            <span className="description">{ unlock.meaning }</span><br/>
-            <span className="kana">{ reading }</span>
+            <div className="character">{ unlock.character }</div>
+            <div className="description">{ unlock.meaning }</div>
+            <div className="kana">{ reading }</div>
           </div>
         </div>
       );

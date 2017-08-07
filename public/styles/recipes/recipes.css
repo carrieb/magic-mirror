@@ -1,0 +1,23 @@
+.ui.container {
+  margin-top: 20px;
+}
+
+.repeated-component button {
+  height: 50%;
+}
+
+.ui.transparent.input {
+  border-bottom: solid 1px lightgrey;
+}
+
+.ui.transparent.input:focus {
+  border-bottom: solid 1px black;
+}
+
+.recipe-card .ingredients-section {
+  margin-bottom: 15px;
+}
+
+form .ingredients-editor button.add-ingredient-button {
+  margin-top: 15px;
+}

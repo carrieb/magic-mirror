@@ -1,38 +1,15 @@
 import React from 'react';
 
+import RecipeCard from 'components/recipes/recipe-card.react';
+import RecipesState from 'state/RecipesState';
+
 class ApiRecipesList extends React.Component {
 
   constructor(props) {
     super(props);
-    // TODO: update to using RecipeState
-    const recipes = [
-      {
-        name: "Testing",
-        ingredients: [
-          {
-            items: [
-              {
-                name: 'apples',
-                quantity: '2'
-              },
-              {
-                name: 'flour',
-                quantity: '1 cup'
-              }
-            ]
-          }
-        ],
-        directions: [
-          {
-            steps: [
-              { content: 'Peel and core the apples' }
-            ]
-          }
-        ]
-      }
-    ];
+
     this.state = {
-      recipes
+      recipes: RecipesState.recipes
     }
   }
 
@@ -66,19 +43,7 @@ class ApiRecipesList extends React.Component {
           </div>
         );
       });
-      return (
-        <div className="ui card" key={i}>
-          <div className="content">
-            <div className="header">{recipe.name}</div>
-          </div>
-          <div className="content">
-            { ingredients }
-          </div>
-          <div className="content">
-            { directions }
-          </div>
-        </div>
-      );
+      return <RecipeCard recipe={recipe} key={i}/>
     });
     return (
       <div className="api-recipes-list">

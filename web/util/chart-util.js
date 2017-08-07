@@ -24,8 +24,9 @@ const ChartUtil = {
     //console.log(dateToWallet);
     docs.forEach((doc) => {
       const amount = find(doc.wallet, (currency) => currency.id === 1).value;
+      const roundedAmt = Math.floor(amount/10000);
       const dateKey = moment(doc.date).format(format);
-      dateToWallet[dateKey] = amount;
+      dateToWallet[dateKey] = roundedAmt;
     });
     //console.log(dateToWallet);
     const data = Object.keys(dateToWallet).map((date) => {
