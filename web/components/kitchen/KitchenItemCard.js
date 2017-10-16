@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import uniqueId from 'lodash/uniqueId';
 
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 class KitchenItemCard extends React.Component {
   constructor(props) {
@@ -27,16 +27,16 @@ class KitchenItemCard extends React.Component {
 
   render() {
     const foodItem = this.props.foodItem;
+    console.log(foodItem);
     let area = foodItem.area || 'Fridge';
-    let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
-    let content;
-    let image;
     let extraContent;
 
-    image = (
+    let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
+    const image = (
       <div className="image"><img src={imageUrl}/></div>
     );
-    content = (
+
+    const content = (
       <div className="content">
         <i className="right floated large star icon"></i>
         <Link to={`/kitchen/${foodItem.description}`}>
@@ -48,29 +48,29 @@ class KitchenItemCard extends React.Component {
         </div>
       </div>
     );
-    let lastImport = null;
-    if (foodItem.importDates) {
-      const lastImportDate = moment(foodItem.importDates[foodItem.importDates.length - 1], "MM/DD/YYYY")
-      lastImport = `${lastImportDate.toNow(true)} old`
-    }
-    extraContent = (
-      <div className="extra content">
-        <span>
-          <i className="cube icon"></i>
-          { foodItem.quantity && `${foodItem.quantity.amount} ${foodItem.quantity.unit}` }
-        </span>
-        <span className="right floated">
-          { lastImport }
-          <i className="trash icon" onClick={(ev) => this.handleTrashClick()}></i>
-        </span>
-      </div>
-    );
+    // let lastImport = null;
+    // if (foodItem.importDates) {
+    //   const lastImportDate = moment(foodItem.importDates[foodItem.importDates.length - 1], "MM/DD/YYYY")
+    //   lastImport = `${lastImportDate.toNow(true)} old`
+    // }
+    // extraContent = (
+    //   <div className="extra content">
+    //     <span>
+    //       <i className="cube icon"></i>
+    //       { foodItem.quantity && `${foodItem.quantity.amount} ${foodItem.quantity.unit}` }
+    //     </span>
+    //     <span className="right floated">
+    //       { lastImport }
+    //       <i className="trash icon" onClick={(ev) => this.handleTrashClick()}></i>
+    //     </span>
+    //   </div>
+    // );
 
     return (
-      <div className="ui card food-item-card" ref={(ref) => this.card = ref}>
+      <div className="ui card food-card" >
         { image }
-        { content }
-        { extraContent }
+        {/*{ content }*/}
+        {/*{ extraContent }*/}
       </div>
     );
   }

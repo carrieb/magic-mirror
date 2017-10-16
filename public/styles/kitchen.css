@@ -58,8 +58,8 @@ input[type=number] {
   margin-top: 15px;
 }
 
-.kitchen-container > button.ui.button {
-  margin-top: 25px;
+.kitchen-container button.ui.button {
+  margin-top: 20px;
 }
 
 .ui.transparent.input {

@@ -20,7 +20,7 @@ const deleteFood = (id, callback) => {
 
 const findFoodByName = (name) => {
   return find(loadedKitchen, (item) => item.description === name);
-}
+};
 
 const executeWhenLoaded = (callback) => {
   if (loadedKitchen === null) {
@@ -28,9 +28,25 @@ const executeWhenLoaded = (callback) => {
   } else {
     callback();
   }
-}
+};
 
 const KitchenState = {
+  DEFAULT_ITEM: {
+    description: 'new item',
+    quantity: {
+      unit: 'cup',
+      amount: 1
+    },
+    expiration: {
+      delta: 'week',
+      length: 1
+    },
+    servingSize: {
+      unit: 'cup',
+      amount: 1
+    }
+  },
+
   getKitchen(callback) {
     executeWhenLoaded(() => {
       callback(loadedKitchen)
