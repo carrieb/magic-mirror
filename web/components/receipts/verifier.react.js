@@ -5,41 +5,52 @@ import ItemInputs from './item-inputs';
 
 import AddItemsForm from '../kitchen/AddItemsForm.react';
 
-const Verifier = React.createClass({
-  componentWillMount() {
-    const filename = this.props.params.filename;
-    if (filename) {
-      ApiWrapper.extractText(this.props.params.filename, (items) => {
-        this.setState({ items, loaded: true });
-      }, () => {
-        this.setState({ error: true });
-      });
-    }
-  },
+class Verifier extends React.Component {
+  constructor(props) {
+    super(props);
+    this.submitItems = this.submitItems.bind(this);
+    this.toggleCollapsed = this.toggleCollapsed.bind(this);
 
-  getInitialState() {
-    return {
+    this.state = {
+      filename: this.props.match.params.filename,
       items: [],
       loaded: false,
       submitted: false,
       collapsed: true,
       error: false
     };
-  },
+  }
+
+  componentWillMount() {
+    const filename = this.props.match.params.filename;
+    if (filename) {
+      ApiWrapper.extractText(filename)
+        .done((items) => {
+          console.log(items);
+          this.setState({ items, loaded: true });
+        })
+        .fail(() => {
+          this.setState({ error: true });
+        });
+    }
+  }
 
   submitItems(ev) {
-    // TODO: .. upload these to my db ..
     console.log(this.state.items);
-    ApiWrapper.submitItems(this.state.items, () => { this.setState({ submitted: true }); });
+    ApiWrapper.submitItems(this.state.items)
+      .done(() => {
+        this.setState({ submitted: true });
+      });
     ev.preventDefault();
-  },
+  }
 
   toggleCollapsed() {
     this.setState({ collapsed: !this.state.collapsed });
-  },
+  }
 
   render() {
     let itemInputs = [];
+
     this.state.items.forEach((item, index) => {
       const updateAtIndex = (field) => {
         return (ev) => {
@@ -60,16 +71,19 @@ const Verifier = React.createClass({
         itemInputs.push(<div key={`divider-${index}`} className="ui hidden divider"></div>)
       }
     });
+
     let content;
     if (this.state.error) {
       content = (<div>error</div>);
     } else {
       content = (
         <div>
-          <img className="ui bordered image" src={`/processed-images/${this.props.params.filename}`}/>
+          <img className="ui centered bordered image"
+               src={`/processed-images/${this.state.filename}`}/>
+          <AddItemsForm />
           <form className="ui form">
             { itemInputs }
-            <AddItemsForm />
+
             <button type="submit"
               className={`ui massive fluid primary toggle button ${this.state.submitted ? 'active disabled' : ''}`}
               onClick={this.submitItems}>
@@ -79,12 +93,13 @@ const Verifier = React.createClass({
         </div>
       );
     }
+
     return (
       <div className="verifier-wrapper">
         { content }
       </div>
     );
   }
-});
+}
 
 export default Verifier;

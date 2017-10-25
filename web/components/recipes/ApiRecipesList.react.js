@@ -37,7 +37,7 @@ class ApiRecipesList extends React.Component {
         return (
           <div className="content" key={j}>
             { title }
-            <div className="ui list">
+            <div className="ui ordered list">
               { steps }
             </div>
           </div>

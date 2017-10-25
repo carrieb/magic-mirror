@@ -8,6 +8,9 @@ import QuantityFormField from 'components/kitchen/item/form/QuantityFormField.re
 class ItemInputs extends React.Component {
   constructor(props) {
     super(props);
+    this.toggleCollapsed = this.toggleCollapsed.bind(this);
+    this.onExpirationChange = this.onExpirationChange.bind(this);
+
     this.state = {
       collapsed: true
     };
@@ -17,6 +20,7 @@ class ItemInputs extends React.Component {
     this.setState({
       collapsed: !this.state.collapsed
     });
+    console.log(ev);
     ev.preventDefault();
   }
 
@@ -43,6 +47,7 @@ class ItemInputs extends React.Component {
           <ServingSizeFormField className="eleven wide column" onChange={this.onServingSizeChange}/>
           <div className="five wide column"><h5>Quantity</h5></div>
           <QuantityFormField className="eleven wide column" onChange={this.onQuantityChange}/>
+          <div className="five wide column"><h5>Category</h5></div>
         </div>
       );
     }

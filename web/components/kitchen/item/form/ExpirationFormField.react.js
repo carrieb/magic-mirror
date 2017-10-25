@@ -10,7 +10,7 @@ class ExpirationFormField extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      length: null,
+      length: 1,
       delta: 'weeks'
     }
   }

@@ -44,7 +44,8 @@ const KitchenState = {
     servingSize: {
       unit: 'cup',
       amount: 1
-    }
+    },
+    category: 'Condiment'
   },
 
   getKitchen(callback) {
@@ -68,6 +69,11 @@ const KitchenState = {
 
   updateImage(foodName, imageUrl) {
     findFoodByName(foodName).img = imageUrl;
+  },
+
+  addItem(item) {
+    // TODO: include API call here
+    loadedKitchen.push(item);
   }
 }
 

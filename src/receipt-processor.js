@@ -87,12 +87,15 @@ const ReceiptProcessor = {
   },
 
   extractText(filename, callback, error) {
+    console.log(filename);
     const inputPath = path.join(Config.getBaseDir(), 'tmp', 'processed-images', filename);
     const jsonOutputPath = path.join(Config.getBaseDir(), 'tmp', 'tesseract-output', filename + '.json');
+    console.log(`input: ${inputPath}`);
+    console.log(`output: ${jsonOutputPath}`);
     fs.stat(jsonOutputPath, (err, stats) => {
       if (err) {
-        // output doesn't already exist, do processing
-        // ensure that processed image exists first
+        //output doesn't already exist, do processing
+        //ensure that processed image exists first
         fs.stat(inputPath, (err, stats) => {
           if (err) error();
           else {

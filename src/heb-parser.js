@@ -1,3 +1,5 @@
+const util = require('util');
+
 const parseItem = (idx, line) => {
     const itemRegex = `^(${idx}) (.*) (\\d{1,2}\\.\\d{2})$`;
     const regex = new RegExp(itemRegex);
@@ -20,6 +22,9 @@ const processLines = (lines) => {
     const line = lines[idx];
     const lineText = line.text.trim();
     console.log(lineText);
+    // const firstChar = line.words[0].symbols[0];
+    // console.log(firstChar.text);
+    // console.log(util.inspect(firstChar.choices, false, 1));
     const nextLineRegexStr = `^(${nextItemIdx}) (.*)$`;
     const regex = new RegExp(nextLineRegexStr);
     const matches = lineText.match(regex);

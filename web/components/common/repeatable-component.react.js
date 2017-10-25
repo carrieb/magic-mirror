@@ -8,8 +8,10 @@ class RepeatableComponent extends React.Component {
   constructor(props) {
     super(props);
 
+    const components = this.props.values.map(_uniqueId);
+
     this.state = {
-      components: [ _uniqueId() ]
+      components
     }
   }
 
@@ -29,8 +31,10 @@ class RepeatableComponent extends React.Component {
   render() {
     const components = this.state.components.map((id, index) => {
       // TODO: pass in an onChange prop
+      const value = this.props.values[index];
       const comp = React.createElement(this.props.component, {
         index,
+        value,
         onChange: (field, value) => {
           console.log(index, field, value);
           this.props.onChange(index, field, value);
@@ -38,24 +42,19 @@ class RepeatableComponent extends React.Component {
       });
 
       return (
-        <div key={id}>
-          <div className="ui grid">
-            <div className={`ui ${this.state.components.length > 1 ? 'thirteen' : 'sixteen'} wide column`}>
-              { comp }
-            </div>
-            { this.state.components.length > 1 &&
-              <div className="ui three wide column">
-                <button className="ui circular icon button"
-                      type="button"
-                      style={{ height: '100%', width: '100%' }}
-                      onClick={() => this.remove(index)}><i className="trash icon"></i></button></div> }
-          </div>
+        <div key={id} className="inner-component">
+
+          { this.state.components.length > 1 &&
+              <div className="delete-button"><button className="ui icon button"
+                    type="button"
+                  onClick={() => this.remove(index)}><i className="trash icon"></i></button></div> }
+          { comp }
         </div>
       );
     });
 
     return (
-      <div className="reapeated-component">
+      <div className="repeated-component">
         <div className="ui top attached segment">{ components }</div>
         <div className="ui basic bottom attached icon button" type="button" onClick={() => this.add()}>
           <i className="plus icon"></i>
@@ -67,9 +66,14 @@ class RepeatableComponent extends React.Component {
 
 RepeatableComponent.propTypes = {
   component: PropTypes.func.isRequired,
+  values: PropTypes.array.isRequired,
   onChange: PropTypes.func,
   onAdd: PropTypes.func,
   onRemove: PropTypes.func
-}
+};
+
+RepeatableComponent.defaultProps = {
+  values: []
+};
 
 export default RepeatableComponent;

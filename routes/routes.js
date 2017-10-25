@@ -86,7 +86,8 @@ router.delete('/food-trash', jsonParser, (req, res) => {
 
 router.post('/food-image', foodImageUpload.single('image'), function (req, res, next) {
   //console.log(req.file);
-  //console.log(req.body);
+  console.log(req.body.filename);
+  console.log(req.file.filename);
   FoodDb.updateImage(req.body.filename, req.file.filename, () => {
     res.send(req.file.filename);
   });

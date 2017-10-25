@@ -32,10 +32,11 @@ input[type=number] {
   max-height: 200px;
   max-width: 100px;
   margin: 0 auto;
+
 }
 
-.food-item-card img {
-  padding: 5px 0;
+.food-card img {
+  padding: 5px;
   background: white;
 }
 

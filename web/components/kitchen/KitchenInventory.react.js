@@ -3,12 +3,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import KitchenState from 'state/KitchenState';
-import MessagingUtil from 'util/messaging-util';
 
 import KitchenItemCard from 'components/kitchen/KitchenItemCard';
 
 class KitchenInventory extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -20,7 +18,6 @@ class KitchenInventory extends React.Component {
   }
 
   componentWillMount() {
-    MessagingUtil.subscribeDevice();
     KitchenState.getKitchen((kitchen) => {
       console.log(kitchen);
       this.setState({ kitchen });
@@ -48,6 +45,10 @@ class KitchenInventory extends React.Component {
       console.log(kitchen);
       this.setState({ kitchen, selectedItem: null });
     });
+  }
+
+  star(id) {
+    
   }
 
   componentDidUpdate() {

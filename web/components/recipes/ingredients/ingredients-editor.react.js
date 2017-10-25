@@ -9,7 +9,7 @@ class IngredientsEditor extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { collapsed: true }
+    this.state = { collapsed: this.props.ingredients.length == 0 }
   }
 
   toggleCollapsed() {
@@ -51,17 +51,20 @@ class IngredientsEditor extends React.Component {
     const moreThanOneSection = ingr.length > 1;
     const ingredientsSections = ingr.map((ingObj, idx) => {
       const nameField = (
-        <div className="ui field">
-          <label>Ingredients Section Name</label>
-          <input type="text" placeholder="default" onChange={(ev) => this.updateIngredientsSection(idx, 'name', ev.target.value)}/>
+        <div className="ui inline field">
+          <label>SECTION TITLE</label>
+          <input type="text"
+            placeholder="default"
+            onChange={(ev) => this.updateIngredientsSection(idx, 'name', ev.target.value)}/>
         </div>
       );
 
       return (
-        <div className="ingredients-section" key={idx}>
+        <div className={`${moreThanOneSection && 'ui segment'} ingredients-section`} key={idx}>
           { moreThanOneSection && nameField }
           { moreThanOneSection && <div className="ui sub header">Ingredients</div>}
           <RepeatableComponent
+            values={ingObj.items}
             component={IngredientsInputs}
             onChange={(index, field, value) => this.updateIngredients(idx, index, field, value)}
             onAdd={() => this.addIngredient(idx)}
@@ -82,13 +85,13 @@ class IngredientsEditor extends React.Component {
       </div>
     );
 
-    const caret = this.state.collapsed ? 'plus square outline' : 'minus square outline';
+    const caret = this.state.collapsed ? 'edit' : 'check';
     const icon = <i className={`${caret} icon`}
       style={{ float: 'right', margin: '0' }}
       onClick={() => this.toggleCollapsed()}/>
     return (
       <div className="ingredients-editor">
-        <h3 className="ui header">{ icon }Ingredients</h3>
+        <label>{ icon }Ingredients</label>
         { !this.state.collapsed && content }
       </div>
     );
@@ -96,7 +99,11 @@ class IngredientsEditor extends React.Component {
 }
 
 IngredientsEditor.propTypes = {
+  ingredients: PropTypes.array.isRequired
+}
 
+IngredientsEditor.defaultProps = {
+  ingredients: []
 }
 
 export default IngredientsEditor;

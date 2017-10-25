@@ -10,7 +10,7 @@ class ServingSizeFormField extends React.Component {
     super(props);
 
     this.state = {
-      amount: null,
+      amount: 1,
       unit: 'quarter cup'
     };
   }
@@ -32,7 +32,8 @@ class ServingSizeFormField extends React.Component {
 
   render() {
     return (
-      <InputDropdownGroup className={this.props.className}
+      <InputDropdownGroup
+        className={this.props.className}
         options={['tsp', 'tbsp', 'quarter cup', 'cup']}
         defaultDropdownValue={this.props.servingSize ? this.props.servingSize.unit : 'cup'}
         onDropdownChange={(value, text, choice) => this.onUnitChange(value, text, choice)}>

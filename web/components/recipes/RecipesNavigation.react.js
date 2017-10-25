@@ -1,24 +1,23 @@
 import React from 'react';
-
 import { NavLink } from 'react-router-dom';
 
-class KitchenNavigation extends React.Component {
+class RecipesNavigation extends React.Component {
   render() {
     return (
-      <div className="ui secondary menu kitchen-navigation">
+      <div className="ui secondary menu recipes-navigation">
         <div className="header active item">
-          <NavLink to="/kitchen">Kitchen</NavLink>
+          <NavLink to="/recipes">Recipes</NavLink>
         </div>
         <div className="header item">
-          <a href="/recipes">Recipes</a>
+          <a href="/kitchen">Kitchen</a>
         </div>
         <div className="right menu">
-          <a className="item" href="/process-receipt">
+          <a className="item" href="/recipes/import">
             <i className="icons icon">
-              <i className="shopping  basket icon"/>
+              <i className="browser icon"/>
               <i className="inverted corner upload icon"/>
             </i>
-            Upload Receipt
+            Import Recipe
           </a>
         </div>
       </div>
@@ -26,4 +25,4 @@ class KitchenNavigation extends React.Component {
   }
 }
 
-export default KitchenNavigation;
+export default RecipesNavigation;

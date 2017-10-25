@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom'
 
 import ApiWrapper from '../../util/api-wrapper';
 import KitchenState from '../../state/KitchenState';
@@ -12,15 +13,18 @@ import QuantityFormField from './item/form/QuantityFormField.react';
 
 import uniqueId from 'lodash/uniqueId';
 import _isEmpty from 'lodash/isEmpty';
+import _isString from 'lodash/isString';
 
 class FoodEditorHandler extends React.Component {
   constructor(props) {
     super(props);
 
-
     const name = this.props.match.params.foodName;
     const foodItem = KitchenState.DEFAULT_ITEM;
     foodItem.description = name;
+
+    this.handleFormRef = this.handleFormRef.bind(this);
+    this.updateImage = this.updateImage.bind(this);
 
     this.state = {
       foodItem,
@@ -63,9 +67,11 @@ class FoodEditorHandler extends React.Component {
       ApiWrapper.uploadFoodImage(this.form, (loaded, total) => {
         console.log(loaded, total);
       }).done((filename) => {
-        console.log('done', filename);
-        KitchenState.updateImage(this.props.params.foodName, filename);
-        this.reloadItem();
+        console.log('done', filename, this.props.match.params.foodName);
+        const foodItem = this.state.foodItem;
+        foodItem.img = filename;
+        this.setState({ foodItem });
+        KitchenState.updateImage(this.props.match.params.foodName, filename);
       }).fail(() => {
         console.error('failed');
       });
@@ -88,8 +94,12 @@ class FoodEditorHandler extends React.Component {
     // TODO: move this to kitchen state
     ApiWrapper.updateFood(food)
       .done((insertedId) => {
-        console.log(insertedId);
-        this.props.router.push('/kitchen')
+        if (_isString(insertedId)) {
+          console.log('updated food', insertedId);
+          food._id = insertedId;
+          KitchenState.addItem(food);
+        }
+        this.props.history.push('/kitchen')
       });
   }
 
@@ -112,6 +122,12 @@ class FoodEditorHandler extends React.Component {
     this.setState({ foodItem });
   }
 
+  onCategoryChange(ev) {
+    const foodItem = this.state.foodItem;
+    foodItem.category = ev.target.value;
+    this.setState({ foodItem });
+  }
+
   toggleNameEdit() {
     this.setState({ editingName: true });
   }
@@ -119,6 +135,7 @@ class FoodEditorHandler extends React.Component {
   editName() {
     const foodItem = this.state.foodItem;
     foodItem.description = this.nameInput.innerText;
+    this.setState({ editingName: false });
     // TODO: WARN/FAIL if we already have an item named this
     this.props.history.push(`/kitchen/${foodItem.description}`);
   }
@@ -133,9 +150,12 @@ class FoodEditorHandler extends React.Component {
     //     ref={(ref) => this.nameInput = ref}/>
     // </div>);
 
+    console.log(foodItem.img);
+
     const headerContent = this.state.editingName
       ? <div>
           <span ref={(ref) => this.nameInput = ref}
+            suppressContentEditableWarning={true}
             contentEditable="true" placeholder="AAA"
             onChange={(ev) => console.log(ev)}>{foodItem.description}</span>
           <a onClick={() => this.editName()}><i className="check icon"></i></a>
@@ -149,6 +169,7 @@ class FoodEditorHandler extends React.Component {
     );
 
     let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
+    console.log(imageUrl);
     const image = (
       <div className="blurring dimmable image" ref={(r) => this.handleDimmerRef(r)}>
         <div className="ui inverted dimmer">
@@ -159,7 +180,7 @@ class FoodEditorHandler extends React.Component {
                 <input type="hidden" name="filename" value={foodItem.description}/>
                 <input id={this.state.id} className="hidden-file-input"
                        name="image" type="file" accept="image/*" capture="camera"
-                       onChange={this.updateImage}/>
+                       onChange={(ev) => this.updateImage(ev)}/>
               </form>
 
           </div>
@@ -192,6 +213,17 @@ class FoodEditorHandler extends React.Component {
           expiration={this.state.foodItem.expiration}
           onChange={(exp) => this.onExpirationChange(exp)}/>
 
+        <div className="five wide column">
+          <h5>Category</h5>
+        </div>
+        <div className="eleven wide column">
+          <div className="ui fluid input">
+            <input type="text"
+              value={this.state.foodItem.category}
+              onChange={(ev) => this.onCategoryChange(ev)}/>
+          </div>
+        </div>
+
         <div className="sixteen wide column">
           <button className="ui green fluid button" onClick={() => this.updateFields()}>Done</button>
         </div>
@@ -211,4 +243,4 @@ class FoodEditorHandler extends React.Component {
 
 
 
-export default FoodEditorHandler;
+export default withRouter(FoodEditorHandler);

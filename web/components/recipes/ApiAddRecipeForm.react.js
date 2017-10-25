@@ -7,6 +7,9 @@ import RepeatableComponent from 'components/common/repeatable-component.react';
 
 import RecipeCard from 'components/recipes/recipe-card.react';
 import IngredientsEditor from 'components/recipes/ingredients/ingredients-editor.react';
+import DirectionsEditor from 'components/recipes/directions/DirectionsEditor.react';
+
+import RecipesState from 'state/RecipesState';
 
 import _range from 'lodash/range';
 
@@ -24,13 +27,10 @@ class DirectionsFields extends React.Component {
 class ApiAddRecipeForm extends React.Component {
   constructor(props) {
     super(props)
+    this.updateDirections = this.updateDirections.bind(this);
 
     this.state = {
-      recipe: {
-        name: '',
-        ingredients: [ { items: [ {} ] } ],
-        directions: [ { steps: [ {} ] } ]
-      }
+      recipe: RecipesState.DEFAULT_RECIPE
     }
   }
 
@@ -61,6 +61,13 @@ class ApiAddRecipeForm extends React.Component {
     this.setState({ recipe });
   }
 
+  updateDirections(directions) {
+    console.log(directions);
+    const recipe = this.state.recipe;
+    recipe.directions = directions;
+    this.setState({ recipe });
+  }
+
   addIngredient(idx) {
     let ingredientsList = this.state.recipe.ingredients[idx];
     ingredientsList.push({ })
@@ -82,7 +89,8 @@ class ApiAddRecipeForm extends React.Component {
     const directionsSections = _range(this.state.directionsSections).map((idx) => {
       return (
         <div key={idx} className="directions-section">
-          <RepeatableComponent component={DirectionsFields}/>
+          <RepeatableComponent component={DirectionsFields}
+            values={this.state.recipe.directions}/>
         </div>
       );
     });
@@ -95,16 +103,13 @@ class ApiAddRecipeForm extends React.Component {
             value={this.state.recipe.name} onChange={(ev) => this.handleNameChange(ev)}/>
         </div>
 
-        <IngredientsEditor updateIngredients={(ingr) => this.updateIngredients(ingr)}
+        <IngredientsEditor
+          updateIngredients={(ingr) => this.updateIngredients(ingr)}
           ingredients={this.state.recipe.ingredients}/>
 
-        <h3 className="ui header">Directions</h3>
-        {directionsSections}
-        <button className="ui blue mini fluid button"
-                type="button"
-                onClick={() => this.addDirectionsSection()}>
-          Add Directions Section
-        </button>
+        <DirectionsEditor
+          updateDirections={this.updateDirections}
+          directions={this.state.recipe.directions}/>
 
         <button className="ui red huge fluid button"
                 type="button"
@@ -122,7 +127,7 @@ class ApiAddRecipeForm extends React.Component {
 
     return (
       <div className="api-add-recipe-form">
-        <div className="ui grid">
+        <div className="ui two column grid">
           <div className="eight wide column">{ form }</div>
           <div className="eight wide column">{ preview }</div>
         </div>

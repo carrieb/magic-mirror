@@ -8,7 +8,7 @@ class Ingredients extends React.Component {
         {ingredientsList.name ? ingredientsList.name : 'ingredients'}
       </div>
       let items = ingredientsList.items.map((item, idx) => {
-        return <div className="item" key={idx}>{item.quantity} of {item.name}</div>
+        return <div className="item" key={idx}><b>{item.quantity}</b> of <a href={`/kitchen/${item.name}`}>{item.name}</a></div>
       });
       return (
         <div className="ingredients-section" key={i}>
@@ -36,7 +36,7 @@ class Directions extends React.Component {
       return (
         <div className="content" key={j}>
           { title }
-          <div className="ui list">
+          <div className="ui ordered list">
             { steps }
           </div>
         </div>
@@ -57,6 +57,9 @@ class RecipeCard extends React.Component {
       <div className="ui card">
         <div className="content">
           <div className="header">{recipe.name}</div>
+        </div>
+        <div className="image" style={{ borderTop: '1px solid rgba(34,36,38,.1)'}}>
+          <img src={recipe.img}/>
         </div>
         <div className="content">
           { ingredients }

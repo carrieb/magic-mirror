@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import moment from 'moment';
 import uniqueId from 'lodash/uniqueId';
+import _noop from 'lodash/noop';
 
 import { Link } from 'react-router-dom';
 
@@ -29,7 +30,7 @@ class KitchenItemCard extends React.Component {
     const foodItem = this.props.foodItem;
     console.log(foodItem);
     let area = foodItem.area || 'Fridge';
-    let extraContent;
+    let category = foodItem.category || 'Condiment';
 
     let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
     const image = (
@@ -38,39 +39,41 @@ class KitchenItemCard extends React.Component {
 
     const content = (
       <div className="content">
-        <i className="right floated large star icon"></i>
+        <i className="right floated large star icon" onClick={this.props.star}></i>
         <Link to={`/kitchen/${foodItem.description}`}>
           <i className="grey right floated large link setting icon"></i>
         </Link>
         <div className="header">{foodItem.description}</div>
         <div className="meta">
-          <a>{area}</a>
+          <a>{area}</a><br/>
+          <a>{category}</a>
         </div>
       </div>
     );
-    // let lastImport = null;
-    // if (foodItem.importDates) {
-    //   const lastImportDate = moment(foodItem.importDates[foodItem.importDates.length - 1], "MM/DD/YYYY")
-    //   lastImport = `${lastImportDate.toNow(true)} old`
-    // }
-    // extraContent = (
-    //   <div className="extra content">
-    //     <span>
-    //       <i className="cube icon"></i>
-    //       { foodItem.quantity && `${foodItem.quantity.amount} ${foodItem.quantity.unit}` }
-    //     </span>
-    //     <span className="right floated">
-    //       { lastImport }
-    //       <i className="trash icon" onClick={(ev) => this.handleTrashClick()}></i>
-    //     </span>
-    //   </div>
-    // );
+
+    let lastImport = null;
+    if (foodItem.importDates) {
+      const lastImportDate = moment(foodItem.importDates[foodItem.importDates.length - 1], "MM/DD/YYYY")
+      lastImport = `${lastImportDate.toNow(true)} old`
+    }
+    const extraContent = (
+      <div className="extra content">
+        <span>
+          <i className="cube icon"></i>
+          { foodItem.quantity && `${foodItem.quantity.amount} ${foodItem.quantity.unit}` }
+        </span>
+        <span className="right floated">
+          { lastImport }
+          <i className="trash icon" onClick={(ev) => this.handleTrashClick()}></i>
+        </span>
+      </div>
+    );
 
     return (
       <div className="ui card food-card" >
         { image }
-        {/*{ content }*/}
-        {/*{ extraContent }*/}
+        { content }
+        { extraContent }
       </div>
     );
   }
@@ -78,7 +81,12 @@ class KitchenItemCard extends React.Component {
 
 KitchenItemCard.propTypes = {
   foodItem: PropTypes.object.isRequired,
-  onSettingsClick: PropTypes.func
+  onSettingsClick: PropTypes.func,
+  star: PropTypes.func
 };
+
+KitchenItemCard.defaultProps = {
+  star: _noop
+}
 
 export default KitchenItemCard;

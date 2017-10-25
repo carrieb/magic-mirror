@@ -1,48 +1,30 @@
 import React from 'react';
+import { withRouter } from 'react-router';
 
 import ApiWrapper from 'util/api-wrapper';
 
 import CropperJs from 'cropperjs';
 
-const Cropper = React.createClass({
-  componentWillMount() {
-    console.log(this.props.params.filename);
-  },
+class Cropper extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleImageRef = this.handleImageRef.bind(this);
+    this.handleCropChange = this.handleCropChange.bind(this);
+    this.submitCrop = this.submitCrop.bind(this);
+    this.complete = this.complete.bind(this);
 
-  getInitialState() {
-    return {
+    this.state = {
       crop: null,
-      ready: false
+      ready: false,
+      filename: this.props.match.params.filename
     };
-  },
-
-  handleCropChange(crop, pixelCrop) {
-    console.log(pixelCrop);
-    this.setState({ crop: pixelCrop });
-  },
-
-  submitCrop() {
-    // TODO: $.ajax('/crop/imageUrl', { data: crop });
-    if (this.state.crop != null) {
-      this.setState({
-        uploading: true
-      });
-      ApiWrapper.submitCrop(this.props.params.filename, this.state.crop, this.complete);
-    }
-  },
-
-  complete() {
-    console.log('done, trasition to verify?');
-    // TODO: transition to verify
-    this.props.router.push(`/process-receipt/verify/${this.props.params.filename}`);
-  },
+  }
 
   handleImageRef(ref) {
     this.image = ref;
-  },
+  }
 
   componentDidMount() {
-    console.log(this.image);
     const cropper = new CropperJs(this.image, {
       rotateable: false,
       cropBoxMoveable: false,
@@ -56,7 +38,6 @@ const Cropper = React.createClass({
             rotate: e.detail.rotate
           }
         });
-        //console.log(e.detail);
       },
       ready: () => {
         this.setState({
@@ -64,11 +45,29 @@ const Cropper = React.createClass({
         });
       }
     });
-  },
+  }
+
+  handleCropChange(crop, pixelCrop) {
+    this.setState({ crop: pixelCrop });
+  }
+
+  submitCrop() {
+    if (this.state.crop != null) {
+      this.setState({
+        uploading: true
+      });
+
+      ApiWrapper.submitCrop(this.state.filename, this.state.crop, this.complete);
+    }
+  }
+
+  complete() {
+    this.props.history.push(`/process-receipt/verify/${this.state.filename}`);
+  }
 
   render() {
-    const url = `/images/${this.props.params.filename}`;
-    console.log(this.crop)
+    const url = `/images/${this.state.filename}`;
+    console.log(this.state.crop)
     return (
       <div className="cropper-wrapper">
         <div className="image-editor">
@@ -80,6 +79,6 @@ const Cropper = React.createClass({
       </div>
     );
   }
-});
+}
 
-export default Cropper;
+export default withRouter(Cropper);

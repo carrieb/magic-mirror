@@ -10,18 +10,23 @@ class IngredientsInputs extends React.Component {
   }
 
   render() {
+    console.log(this.props);
     return <div className="ingredients-fields">
-      <div className="ui field">
+      <div className="ui inline field">
         <label>Name</label>
         <div className="ui transparent input">
-          <input type="text" onChange={(ev) => this.handleChange(ev, 'name')}/>
+          <input type="text"
+            onChange={(ev) => this.handleChange(ev, 'name')}
+            value={this.props.value.name}/>
         </div>
-      </div>
+      </div><br/>
 
-      <div className="ui field">
+      <div className="ui inline field">
         <label>Quantity</label>
         <div className="ui transparent input">
-          <input type="text" onChange={(ev) => this.handleChange(ev, 'quantity')}/>
+          <input type="text"
+            onChange={(ev) => this.handleChange(ev, 'quantity')}
+            value={this.props.value.quantity}/>
         </div>
       </div>
     </div>;

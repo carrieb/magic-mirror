@@ -23,7 +23,7 @@ const FoodDb = {
       // TODO: encrypted version of _id? (token)
       if (item._id) {
         // update
-        const o_id = new mongo.ObjectID(id);
+        const o_id = new mongo.ObjectID(item._id);
         coll.updateOne({
           "_id": o_id
         }, {
@@ -31,7 +31,8 @@ const FoodDb = {
             description: item.description,
             expiration: item.expiration,
             servingSize: item.servingSize,
-            quantity: item.quantity
+            quantity: item.quantity,
+            category: item.category
           }
         })
         .then(callback);

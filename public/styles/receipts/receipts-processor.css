@@ -1,0 +1,15 @@
+.ui.container.receipt-processor {
+  margin-top: 15px;
+}
+
+.ui.container.receipt-processor .uploader-wrapper .button.upload {
+  margin-bottom: 15px;
+}
+
+.ui.container.receipt-processor .verifier-wrapper .add-kitchen-items-form {
+  margin-top: 15px;
+}
+
+.ui.container.receipt-processor .verifier-wrapper .add-kitchen-items-form .add-item.button {
+  margin-bottom: 15px;
+}

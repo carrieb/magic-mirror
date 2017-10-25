@@ -10,12 +10,13 @@ class QuantityFormField extends React.Component {
     super(props);
 
     this.state = {
-      amount: null,
-      unit: 'quarter cup'
+      amount: 1,
+      unit: 'cup'
     };
   }
 
   onUnitChange(value, text, choice) {
+    console.log(value, text, choice);
     this.setState({ unit: value });
   }
 
@@ -31,9 +32,10 @@ class QuantityFormField extends React.Component {
   }
 
   render() {
+    console.log(this.props.quantity.unit);
     return (
       <InputDropdownGroup className={this.props.className}
-        options={['', 'tsp', 'tbsp', 'quarter cup', 'cup']}
+        options={['tsp', 'tbsp', 'quarter cup', 'cup']}
         defaultDropdownValue={this.props.quantity ? this.props.quantity.unit : 'cup'}
         onDropdownChange={(value, text, choice) => this.onUnitChange(value, text, choice)}>
         <input value={this.props.quantity ? this.props.quantity.amount : ''}
@@ -47,6 +49,7 @@ class QuantityFormField extends React.Component {
 }
 
 QuantityFormField.propTypes = {
+  quantity: PropTypes.object,
   className: PropTypes.string,
   onChange: PropTypes.func
 }

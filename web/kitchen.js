@@ -11,6 +11,10 @@ import AddItemsForm from 'components/kitchen/AddItemsForm.react';
 import KitchenNavigation from 'components/kitchen/KitchenNavigation.react';
 import KitchenInventory from 'components/kitchen/KitchenInventory.react';
 
+import MessagingUtil from 'util/messaging-util';
+
+MessagingUtil.subscribeDevice();
+
 import 'styles/kitchen.css';
 
 
