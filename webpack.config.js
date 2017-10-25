@@ -19,6 +19,10 @@ module.exports = [{
         use: ['json-loader']
       },
       {
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader']
+      },
+      {
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
       },
@@ -42,6 +46,7 @@ module.exports = [{
      src: path.join(__dirname, 'src'),
      components: path.join(__dirname, 'web', 'components'),
      styles: path.join(__dirname, 'public', 'styles'),
+     sass: path.join(__dirname, 'web', 'styles'),
      state: path.join(__dirname, 'web', 'state')
    }
  }

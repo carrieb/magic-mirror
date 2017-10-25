@@ -1,0 +1,36 @@
+div.kitchen-inventory {
+  div.header {
+    margin-bottom: 10px;
+    padding-top: 10px;
+
+    div.ui.grid {
+      div.column {
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+    }
+
+    .ui.animated.button {
+      .visible.content {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  > div.content {
+    margin-bottom: 75px;
+  }
+
+  div.footer {
+    position: fixed;
+    background: #e8e8e8;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    text-align: center;
+
+    button {
+      margin: 10px 10px;
+    }
+  }
+}

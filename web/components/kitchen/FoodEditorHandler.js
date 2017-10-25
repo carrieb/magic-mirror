@@ -14,13 +14,14 @@ import QuantityFormField from './item/form/QuantityFormField.react';
 import uniqueId from 'lodash/uniqueId';
 import _isEmpty from 'lodash/isEmpty';
 import _isString from 'lodash/isString';
+import _clone from 'lodash/clone';
 
 class FoodEditorHandler extends React.Component {
   constructor(props) {
     super(props);
 
     const name = this.props.match.params.foodName;
-    const foodItem = KitchenState.DEFAULT_ITEM;
+    const foodItem = _clone(KitchenState.DEFAULT_ITEM);
     foodItem.description = name;
 
     this.handleFormRef = this.handleFormRef.bind(this);
@@ -36,6 +37,13 @@ class FoodEditorHandler extends React.Component {
 
   componentWillMount() {
     this.loadItem();
+  }
+
+  componentDidUpdate() {
+    if (this.state.editingName) {
+      // focus on that span
+      $(this.nameInput).focus();
+    }
   }
 
   loadItem() {
@@ -94,9 +102,10 @@ class FoodEditorHandler extends React.Component {
     // TODO: move this to kitchen state
     ApiWrapper.updateFood(food)
       .done((insertedId) => {
+        const foodItem = this.state.foodItem;
         if (_isString(insertedId)) {
           console.log('updated food', insertedId);
-          food._id = insertedId;
+          foodItem._id = insertedId;
           KitchenState.addItem(food);
         }
         this.props.history.push('/kitchen')
@@ -140,6 +149,13 @@ class FoodEditorHandler extends React.Component {
     this.props.history.push(`/kitchen/${foodItem.description}`);
   }
 
+  handleKeypress(ev) {
+    if (ev.key === 'Enter') {
+      ev.preventDefault();
+      this.editName();
+    }
+  }
+
   render() {
     const foodItem = this.state.foodItem;
 
@@ -150,14 +166,14 @@ class FoodEditorHandler extends React.Component {
     //     ref={(ref) => this.nameInput = ref}/>
     // </div>);
 
-    console.log(foodItem.img);
+    console.log(foodItem);
 
     const headerContent = this.state.editingName
       ? <div>
           <span ref={(ref) => this.nameInput = ref}
             suppressContentEditableWarning={true}
             contentEditable="true" placeholder="AAA"
-            onChange={(ev) => console.log(ev)}>{foodItem.description}</span>
+            onKeyPress={(ev) => this.handleKeypress(ev)}>{foodItem.description}</span>
           <a onClick={() => this.editName()}><i className="check icon"></i></a>
         </div>
     :  foodItem.description;
@@ -169,7 +185,6 @@ class FoodEditorHandler extends React.Component {
     );
 
     let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
-    console.log(imageUrl);
     const image = (
       <div className="blurring dimmable image" ref={(r) => this.handleDimmerRef(r)}>
         <div className="ui inverted dimmer">

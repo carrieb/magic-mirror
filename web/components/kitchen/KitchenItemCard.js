@@ -7,6 +7,8 @@ import _noop from 'lodash/noop';
 
 import { Link } from 'react-router-dom';
 
+import 'sass/kitchen/food-card.scss';
+
 class KitchenItemCard extends React.Component {
   constructor(props) {
     super(props);
@@ -28,7 +30,6 @@ class KitchenItemCard extends React.Component {
 
   render() {
     const foodItem = this.props.foodItem;
-    console.log(foodItem);
     let area = foodItem.area || 'Fridge';
     let category = foodItem.category || 'Condiment';
 
@@ -81,7 +82,6 @@ class KitchenItemCard extends React.Component {
 
 KitchenItemCard.propTypes = {
   foodItem: PropTypes.object.isRequired,
-  onSettingsClick: PropTypes.func,
   star: PropTypes.func
 };
 

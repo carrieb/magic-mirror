@@ -6,6 +6,11 @@ import KitchenState from 'state/KitchenState';
 
 import KitchenItemCard from 'components/kitchen/KitchenItemCard';
 
+import 'sass/kitchen/inventory.scss';
+
+const ALL_CATEGORIES = ['Condiment', 'Dairy', 'Produce', 'Meat', 'Leftovers'];
+const ALL_ZONES = ['Fridge', 'Freezer', 'Pantry'];
+
 class KitchenInventory extends React.Component {
   constructor(props) {
     super(props);
@@ -13,7 +18,9 @@ class KitchenInventory extends React.Component {
     this.state = {
       kitchen: [],
       selectedItem: null,
-      layout: 'block'
+      layout: 'Cards',
+      categories: new Set(ALL_CATEGORIES),
+      zones: new Set(ALL_ZONES)
     }
   }
 
@@ -24,22 +31,6 @@ class KitchenInventory extends React.Component {
     });
   }
 
-  showModal(idx) {
-    return () => {
-      console.log(this.state.kitchen);
-      const selectedItem = this.state.kitchen[idx];
-      this.setState({ selectedItem });
-      //$('.ui.modal').modal('show');
-    };
-  }
-
-  showAddModal() {
-    let kitchen = this.state.kitchen;
-    kitchen.push({ description: 'new' });
-    const selectedItem = kitchen[kitchen.length -1]
-    this.setState({ selectedItem, kitchen });
-  }
-
   delete(id) {
     KitchenState.trashFood(id, (kitchen) => {
       console.log(kitchen);
@@ -48,7 +39,35 @@ class KitchenInventory extends React.Component {
   }
 
   star(id) {
-    
+
+  }
+
+  toggleLayout() {
+    this.setState({
+      layout: this.state.layout === 'Cards' ? 'List' : 'Cards'
+    });
+  }
+
+  toggleCategory(ev) {
+    const category = ev.target.innerText;
+    const categories = this.state.categories;
+    if (categories.has(category)) {
+      categories.delete(category);
+    } else {
+      categories.add(category);
+    }
+    this.setState({ categories });
+  }
+
+  toggleZone(ev) {
+    const zone = ev.target.innerText;
+    const zones = this.state.zones;
+    if (zones.has(zone)) {
+      zones.delete(zone);
+    } else {
+      zones.add(zone);
+    }
+    this.setState({ zones });
   }
 
   componentDidUpdate() {
@@ -59,37 +78,40 @@ class KitchenInventory extends React.Component {
 
   render() {
     let inventory = null;
-    let layoutOptions = [
-      <a className={`item icon-only ${this.state.layout === 'block' ? 'active': ''}`}
-         key="block-layout" onClick={() => this.setState({ layout: 'block' }) }>
-        <i className="block layout icon"></i>
-      </a>,
-      <a className={`item icon-only ${this.state.layout === 'table' ? 'active': ''}`}
-         key="list-layout" onClick={() => this.setState({ layout: 'table' }) }>
-        <i className="list layout icon"></i>
-      </a>
-    ];
 
-    if (this.state.layout === 'block') {
-      let itemCards = this.state.kitchen.map((foodItem, idx) => {
+    if (this.state.layout === 'Cards') {
+      let itemCards = this.state.kitchen
+      .filter((item) => {
+        let filtered = false;
+        if (item.zone && !this.state.zones.has(item.zone)) {
+          filtered = true;
+        }
+        if (item.category && !this.state.categories.has(item.category)) {
+          filtered = true;
+        }
+        console.log(this.state.zones, this.state.categories, item.category, item.zone, filtered);
+        return !filtered;
+      })
+      .map((foodItem, idx) => {
         return (
           <KitchenItemCard foodItem={foodItem}
                            delete={(id) => this.delete(id)}
-                           key={idx}
-                           onSettingsClick={this.showModal(idx)}/>
+                           key={idx}/>
         );
       });
 
       inventory = (
         <div className="kitchen-inventory">
           <div className="ui six doubling cards">
-            { itemCards.length > 0 ? itemCards : <div className="ui card"><div className="content">Nothing in inventory.</div></div> }
+            { itemCards.length > 0 ?
+              itemCards :
+              <div className="ui card"><div className="content">Nothing in inventory.</div></div> }
           </div>
         </div>
       );
     }
 
-    if (this.state.layout === 'table') {
+    if (this.state.layout === 'List') {
       const itemRows = this.state.kitchen.map((foodItem, idx) => {
         let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
         return (
@@ -122,12 +144,57 @@ class KitchenInventory extends React.Component {
     }
 
     // TODO: add ability to add any item custom
+    const buttonClass = (isActive) => `ui ${isActive ? 'active ' : ''} button`;
+    const button = (activeSet, name, onClick) => {
+      return (
+        <div onClick={onClick}
+          key={name}
+          className={ buttonClass(activeSet.has(name)) }>{ name }</div>
+      );
+    }
+    const zoneButtons = ALL_ZONES.map((zone) => button(this.state.zones, zone, (ev) => this.toggleZone(ev)));
+    const categoryButtons = ALL_CATEGORIES.map((category) => button(this.state.categories, category, (ev) => this.toggleCategory(ev)));
+
+    const layoutClassName = (layout) => `ui ${this.state.layout === layout ? 'active ' : ''} vertical animated icon button`;
     return (
       <div className="kitchen-inventory">
-        { inventory }
-        <div>
+        <div className="header">
+          <div className="ui grid">
+            <div className="ui four wide column">
+              <div className="ui basic fluid buttons">
+                <div className={layoutClassName('Cards')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
+                  <div className="hidden content">Cards</div>
+                  <div className="visible content">
+                    <i className="grid layout icon"/>
+                  </div>
+                </div>
+                <div className={layoutClassName('List')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
+                  <div className="hidden content">List</div>
+                  <div className="visible content">
+                    <i className="list layout icon"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="ui twelve wide column">
+              <div className="ui basic fluid buttons">
+                { zoneButtons }
+              </div>
+            </div>
+            <div className="ui sixteen wide column">
+              <div className="ui basic fluid buttons">
+                { categoryButtons }
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div className="content">
+          { inventory }
+        </div>
+        <div className="footer">
           <Link to="/kitchen/new">
-            <button className="ui fluid huge button">Add Item</button>
+            <button className="ui large purple button">Add Item</button>
           </Link>
         </div>
       </div>

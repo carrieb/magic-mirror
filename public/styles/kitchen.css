@@ -59,10 +59,6 @@ input[type=number] {
   margin-top: 15px;
 }
 
-.kitchen-container button.ui.button {
-  margin-top: 20px;
-}
-
 .ui.transparent.input {
   margin-left: .75rem;
   font-weight: 700;

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { withRouter } from 'react-router';
+
 import { NavLink } from 'react-router-dom';
 
 class KitchenNavigation extends React.Component {
@@ -26,4 +28,4 @@ class KitchenNavigation extends React.Component {
   }
 }
 
-export default KitchenNavigation;
+export default withRouter(KitchenNavigation);
