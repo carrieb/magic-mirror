@@ -4,15 +4,28 @@ div.kitchen-inventory {
     padding-top: 10px;
 
     div.ui.grid {
+      div.row {
+        padding: 0;
+      }
       div.column {
         padding-top: 5px;
         padding-bottom: 5px;
+
+        + div.column {
+          padding-left: 0;
+        }
       }
     }
 
     .ui.animated.button {
       .visible.content {
         margin-right: 5px;
+      }
+    }
+
+    .zone-buttons, .category-buttons {
+      img {
+        max-height: 16px;
       }
     }
   }

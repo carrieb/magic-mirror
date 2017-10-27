@@ -19,7 +19,7 @@ class KitchenInventory extends React.Component {
       kitchen: [],
       selectedItem: null,
       layout: 'Cards',
-      categories: new Set(ALL_CATEGORIES),
+      categories: new Set(['Dairy', 'Produce', 'Meat', 'Leftovers']),
       zones: new Set(ALL_ZONES)
     }
   }
@@ -48,8 +48,7 @@ class KitchenInventory extends React.Component {
     });
   }
 
-  toggleCategory(ev) {
-    const category = ev.target.innerText;
+  toggleCategory(ev, category) {
     const categories = this.state.categories;
     if (categories.has(category)) {
       categories.delete(category);
@@ -57,10 +56,10 @@ class KitchenInventory extends React.Component {
       categories.add(category);
     }
     this.setState({ categories });
+    document.activeElement.blur();
   }
 
-  toggleZone(ev) {
-    const zone = ev.target.innerText;
+  toggleZone(ev, zone) {
     const zones = this.state.zones;
     if (zones.has(zone)) {
       zones.delete(zone);
@@ -68,6 +67,7 @@ class KitchenInventory extends React.Component {
       zones.add(zone);
     }
     this.setState({ zones });
+    document.activeElement.blur();
   }
 
   componentDidUpdate() {
@@ -89,7 +89,6 @@ class KitchenInventory extends React.Component {
         if (item.category && !this.state.categories.has(item.category)) {
           filtered = true;
         }
-        console.log(this.state.zones, this.state.categories, item.category, item.zone, filtered);
         return !filtered;
       })
       .map((foodItem, idx) => {
@@ -144,6 +143,18 @@ class KitchenInventory extends React.Component {
     }
 
     // TODO: add ability to add any item custom
+    const animatedButtonClass = (isActive) => `ui ${isActive ? 'active ' : ''} vertical animated icon button`;
+    const animatedButton = (name, isActive, onClick, imgSrc) => {
+      return (
+        <div className={ animatedButtonClass(isActive(name)) }
+          key={name}
+          tabIndex="0"
+          onClick={onClick}>
+          <div className="hidden content"><img src={imgSrc}/></div>
+          <div className="visible content">{name}</div>
+        </div>
+      );
+    }
     const buttonClass = (isActive) => `ui ${isActive ? 'active ' : ''} button`;
     const button = (activeSet, name, onClick) => {
       return (
@@ -152,41 +163,50 @@ class KitchenInventory extends React.Component {
           className={ buttonClass(activeSet.has(name)) }>{ name }</div>
       );
     }
-    const zoneButtons = ALL_ZONES.map((zone) => button(this.state.zones, zone, (ev) => this.toggleZone(ev)));
-    const categoryButtons = ALL_CATEGORIES.map((category) => button(this.state.categories, category, (ev) => this.toggleCategory(ev)));
+    const zoneButtons = ALL_ZONES.map((zone) => animatedButton(zone, (z) => this.state.zones.has(z), (ev) => this.toggleZone(ev, zone), `/images/kitchen/${zone.toLowerCase()}.png`));
+    const categoryButtons = ALL_CATEGORIES.map((cat) => animatedButton(cat, (c) => this.state.categories.has(c), (ev) => this.toggleCategory(ev, cat), `/images/kitchen/${cat.toLowerCase()}.png`));
 
     const layoutClassName = (layout) => `ui ${this.state.layout === layout ? 'active ' : ''} vertical animated icon button`;
     return (
       <div className="kitchen-inventory">
         <div className="header">
           <div className="ui grid">
-            <div className="ui four wide column">
-              <div className="ui basic fluid buttons">
-                <div className={layoutClassName('Cards')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
-                  <div className="hidden content">Cards</div>
-                  <div className="visible content">
-                    <i className="grid layout icon"/>
+            <div className="row">
+              <div className="ui four wide column">
+                <div className="ui basic fluid buttons">
+                  <div className={layoutClassName('Cards')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
+                    <div className="hidden content">Cards</div>
+                    <div className="visible content">
+                      <i className="grid layout icon"/>
+                    </div>
+                  </div>
+                  <div className={layoutClassName('List')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
+                    <div className="hidden content">List</div>
+                    <div className="visible content">
+                      <i className="list layout icon"/>
+                    </div>
                   </div>
                 </div>
-                <div className={layoutClassName('List')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
-                  <div className="hidden content">List</div>
-                  <div className="visible content">
-                    <i className="list layout icon"/>
-                  </div>
+              </div>
+              <div className="ui twelve wide column">
+                <div className="ui basic fluid buttons zone-buttons">
+                  { zoneButtons }
                 </div>
               </div>
             </div>
-            <div className="ui twelve wide column">
-              <div className="ui basic fluid buttons">
-                { zoneButtons }
+
+            <div className="row">
+              <div className="ui sixteen wide column">
+                <div className="ui basic fluid buttons category-buttons">
+                  { categoryButtons }
+                </div>
               </div>
             </div>
-            <div className="ui sixteen wide column">
-              <div className="ui basic fluid buttons">
-                { categoryButtons }
-              </div>
-            </div>
+
+
           </div>
+
+
 
         </div>
         <div className="content">

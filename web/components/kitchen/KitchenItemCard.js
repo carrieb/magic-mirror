@@ -30,7 +30,7 @@ class KitchenItemCard extends React.Component {
 
   render() {
     const foodItem = this.props.foodItem;
-    let area = foodItem.area || 'Fridge';
+    let zone = foodItem.zone || 'Fridge';
     let category = foodItem.category || 'Condiment';
 
     let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
@@ -40,13 +40,15 @@ class KitchenItemCard extends React.Component {
 
     const content = (
       <div className="content">
-        <i className="right floated large star icon" onClick={this.props.star}></i>
-        <Link to={`/kitchen/${foodItem.description}`}>
-          <i className="grey right floated large link setting icon"></i>
-        </Link>
-        <div className="header">{foodItem.description}</div>
+        <div className="header">
+          <i className="right floated star icon" onClick={this.props.star}></i>
+          <Link to={`/kitchen/${foodItem.description}`}>
+            <i className="grey right floated link setting icon"></i>
+          </Link>
+          <span className="title">{foodItem.description}</span>
+        </div>
         <div className="meta">
-          <a>{area}</a><br/>
+          <a>{zone}</a><br/>
           <a>{category}</a>
         </div>
       </div>

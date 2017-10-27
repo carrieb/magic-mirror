@@ -1,4 +1,9 @@
 div.food-card.ui.card {
+  .header {
+    .title {
+      max-width: 80%;
+    }
+  }
   .image {
     background: white;
 
@@ -6,6 +11,8 @@ div.food-card.ui.card {
       max-height: 200px;
       width: auto;
       margin: auto;
+      max-width: 100%;
+      border-radius: 10px;
     }
   }
 }

@@ -3,7 +3,9 @@ import { withRouter } from 'react-router-dom'
 
 import ApiWrapper from '../../util/api-wrapper';
 import KitchenState from '../../state/KitchenState';
+import KitchenConstants from 'state/kitchen/kitchen-constants';
 
+import Dropdown from 'components/common/dropdown.react';
 import DropdownOptions from 'components/common/dropdown-options';
 import InputDropdownGroup from 'components/common/input-dropdown-group.react';
 
@@ -16,6 +18,8 @@ import _isEmpty from 'lodash/isEmpty';
 import _isString from 'lodash/isString';
 import _clone from 'lodash/clone';
 
+import 'sass/kitchen/food-editor.scss';
+
 class FoodEditorHandler extends React.Component {
   constructor(props) {
     super(props);
@@ -26,6 +30,8 @@ class FoodEditorHandler extends React.Component {
 
     this.handleFormRef = this.handleFormRef.bind(this);
     this.updateImage = this.updateImage.bind(this);
+    this.onZoneChange = this.onZoneChange.bind(this);
+    this.onCategoryChange = this.onCategoryChange.bind(this);
 
     this.state = {
       foodItem,
@@ -131,9 +137,15 @@ class FoodEditorHandler extends React.Component {
     this.setState({ foodItem });
   }
 
-  onCategoryChange(ev) {
+  onCategoryChange(value, text, choice) {
     const foodItem = this.state.foodItem;
-    foodItem.category = ev.target.value;
+    foodItem.category = value;
+    this.setState({ foodItem });
+  }
+
+  onZoneChange(value, text, choice) {
+    const foodItem = this.state.foodItem;
+    foodItem.zone = value;
     this.setState({ foodItem });
   }
 
@@ -205,6 +217,16 @@ class FoodEditorHandler extends React.Component {
       </div>
     );
 
+    const valueToOption = (val) => (
+      <div className="item" data-value={val} key={val}> 
+        <img className="ui mini avatar image" src={`/images/kitchen/${val.toLowerCase()}.png`}/>
+        {val}
+      </div>
+    );
+
+    const zoneOptions = KitchenConstants.ALL_ZONES.map(valueToOption);
+    const categoryOptions = KitchenConstants.ALL_CATEGORIES.map(valueToOption);
+
     const content = (
       <div className="ui grid">
         <div className="five wide column">
@@ -232,11 +254,22 @@ class FoodEditorHandler extends React.Component {
           <h5>Category</h5>
         </div>
         <div className="eleven wide column">
-          <div className="ui fluid input">
-            <input type="text"
-              value={this.state.foodItem.category}
-              onChange={(ev) => this.onCategoryChange(ev)}/>
-          </div>
+          <Dropdown className="fluid selection category-dropdown"
+                    defaultValue={ this.state.foodItem.category }
+                    options={{ onChange: this.onCategoryChange }}>
+            { categoryOptions }
+          </Dropdown>
+        </div>
+
+        <div className="five wide column">
+          <h5>Zone</h5>
+        </div>
+        <div className="eleven wide column">
+          <Dropdown className="fluid selection zone-dropdown"
+                    defaultValue={ this.state.foodItem.zone }
+                    options={{ onChange: this.onZoneChange }}>
+            { zoneOptions }
+          </Dropdown>
         </div>
 
         <div className="sixteen wide column">

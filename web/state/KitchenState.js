@@ -45,7 +45,8 @@ const KitchenState = {
       unit: 'cup',
       amount: 1
     },
-    category: 'Condiment'
+    category: 'Leftovers',
+    zone: 'Fridge'
   },
 
   getKitchen(callback) {

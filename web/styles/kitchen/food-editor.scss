@@ -1,0 +1,18 @@
+.food-editor-container {
+  img {
+    border-radius: 10px;
+  }
+
+  .dropdown {
+    img.image {
+      border-radius: 0;
+    }
+  }
+
+  .zone-dropdown {
+    i.dropdown.icon {
+      padding-top: 15px !important;
+    }
+  }
+
+}
