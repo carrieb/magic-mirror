@@ -39,7 +39,7 @@ class KitchenInventory extends React.Component {
   }
 
   star(id) {
-
+    // TODO: ..
   }
 
   toggleLayout() {
@@ -155,18 +155,11 @@ class KitchenInventory extends React.Component {
         </div>
       );
     }
-    const buttonClass = (isActive) => `ui ${isActive ? 'active ' : ''} button`;
-    const button = (activeSet, name, onClick) => {
-      return (
-        <div onClick={onClick}
-          key={name}
-          className={ buttonClass(activeSet.has(name)) }>{ name }</div>
-      );
-    }
+
     const zoneButtons = ALL_ZONES.map((zone) => animatedButton(zone, (z) => this.state.zones.has(z), (ev) => this.toggleZone(ev, zone), `/images/kitchen/${zone.toLowerCase()}.png`));
     const categoryButtons = ALL_CATEGORIES.map((cat) => animatedButton(cat, (c) => this.state.categories.has(c), (ev) => this.toggleCategory(ev, cat), `/images/kitchen/${cat.toLowerCase()}.png`));
 
-    const layoutClassName = (layout) => `ui ${this.state.layout === layout ? 'active ' : ''} vertical animated icon button`;
+    const layoutClassName = (layout) => `ui ${this.state.layout === layout ? 'disabled active' : ''} vertical animated icon button`;
     return (
       <div className="kitchen-inventory">
         <div className="header">
