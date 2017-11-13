@@ -4,7 +4,14 @@
 
 ```
 > npm install
-> webpack --watch
+> npm install -g webpack
+> cd semantic
+> npm install -g gulp
+> gulp build
+```
+##### Run
+```
+> wepback --watch
 > node node-app.js
 ```
 

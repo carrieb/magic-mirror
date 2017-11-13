@@ -5,11 +5,19 @@ import ItemInputs from './item-inputs';
 
 import AddItemsForm from '../kitchen/AddItemsForm.react';
 
+import KitchenState from 'state/KitchenState';
+
+import 'sass/receipts/verifier.scss';
+
+import _assign from 'lodash/assign';
+import _clone from 'lodash/clone';
+
 class Verifier extends React.Component {
   constructor(props) {
     super(props);
     this.submitItems = this.submitItems.bind(this);
     this.toggleCollapsed = this.toggleCollapsed.bind(this);
+    this.updateItems = this.updateItems.bind(this);
 
     this.state = {
       filename: this.props.match.params.filename,
@@ -25,8 +33,12 @@ class Verifier extends React.Component {
     const filename = this.props.match.params.filename;
     if (filename) {
       ApiWrapper.extractText(filename)
-        .done((items) => {
-          console.log(items);
+        .done((partialItems) => {
+          const items = partialItems.map((item) => {
+            const def = _clone(KitchenState.DEFAULT_ITEM);
+            const result = _assign(def, item);
+            return result;
+          });
           this.setState({ items, loaded: true });
         })
         .fail(() => {
@@ -36,12 +48,15 @@ class Verifier extends React.Component {
   }
 
   submitItems(ev) {
-    console.log(this.state.items);
     ApiWrapper.submitItems(this.state.items)
       .done(() => {
         this.setState({ submitted: true });
       });
     ev.preventDefault();
+  }
+
+  updateItems(items) {
+    this.setState({ items });
   }
 
   toggleCollapsed() {
@@ -80,16 +95,12 @@ class Verifier extends React.Component {
         <div>
           <img className="ui centered bordered image"
                src={`/processed-images/${this.state.filename}`}/>
-          <AddItemsForm />
-          <form className="ui form">
-            { itemInputs }
-
-            <button type="submit"
-              className={`ui massive fluid primary toggle button ${this.state.submitted ? 'active disabled' : ''}`}
-              onClick={this.submitItems}>
-              {this.state.submitted ? <span><i className="checkmark icon"></i>Success</span> : 'Submit'}
-            </button>
-          </form>
+          <AddItemsForm update={this.updateItems} items={this.state.items}/>
+          <button type="submit"
+            className={`ui massive fluid primary toggle button ${this.state.submitted ? 'active disabled' : ''}`}
+            onClick={this.submitItems}>
+            {this.state.submitted ? <span><i className="checkmark icon"></i>Success</span> : 'Submit'}
+          </button>
         </div>
       );
     }

@@ -34,21 +34,20 @@ const GuildWars2Api = {
   },
 
   fetchDailyAchievementsWithMetadata(done, err) {
+    //console.log('hey');
     this.fetchDailyAchievements((achievements) => {
-      const ids = new Set(achievements.pve.map((achievement) => achievement.id));
-      //console.log(achievements.pve);
+      const ids = new Set(achievements.pve.map((achiev) => achiev.id));
+
       let achievementIndex = {}
       let numUpdated = 0;
-      achievements.pve.forEach((achievement) => achievementIndex[achievement.id] = achievement);
+      achievements.pve.forEach((achiev) => achievementIndex[achiev.id] = achiev);
+
+      // TODO: lookup account status for each too
       this.fetchAchievementsData(ids, (metas) => {
-        //console.log(metas);
         metas.forEach((meta) => {
-          //console.log(meta);
           const id = meta.id;
           achievementIndex[id] = assign(achievementIndex[id], meta);
-          //console.log(achievementIndex);
           numUpdated++;
-          //console.log(ids, numUpdated, ids.size);
           if (numUpdated === ids.size) {
             const res = Object.keys(achievementIndex).map((key) => achievementIndex[key]);
             done(res);

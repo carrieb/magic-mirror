@@ -1,0 +1,37 @@
+.verifier-wrapper {
+  margin-bottom: 25px;
+
+  .ui.grid {
+    margin: 0;
+
+    .column:not(.row) {
+      padding: 0 10px;
+      margin-top: 10px;
+    }
+  }
+
+  .item-inputs-wrapper {
+    margin-bottom: 10px;
+
+    .ui.labeled.input {
+        text-align: left;
+    }
+
+    .controlled-item-editor {
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      background: linear-gradient(white, rgba(244, 244, 244, 0.78));
+
+      h5 {
+        line-height: 38px;
+        text-align: right;
+      }
+
+
+
+      img.ui.mini.avatar.image {
+        border-radius: 0;
+      }
+    }
+  }
+}

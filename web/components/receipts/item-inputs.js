@@ -5,11 +5,12 @@ import ExpirationFormField from 'components/kitchen/item/form/ExpirationFormFiel
 import ServingSizeFormField from 'components/kitchen/item/form/ServingSizeFormField.react';
 import QuantityFormField from 'components/kitchen/item/form/QuantityFormField.react';
 
+import ControlledItemEditor from 'components/kitchen/controlled-item-editor.react';
+
 class ItemInputs extends React.Component {
   constructor(props) {
     super(props);
     this.toggleCollapsed = this.toggleCollapsed.bind(this);
-    this.onExpirationChange = this.onExpirationChange.bind(this);
 
     this.state = {
       collapsed: true
@@ -20,7 +21,6 @@ class ItemInputs extends React.Component {
     this.setState({
       collapsed: !this.state.collapsed
     });
-    console.log(ev);
     ev.preventDefault();
   }
 
@@ -30,37 +30,24 @@ class ItemInputs extends React.Component {
     }
   }
 
-  onExpirationChange(expiration) {
-    console.log(expiration);
-    // TODO:
-  }
-
   render() {
     const item = this.props.item;
     let extraContent;
     if (!this.state.collapsed) {
       extraContent = (
-        <div className="ui grid" style={{ marginBottom: '15px' }}>
-          <div className="five wide column"><h5>Expiration</h5></div>
-          <ExpirationFormField className="eleven wide column" onChange={this.onExpirationChange}/>
-          <div className="five wide column"><h5>Serving Size</h5></div>
-          <ServingSizeFormField className="eleven wide column" onChange={this.onServingSizeChange}/>
-          <div className="five wide column"><h5>Quantity</h5></div>
-          <QuantityFormField className="eleven wide column" onChange={this.onQuantityChange}/>
-          <div className="five wide column"><h5>Category</h5></div>
-        </div>
+        <ControlledItemEditor foodItem={item} onChange={this.props.onChange}/>
       );
     }
     return (
       <div className="item-inputs-wrapper">
-        <div className="two fields">
-          <div className="twelve wide field">
-            <input type="text" value={item.description} onChange={this.props.onChange('description')}/>
+        <div className="two unstackable fields">
+          <div className="nine wide field">
+            <input type="text" value={item.description} onChange={()=>{}}/>
           </div>
-          <div className="four wide field">
+          <div className="seven wide field">
             <div className="ui left labeled input right-aligned">
               <div className="ui label">$</div>
-              <input className="right-aligned" type="number" value={item.price} onChange={this.props.onChange('price')}/>
+              <input type="number" value={item.price} onChange={() => {}}/>
               <button className="ui basic right floated icon button" onClick={this.toggleCollapsed}>
                 <i className={`chevron ${this.state.collapsed ? 'up' : 'down'} icon`}></i>
               </button>

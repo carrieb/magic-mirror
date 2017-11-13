@@ -99,7 +99,8 @@ const ReceiptProcessor = {
         fs.stat(inputPath, (err, stats) => {
           if (err) error();
           else {
-            Tesseract.recognize(inputPath)
+            Tesseract.create({ langPath: '/Users/carolyn/projects/magic-mirror/'})
+            .recognize(inputPath)
             .then((result) => {
               saveTessaractOutput(filename, result);
               console.log('successfully got text with Tesseract');

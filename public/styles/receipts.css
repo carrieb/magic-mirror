@@ -14,10 +14,6 @@
   margin-bottom: 25px;
 }
 
-.verifier-wrapper {
-  margin-bottom: 100px;
-}
-
 .verifier-wrapper .right.floated {
   margin-left: 10px;
 }
@@ -26,10 +22,6 @@
   max-height: 300px;
   margin: 0 auto;
   margin-bottom: 20px;
-}
-
-.verifier-wrapper input.right-aligned {
-  text-align: right;
 }
 
 .verifier-wrapper button[type=submit] {

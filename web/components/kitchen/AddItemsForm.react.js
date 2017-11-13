@@ -1,36 +1,37 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import ItemInputs from '../receipts/item-inputs';
+
+import ControlledItemEditor from 'components/kitchen/controlled-item-editor.react';
+
+import KitchenState from 'state/KitchenState';
+
+import _clone from 'lodash/clone';
 
 class AddItemsForm extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      items: []
-    }
+
+    this.addItem = this.addItem.bind(this);
   }
 
-  updateItemFieldAtIndex(index) {
-    return (field) => {
-      return (ev) => {
-        console.log(ev.target.value);
-        this.state.items[index][field] = ev.target.value;
-        //console.log(this.state.items);
-        this.setState({ items: this.state.items });
-      };
-    };
+  updateItemFieldAtIndex(index, field, value) {
+    const items = this.props.items;
+    items[index][field] = value;
+    this.props.update(items);
   }
 
   addItem(ev) {
-    const items = this.state.items;
-    items.push({ description: 'new item', price: 1.11 });
-    this.setState({ items });
+    const items = this.props.items;
+    items.push(_clone(KitchenState.DEFAULT_ITEM));
+    this.props.update(items);
     ev.preventDefault();
   }
 
   render() {
-    const items = this.state.items.map((item, idx) => {
-      return <ItemInputs key={idx} item={item} onChange={this.updateItemFieldAtIndex(idx)}/>
+    const items = this.props.items.map((item, idx) => {
+      return <ItemInputs key={idx} item={item} onChange={(field, value) => this.updateItemFieldAtIndex(idx, field, value)}/>
     });
 
     return (
@@ -45,6 +46,11 @@ class AddItemsForm extends React.Component {
       </div>
     );
   }
+}
+
+AddItemsForm.propTypes = {
+  items: PropTypes.array,
+  update: PropTypes.func
 }
 
 export default AddItemsForm;

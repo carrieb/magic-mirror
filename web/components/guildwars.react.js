@@ -9,6 +9,8 @@ import isEqual from 'lodash/isEqual';
 import min from 'lodash/min';
 import max from 'lodash/max';
 
+import 'sass/mirror/guildwars.scss';
+
 class GuildWars extends React.Component {
   constructor(props) {
     super(props);
@@ -109,7 +111,7 @@ class GuildWars extends React.Component {
       return (
         <div className="statistic" key={currency.id}>
           <div className="value">
-            <img src={currency.icon} className="ui mini circular inline image"/>
+            <img src={currency.icon} className="ui mini circular inline image currency-image"/>
             { formatCurrency(currency.name, currency.value) }
           </div>
           <div className="label">

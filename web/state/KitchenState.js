@@ -46,7 +46,8 @@ const KitchenState = {
       amount: 1
     },
     category: 'Leftovers',
-    zone: 'Fridge'
+    zone: 'Fridge',
+    price: 1.00
   },
 
   getKitchen(callback) {

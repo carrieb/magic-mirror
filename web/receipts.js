@@ -18,6 +18,8 @@ import 'styles/receipts/receipts-processor.css';
 // TODO: add react router: receipt/upload receipt/crop receipt/verify
 // TODO: add semantic-ui and "steps"
 
+import 'sass/receipts/receipts.scss';
+
 const NavItem = ({children, to, exact}) => {
     return (
         <Route path={to} exact={exact} children={({match}) => (

@@ -1,7 +1,9 @@
 div.kitchen-inventory {
+
   div.header {
     margin-bottom: 10px;
     padding-top: 10px;
+    padding-bottom: 10px;
 
     div.ui.grid {
       div.row {
@@ -32,6 +34,7 @@ div.kitchen-inventory {
 
   > div.content {
     margin-bottom: 75px;
+    text-align: center;
   }
 
   div.footer {

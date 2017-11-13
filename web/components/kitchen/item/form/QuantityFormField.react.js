@@ -32,7 +32,6 @@ class QuantityFormField extends React.Component {
   }
 
   render() {
-    console.log(this.props.quantity.unit);
     return (
       <InputDropdownGroup className={this.props.className}
         options={['tsp', 'tbsp', 'quarter cup', 'cup']}
