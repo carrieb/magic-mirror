@@ -42,14 +42,17 @@ class ItemInputs extends React.Component {
       <div className="item-inputs-wrapper">
         <div className="two unstackable fields">
           <div className="nine wide field">
-            <input type="text" value={item.description} onChange={()=>{}}/>
+            <input type="text" value={item.description} onChange={(ev) => this.props.onChange('description', ev.target.value)}/>
           </div>
           <div className="seven wide field">
             <div className="ui left labeled input right-aligned">
               <div className="ui label">$</div>
-              <input type="number" value={item.price} onChange={() => {}}/>
+              <input type="number" value={item.price} onChange={(ev) => this.props.onChange('price', ev.target.value)}/>
               <button className="ui basic right floated icon button" onClick={this.toggleCollapsed}>
                 <i className={`chevron ${this.state.collapsed ? 'up' : 'down'} icon`}></i>
+              </button>
+              <button className="ui basic right floated icon button" onClick={this.props.onDelete}>
+                <i className="trash icon"></i>
               </button>
             </div>
           </div>

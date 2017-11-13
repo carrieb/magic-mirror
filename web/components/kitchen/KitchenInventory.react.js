@@ -102,7 +102,7 @@ class KitchenInventory extends React.Component {
       inventory = (
         <div className="kitchen-inventory">
           { itemCards.length > 0 ?
-            <div className="ui six doubling cards">itemCards</div> :
+            <div className="ui six doubling cards">{ itemCards }</div> :
             <div className="ui fluid card"><div className="content">Nothing in inventory.</div></div> }
         </div>
       );

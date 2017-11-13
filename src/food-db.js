@@ -72,13 +72,14 @@ const FoodDb = {
       // later we'll add a completed date to each item
       // can query there to see what's good
       // then we should have another coll for info? (expiration, image etc.)
+
+      // TODO: separate cases for item exists/does not exist
       items.forEach((item) => {
         batch
           .find({ description: item.description })
           .upsert()
           .updateOne({
-            "$inc": { "quantity": 1 },
-            "$push": { "prices": item.price, "importDates" : moment().format('MM/DD/YYYY')}
+            "$set": item,
           });
       });
       batch.execute((err, result) => {

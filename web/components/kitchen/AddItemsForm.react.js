@@ -29,10 +29,20 @@ class AddItemsForm extends React.Component {
     ev.preventDefault();
   }
 
+  removeItem(ev, idx) {
+    const items = this.props.items;
+    items.splice(idx, 1);
+    this.props.update(items);
+    ev.preventDefault();
+  }
+
   render() {
-    const items = this.props.items.map((item, idx) => {
-      return <ItemInputs key={idx} item={item} onChange={(field, value) => this.updateItemFieldAtIndex(idx, field, value)}/>
-    });
+    const items = this.props.items.map((item, idx) =>
+      <ItemInputs key={idx}
+                  item={item}
+                  onDelete={(ev) => this.removeItem(ev, idx)}
+                  onChange={(field, value) => this.updateItemFieldAtIndex(idx, field, value)}/>
+    );
 
     return (
       <div className="add-kitchen-items-form">

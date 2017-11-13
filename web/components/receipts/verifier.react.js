@@ -64,29 +64,6 @@ class Verifier extends React.Component {
   }
 
   render() {
-    let itemInputs = [];
-
-    this.state.items.forEach((item, index) => {
-      const updateAtIndex = (field) => {
-        return (ev) => {
-          console.log(ev.target.value);
-          this.state.items[index][field] = ev.target.value;
-          //console.log(this.state.items);
-          this.setState({ items: this.state.items });
-        }
-      };
-      let extraContent;
-      if (!this.state.collapsed) {
-        extraContent = 'Extra content';
-      }
-      itemInputs.push(
-        <ItemInputs key={index} item={item} onChange={updateAtIndex}/>
-      );
-      if (index !== this.state.items.length - 1) {
-        itemInputs.push(<div key={`divider-${index}`} className="ui hidden divider"></div>)
-      }
-    });
-
     let content;
     if (this.state.error) {
       content = (<div>error</div>);

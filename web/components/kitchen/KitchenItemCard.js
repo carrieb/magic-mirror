@@ -41,10 +41,6 @@ class KitchenItemCard extends React.Component {
     const content = (
       <div className="content">
         <div className="header">
-          <i className="right floated star icon" onClick={this.props.star}></i>
-          <Link to={`/kitchen/${foodItem.description}`}>
-            <i className="grey right floated link setting icon"></i>
-          </Link>
           <span className="title">{foodItem.description}</span>
         </div>
         <div className="meta">
@@ -61,6 +57,12 @@ class KitchenItemCard extends React.Component {
     }
     const extraContent = (
       <div className="extra content">
+        <span className="left floated">
+          <i className="star icon" onClick={this.props.star}></i>
+          <Link to={`/kitchen/${foodItem.description}`}>
+            <i className="grey link setting icon"></i>
+          </Link>
+        </span>
         <span>
           <i className="cube icon"></i>
           { foodItem.quantity && `${foodItem.quantity.amount} ${foodItem.quantity.unit}` }
