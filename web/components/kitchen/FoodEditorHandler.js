@@ -189,7 +189,7 @@ class FoodEditorHandler extends React.Component {
       <div>
         <ControlledItemEditor foodItem={this.state.foodItem}
                               onChange={this.updateFoodItem}/>
-        <button className="ui green fluid button" onClick={() => this.updateFields()}>Done</button>
+        <button className="ui green fluid button" style={{ marginTop: '20px' }} onClick={() => this.updateFields()}>Done</button>
       </div>
     );
 

@@ -63,10 +63,6 @@ class KitchenItemCard extends React.Component {
             <i className="grey link setting icon"></i>
           </Link>
         </span>
-        <span>
-          <i className="cube icon"></i>
-          { foodItem.quantity && `${foodItem.quantity.amount} ${foodItem.quantity.unit}` }
-        </span>
         <span className="right floated">
           { lastImport }
           <i className="trash icon" onClick={(ev) => this.handleTrashClick()}></i>

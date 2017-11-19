@@ -3,13 +3,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import KitchenState from 'state/KitchenState';
+import KitchenConstants from 'state/kitchen/kitchen-constants';
 
 import KitchenItemCard from 'components/kitchen/KitchenItemCard';
 
 import 'sass/kitchen/inventory.scss';
 
-const ALL_CATEGORIES = ['Condiment', 'Dairy', 'Produce', 'Meat', 'Leftovers'];
-const ALL_ZONES = ['Fridge', 'Freezer', 'Pantry'];
+const ALL_CATEGORIES = KitchenConstants.ALL_CATEGORIES;
+const ALL_ZONES = KitchenConstants.ALL_ZONES;
 
 class KitchenInventory extends React.Component {
   constructor(props) {
@@ -19,7 +20,7 @@ class KitchenInventory extends React.Component {
       kitchen: [],
       selectedItem: null,
       layout: 'Cards',
-      categories: new Set(['Dairy', 'Produce', 'Meat', 'Leftovers']),
+      categories: new Set(['Dairy', 'Produce', 'Meat', 'Leftovers', 'Dry Goods']),
       zones: new Set(ALL_ZONES)
     }
   }

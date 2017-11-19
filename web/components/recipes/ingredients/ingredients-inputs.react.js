@@ -10,24 +10,40 @@ class IngredientsInputs extends React.Component {
   }
 
   render() {
-    console.log(this.props);
+    const value = this.props.value;
     return <div className="ingredients-fields">
-      <div className="ui inline field">
-        <label>Name</label>
-        <div className="ui transparent input">
-          <input type="text"
-            onChange={(ev) => this.handleChange(ev, 'name')}
-            value={this.props.value.name}/>
-        </div>
-      </div><br/>
+      <div className="fields">
 
-      <div className="ui inline field">
-        <label>Quantity</label>
-        <div className="ui transparent input">
-          <input type="text"
-            onChange={(ev) => this.handleChange(ev, 'quantity')}
-            value={this.props.value.quantity}/>
+        <div className="seven wide field">
+          <label>Quantity</label>
+
+          <div className="two fields">
+            <div className="field">
+              <input type="number"
+                step="0.25"
+                placeholder="1"
+                onChange={(ev) => this.handleChange(ev, 'quantity.amount')}
+                value={this.props.value.quantity.amount}/>
+            </div>
+            <div className="field">
+              <input type="text"
+                placeholder="pkg"
+                onChange={(ev) => this.handleChange(ev, 'quantity.unit')}
+                value={value.quantity.unit}/>
+            </div>
+          </div>
         </div>
+
+        <div className="four wide field">
+          <label>Modifier</label>
+          <input type="text" value={value.modifier}/>
+        </div>
+
+        <div className="five wide field">
+          <label>Ingredient</label>
+          <input type="text" value={value.name}/>
+        </div>
+
       </div>
     </div>;
   }

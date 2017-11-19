@@ -26,6 +26,8 @@ class Header extends React.Component {
       return 'Good Morning';
     } else if (hour < 15) {
       return 'Good Day';
+    } else if (hour < 18) {
+      return 'Good Afternoon';
     } else if (hour < 21) {
       return 'Good Evening';
     } else {
@@ -35,11 +37,25 @@ class Header extends React.Component {
 
   render() {
     const now = this.state.time;
+    const cal = (
+      <svg className="calendar" width="80" height="80" style={{ float: 'left', marginRight: '20px'}}>
+        <text textAnchor="middle" x="40" y="15" style={{ fontFamily: 'Verdana', fill: 'white' }}>
+          { now.format('MMM').toUpperCase() }
+        </text>
+        <rect width="80" height="20" style={{ fill: 'none', stroke: 'white', strokeWidth: '1px'}}/>
+        <rect width="80" height="75" style={{ fill: 'none', stroke: 'white', strokeWidth: '1px'}}/>
+        <text textAnchor="middle" x="40" y="35" style={{ fontFamily: 'Verdana', fill: 'white' }}>
+          { now.format('dddd').toUpperCase() }
+        </text>
+        <text textAnchor="middle" x="40" y="60" style={{ fontFamily: 'Verdana', fill: 'white', fontSize: '20px', fontWeight: 'bold' }}>
+          { now.format('Do') }
+        </text>
+      </svg>
+    );
     return (
       <div className="header-container">
+        { cal }
         <h1>{ this.getGreeting() }, { this.props.name }!</h1>
-        <p>It's { now.format('dddd, MMMM Do') }.</p>
-        <p> { now.format('LT') }</p>
       </div>
     );
   }

@@ -1,0 +1,30 @@
+.directions-editor {
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  .delete-button {
+    float: right;
+    vertical-align: middle;
+  }
+
+  .step {
+    display: inline-block;
+  }
+
+  .directions-section {
+    .inner-component:not(:last-child) {
+      .field {
+        margin-bottom: 10px !important;
+
+      }
+    }
+
+    .step {
+      width: 85% !important;
+
+      input {
+        width: 90% !important;
+      }
+    }
+  }
+}

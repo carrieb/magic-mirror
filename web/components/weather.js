@@ -1,6 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 
+import 'sass/mirror/weather.scss';
+
 import ApiWrapper from '../util/api-wrapper';
 
 const isNight = () => {
@@ -82,7 +84,7 @@ class Weather extends React.Component {
       });
       forecastContent = (
         <div className="forcasts-container">
-          <div className="row">
+          <div className="row mx-auto">
              { forecastEls }
           </div>
         </div>

@@ -7,7 +7,7 @@ import RepeatableComponent from 'components/common/repeatable-component.react';
 
 import RecipeCard from 'components/recipes/recipe-card.react';
 import IngredientsEditor from 'components/recipes/ingredients/ingredients-editor.react';
-import DirectionsEditor from 'components/recipes/directions/DirectionsEditor.react';
+import DirectionsEditor from 'components/recipes/directions/directions-editor.react';
 
 import RecipesState from 'state/RecipesState';
 
@@ -68,32 +68,20 @@ class ApiAddRecipeForm extends React.Component {
     this.setState({ recipe });
   }
 
-  addIngredient(idx) {
-    let ingredientsList = this.state.recipe.ingredients[idx];
-    ingredientsList.push({ })
-  }
-
-  deleteIngredient(idx) {
-    // TODO:
-  }
-
   handleNameChange(ev) {
     let recipe = this.state.recipe;
     recipe.name = ev.target.value;
     this.setState({ recipe });
   }
 
-  render() {
-    console.log(this.state.recipe);
+  updateServings(ev) {
+    let recipe = this.state.recipe;
+    recipe.servings = parseInt(ev.target.value);
+    this.setState({ recipe });
+  }
 
-    const directionsSections = _range(this.state.directionsSections).map((idx) => {
-      return (
-        <div key={idx} className="directions-section">
-          <RepeatableComponent component={DirectionsFields}
-            values={this.state.recipe.directions}/>
-        </div>
-      );
-    });
+  render() {
+    //console.log(this.state.recipe);
 
     const form = (
       <form className="ui form" ref={(ref) => this.handleFormRef(ref)}>
@@ -101,6 +89,12 @@ class ApiAddRecipeForm extends React.Component {
           <label>Recipe Name</label>
           <input type="text" name="name"
             value={this.state.recipe.name} onChange={(ev) => this.handleNameChange(ev)}/>
+        </div>
+
+        <div className="field">
+          <label>Servings</label>
+          <input type="number" name="name"
+            value={this.state.recipe.servings} onChange={(ev) => this.updateServings(ev)}/>
         </div>
 
         <IngredientsEditor
@@ -111,7 +105,7 @@ class ApiAddRecipeForm extends React.Component {
           updateDirections={this.updateDirections}
           directions={this.state.recipe.directions}/>
 
-        <button className="ui red huge fluid button"
+        <button className="ui purple huge fluid button"
                 type="button"
                 onClick={() => this.saveRecipe()}>
           Save Recipe

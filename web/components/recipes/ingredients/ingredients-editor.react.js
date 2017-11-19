@@ -5,6 +5,8 @@ import RepeatableComponent from 'components/common/repeatable-component.react';
 
 import IngredientsInputs from 'components/recipes/ingredients/ingredients-inputs.react';
 
+import 'sass/recipes/ingredients-editor.scss';
+
 class IngredientsEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -49,6 +51,7 @@ class IngredientsEditor extends React.Component {
   render() {
     const ingr = this.props.ingredients;
     const moreThanOneSection = ingr.length > 1;
+
     const ingredientsSections = ingr.map((ingObj, idx) => {
       const nameField = (
         <div className="ui inline field">
@@ -59,16 +62,18 @@ class IngredientsEditor extends React.Component {
         </div>
       );
 
+      // <RepeatableComponent
+      //   values={ingObj.items}
+      //   component={IngredientsInputs}
+      //   onChange={(index, field, value) => this.updateIngredients(idx, index, field, value)}
+      //   onAdd={() => this.addIngredient(idx)}
+      //   onDelete={(index) => this.deleteIngredient(idx, index)}
+
       return (
-        <div className={`${moreThanOneSection && 'ui segment'} ingredients-section`} key={idx}>
+        <div className={`${moreThanOneSection && 'ui vertical segment'} ingredients-section`} key={idx}>
           { moreThanOneSection && nameField }
           { moreThanOneSection && <div className="ui sub header">Ingredients</div>}
-          <RepeatableComponent
-            values={ingObj.items}
-            component={IngredientsInputs}
-            onChange={(index, field, value) => this.updateIngredients(idx, index, field, value)}
-            onAdd={() => this.addIngredient(idx)}
-            onDelete={(index) => this.deleteIngredient(idx, index)}
+
           />
         </div>
       );
@@ -78,9 +83,9 @@ class IngredientsEditor extends React.Component {
       <div>
         { ingredientsSections }
         <button type="button"
-          className="ui basic olive mini fluid button add-ingredient-button"
+          className="ui olive mini fluid button add-ingredient-button"
           onClick={() => this.addIngedientsSection()}>
-            Add Ingredients Section
+            ADD SECTION
         </button>
       </div>
     );
@@ -91,7 +96,7 @@ class IngredientsEditor extends React.Component {
       onClick={() => this.toggleCollapsed()}/>
     return (
       <div className="ingredients-editor">
-        <label>{ icon }Ingredients</label>
+        <h4>{ icon }Ingredients</h4>
         { !this.state.collapsed && content }
       </div>
     );

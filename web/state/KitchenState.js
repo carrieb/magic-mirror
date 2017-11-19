@@ -45,8 +45,8 @@ const KitchenState = {
       unit: 'cup',
       amount: 1
     },
-    category: 'Leftovers',
-    zone: 'Fridge',
+    category: 'Dry Goods',
+    zone: 'Pantry',
     price: 1.00
   },
 

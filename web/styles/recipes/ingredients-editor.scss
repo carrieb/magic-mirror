@@ -1,0 +1,16 @@
+.ingredients-editor {
+
+  .ingredients-fields {
+    > .fields {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  .delete-button {
+    float: right;
+  }
+
+  input {
+    padding: 7px !important;
+  }
+}

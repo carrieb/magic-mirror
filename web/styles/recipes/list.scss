@@ -1,0 +1,14 @@
+.api-recipes-list {
+  margin-bottom: 25px !important;
+  margin-top: 20px !important;
+
+  .recipe-card {
+    .ui.card {
+      margin-right: 20px;
+    }
+  }
+
+  .collapse-toggle {
+    text-align: center;
+  }
+}

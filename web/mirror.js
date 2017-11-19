@@ -13,16 +13,16 @@ window.onload = function() {
   render(
     <div className="mirror-container">
       <BackgroundVideo/>
-      <div className="row">
-        <div className="col-xs-3">
+      <div className="ui grid">
+        <div className="left floated four wide column">
           <Wunderlist/>
           <Calendar/>
         </div>
-        <div className="col-xs-6">
+        <div className="six wide column">
           <Header/>
           <Weather/>
         </div>
-        <div className="col-xs-3">
+        <div className="right floated four wide column">
           <Wanikani/>
           <GuildWars/>
         </div>

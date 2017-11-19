@@ -23,7 +23,7 @@ class RepeatableComponent extends React.Component {
   }
 
   remove(idx) {
-    const components = this.state.components.filter((id, index) => index !== idx);
+    const components = this.state.components.filter((id, index) => index === idx);
     this.setState({ components });
     this.props.onRemove(idx);
   }
@@ -31,32 +31,32 @@ class RepeatableComponent extends React.Component {
   render() {
     const components = this.state.components.map((id, index) => {
       // TODO: pass in an onChange prop
-      const value = this.props.values[index];
+      // console.log(this.props.values);
       const comp = React.createElement(this.props.component, {
+        value: this.props.values[index],
         index,
-        value,
-        onChange: (field, value) => {
-          console.log(index, field, value);
-          this.props.onChange(index, field, value);
+        onChange: (updated) => {
+          this.props.onChange(index, updated);
         }
       });
 
       return (
         <div key={id} className="inner-component">
 
-          { this.state.components.length > 1 &&
-              <div className="delete-button"><button className="ui icon button"
-                    type="button"
-                  onClick={() => this.remove(index)}><i className="trash icon"></i></button></div> }
           { comp }
+          { this.state.components.length > 1 &&
+              <div className="delete-button"><button className="ui circular icon button"
+                    type="button"
+                    onClick={() => this.remove(index)}><i className="trash icon"></i></button></div> }
         </div>
       );
     });
 
     return (
       <div className="repeated-component">
-        <div className="ui top attached segment">{ components }</div>
-        <div className="ui basic bottom attached icon button" type="button" onClick={() => this.add()}>
+        { this.props.children }
+        <div className="ui attached segment">{ components }</div>
+        <div className="ui bottom attached violet icon button" onClick={() => this.add()}>
           <i className="plus icon"></i>
         </div>
       </div>
