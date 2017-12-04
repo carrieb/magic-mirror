@@ -55,7 +55,7 @@ class Section extends React.Component {
   addStep() {
     const section = this.props.section;
     const steps = section.steps || [];
-    steps.push({});
+    steps.push({ key: _uniqueId() });
     section.steps = steps;
     this.props.updateSection(section);
   }
@@ -69,14 +69,28 @@ class Section extends React.Component {
     this.props.updateSection(section);
   }
 
+  updateName(ev) {
+    const section = this.props.section;
+    section.name = ev.target.value;
+    this.props.updateSection(section);
+  }
+
   render() {
-    const steps = this.props.section.steps || [];
+    const section = this.props.section || {};
+    const steps = section.steps || [];
+    const nameInput = <div className="field">
+      <label>Section Name</label>
+      <input type="text" value={section.name} onChange={ this.updateName }/>
+    </div>;
     const repeated = <RepeatableComponent component={Step}
                                           values={steps}
                                           onChange={ this.updateStep }
                                           onAdd={ this.addStep }
+                                          showRemoveSelf={ this.props.totalSections > 1 }
+                                          onRemoveSelf={ this.props.deleteSection }
                                           onRemove={ this.deleteStep }>
-                                          { this.props.children }</RepeatableComponent>
+                                          { this.props.totalSections > 1 && nameInput }
+    </RepeatableComponent>
     return (
       <div className="ui vertical segment directions-section">
         { repeated }
@@ -104,7 +118,7 @@ class DirectionsEditor extends React.Component {
     // TODO: add section
     const directions = this.props.directions;
     //console.log(directions);
-    directions.push({ steps: [ {} ] });
+    directions.push({ id: _uniqueId(), steps: [ { id: _uniqueId() } ] });
     this.props.updateDirections(directions);
   }
 
@@ -121,11 +135,7 @@ class DirectionsEditor extends React.Component {
     let directionsSections = directions.map((section, i) => {
       return (
         <div key={_uniqueId()}>
-          <Section section={section} updateSection={ this.updateSection(i) }>
-            { directions.length > 1 && <div className="ui top attached teal icon button" onClick={ this.deleteSection(i) }>
-              <i className="minus icon"></i>
-            </div> }
-          </Section>
+          <Section section={section} updateSection={ this.updateSection(i) } deleteSection={ this.deleteSection(i) }/>
         </div>
       );
     });

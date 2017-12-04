@@ -1,22 +1,44 @@
-const url = 'mongodb://localhost:27017/recipes';
+const RECIPE_DB_URL = 'mongodb://localhost:27017/recipes';
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 
 const noop = () => {};
 
-const getRecipes = (done, error=noop) => {
-  MongoClient.connect(url, (err, db) => {
+function _connect(error) {
+  MongoClient.connect(RECIPE_DB_URL, error);
+}
+
+function _documents(callback, error) {
+  _connect((err, db) => {
     if (err) error(err);
     const coll = db.collection('documents');
-    coll.find().toArray((err, docs) => {
-      if (err) error(err);
-      done(docs);
-    });
+    callback(coll, db);
   });
 }
 
-const RecipesDb = {
-  getRecipes
+function getRecipes(done, error=noop) {
+  _documents((coll, db) => {
+    coll.find().toArray((err, docs) => {
+      if (err) error(err);
+      done(docs);
+      db.close();
+    });
+  }, error);
 }
 
-export default RecipesDb;
+function uploadRecipe(recipe, done, error=noop) {
+  _documents((coll, db) => {
+    coll.insertOne(recipe)
+      .then((res) => {
+        done(res.insertedId);
+        db.close();
+      })
+  }, error);
+}
+
+const RecipesDb = {
+  getRecipes,
+  uploadRecipe
+};
+
+module.exports = RecipesDb;

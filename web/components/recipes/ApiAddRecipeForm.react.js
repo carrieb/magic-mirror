@@ -12,6 +12,8 @@ import DirectionsEditor from 'components/recipes/directions/directions-editor.re
 import RecipesState from 'state/RecipesState';
 
 import _range from 'lodash/range';
+import _uniqueId from 'lodash/uniqueId';
+import _isEmpty from 'lodash/isEmpty';
 
 class DirectionsFields extends React.Component {
   render() {
@@ -26,11 +28,33 @@ class DirectionsFields extends React.Component {
 
 class ApiAddRecipeForm extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
+
+    const id = this.props.match.params.id;
     this.updateDirections = this.updateDirections.bind(this);
 
+    console.log(id);
+
+    let recipe = RecipesState.getRecipeById(id);
+    if (_isEmpty(recipe)) {
+      console.log(recipe);
+      recipe = RecipesState.DEFAULT_RECIPE;
+    }
+    recipe.ingredients.forEach((section) => {
+      section.id = _uniqueId();
+      section.items.forEach((item) => {
+        item.id = _uniqueId();
+      });
+    });
+    recipe.directions.forEach((section) => {
+      section.id = _uniqueId();
+      section.steps.forEach((step) => {
+        step.id = _uniqueId();
+      })
+    });
+
     this.state = {
-      recipe: RecipesState.DEFAULT_RECIPE
+      recipe
     }
   }
 
@@ -47,7 +71,7 @@ class ApiAddRecipeForm extends React.Component {
   }
 
   saveRecipe() {
-    console.log($(this.formRef).param());
+    console.log(this.state.recipe);
   }
 
   handleFormRef(ref) {
@@ -115,7 +139,7 @@ class ApiAddRecipeForm extends React.Component {
 
     let preview = (
       <div className="recipe-preview">
-        <RecipeCard recipe={this.state.recipe}/>
+        <RecipeCard recipe={this.state.recipe} enableCollapse={false} showActions={false}/>
       </div>
     );
 

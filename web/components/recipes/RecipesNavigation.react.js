@@ -12,13 +12,15 @@ class RecipesNavigation extends React.Component {
           <a href="/kitchen">Kitchen</a>
         </div>
         <div className="right menu">
-          <a className="item" href="/recipes/import">
-            <i className="icons icon">
-              <i className="browser icon"/>
-              <i className="inverted corner upload icon"/>
-            </i>
-            Import Recipe
-          </a>
+          <div className="item">
+            <NavLink to="/recipes/import">
+              <i className="icons icon">
+                <i className="browser icon"/>
+                <i className="inverted corner upload icon"/>
+              </i>
+              Import Recipe
+            </NavLink>
+          </div>
         </div>
       </div>
     );

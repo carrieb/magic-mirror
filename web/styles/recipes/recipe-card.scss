@@ -1,0 +1,15 @@
+.recipe-card {
+  .ui.card {
+    .ingredients-section:not(:last-child) {
+      margin-bottom: 1em;
+    }
+
+    .content.actions {
+      padding-bottom: 0;
+
+      & + .content {
+        border-top: none;
+      }
+    }
+  }
+}

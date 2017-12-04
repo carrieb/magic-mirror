@@ -10,6 +10,7 @@ import RecipesNavigation from 'components/recipes/RecipesNavigation.react';
 
 import ApiRecipesList from 'components/recipes/ApiRecipesList.react';
 import ApiAddRecipeForm from 'components/recipes/ApiAddRecipeForm.react';
+import ImportRecipeForm from 'components/recipes/import-recipe-form.react';
 
 import 'styles/recipes/recipes.css';
 
@@ -38,8 +39,9 @@ window.onload = function() {
       <div className="ui container recipes-container">
         <RecipesNavigation/>
         <Route path="/recipes" exact={true} component={Recipes}/>
+        <Route path="/recipes/edit/:id" component={ApiAddRecipeForm}/>
         <Route path="/recipes/add" component={ApiAddRecipeForm}/>
-        <Route path="/recipes/import"/>
+        <Route path="/recipes/import" component={ImportRecipeForm}/>
       </div>
     </Router>,
     document.getElementById("render-wrapper")

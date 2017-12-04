@@ -1,0 +1,12 @@
+.import-recipe {
+  .recipe-card {
+    .ui.card {
+      width: 100% !important;
+    }
+  }
+
+  .error-text {
+    margin-top: .5em;
+    color: rgb(159, 58, 56);
+  }
+}

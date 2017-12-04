@@ -1,16 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import _set from 'lodash/set';
+
 class IngredientsInputs extends React.Component {
   handleChange(ev, field) {
     if (this.props.onChange) {
-      console.log(field, ev.target.value);
-      this.props.onChange(field, ev.target.value)
+      const value = this.props.value;
+      _set(value, field, ev.target.value);
+      this.props.onChange(value);
     }
   }
 
   render() {
     const value = this.props.value;
+    const quantity = value.quantity || {};
     return <div className="ingredients-fields">
       <div className="fields">
 
@@ -23,25 +27,29 @@ class IngredientsInputs extends React.Component {
                 step="0.25"
                 placeholder="1"
                 onChange={(ev) => this.handleChange(ev, 'quantity.amount')}
-                value={this.props.value.quantity.amount}/>
+                value={quantity.amount}/>
             </div>
             <div className="field">
               <input type="text"
                 placeholder="pkg"
                 onChange={(ev) => this.handleChange(ev, 'quantity.unit')}
-                value={value.quantity.unit}/>
+                value={quantity.unit}/>
             </div>
           </div>
         </div>
 
         <div className="four wide field">
           <label>Modifier</label>
-          <input type="text" value={value.modifier}/>
+          <input type="text"
+                 value={value.modifier}
+                 onChange={(ev) => this.handleChange(ev, 'modifier')}/>
         </div>
 
         <div className="five wide field">
           <label>Ingredient</label>
-          <input type="text" value={value.name}/>
+          <input type="text"
+                value={value.name}
+                onChange={(ev) => this.handleChange(ev, 'name')}/>
         </div>
 
       </div>

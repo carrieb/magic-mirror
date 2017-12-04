@@ -11,6 +11,10 @@ const GuildWars2Api = require('../src/api/gw2-api')
 
 const GuildWars2DB = require('../src/gw2-db')
 const FoodDb = require('../src/food-db');
+const RecipesDb = require('../src/recipes-db');
+
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json();
 
 router.get('/weather', cache('1 day'), (req, res) => {
   WundergroundApi.getCurrentWeather(
@@ -66,6 +70,13 @@ router.get('/kitchen', (req, res) => {
     (result) => res.json(result),
     (err) => res.status(500).send('Failed to get kitchen.')
   );
+});
+
+router.post('/recipe', jsonParser, (req, res) => {
+  RecipesDb.uploadRecipe(req.body.recipe, (id) => {
+    // TODO: obfuscate somehow
+    res.json(id);
+  }, (err) => res.status(500).send('Failed to upload recipe.'))
 });
 
 module.exports = router;
