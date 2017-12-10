@@ -152,6 +152,23 @@ const ApiWrapper = {
       data: JSON.stringify({ recipe }),
       contentType: 'application/json; charset=utf-8'
     });
+  },
+
+  getRecipeCatalog() {
+    return $.ajax({
+      url: '/api/recipe/catalog',
+      type: 'GET',
+      contentType: 'application/json; charset=utf-8'
+    });
+  },
+
+  exportShoppingList(items) {
+    return $.ajax({
+      url: '/api/export/shopping-list',
+      type: 'POST',
+      data: JSON.stringify({ items }),
+      contentType: 'application/json; charset=utf-8'
+    });
   }
 }
 

@@ -1,29 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import IngredientsList from 'components/recipes/ingredients-list.react';
+
 import _noop from 'lodash/noop';
+import _flatten from 'lodash/flatten';
+import _sortBy from 'lodash/sortBy';
+import _uniq from 'lodash/uniq';
+import _uniqueId from 'lodash/uniqueId';
 
 import 'sass/recipes/recipe-card.scss';
 
-class Ingredient extends React.Component {
-  render() {
-    const item = this.props.item;
-    let q = item.quantity || {};
-    const remainder = q.amount - Math.floor(q.amount);
-    const whole = q.amount - remainder;
-    let amt = whole === 0 ? '' : whole + ' ';
-    if (remainder === .75) { amt += '3/4 '; }
-    if (remainder === .33) { amt += '1/3 '; }
-    if (remainder === .25) { amt += '1/4 '; }
-    if (remainder === .5) { amt += '1/2 '; }
-    const quantity = <span>{amt}{q.unit}{(q.amount > 1 && q.unit)&& 's'}</span>;
-    return (
-      <span>
-        <b>{quantity}</b>{q.unit && ' of '}{item.modifier} <a href={`/kitchen/${item.name}`}>{item.name}</a>
-      </span>
-    );
-  }
-}
+const MAX_ITEMS = 3;
 
 class Ingredients extends React.Component {
   constructor(props) {
@@ -39,28 +27,21 @@ class Ingredients extends React.Component {
   render() {
     const ingredients = this.props.ingredients || [];
     let counter = 0;
-    const ingrEls = ingredients.map((ingredientsList, i) => {
-      let shouldCollapse = (this.props.enableCollapse && (this.state.collapsed && counter > 2));
-      const title = !shouldCollapse && <div className="ui grey sub header">{ingredientsList.name || 'ingredients'}</div>;
-      const items = ingredientsList.items || [];
-
-      let itemEls = items.map((item, idx) => {
-        shouldCollapse = (this.props.enableCollapse && (this.state.collapsed && counter > 2));
-        counter++;
-        if (shouldCollapse) { return null; }
-        return <div className="item" key={idx}>
-          <Ingredient item={item}/>
-        </div>;
-      });
-
-      return (
-        <div className="ingredients-section" key={i}>
-          { title }
-          <div className="ui list">
-            { itemEls }
+    const ingrEls = ingredients.map((section, i) => {
+      const ingredients = section.items || [];
+      let shouldCollapse = this.props.enableCollapse && this.state.collapsed;
+      if (shouldCollapse && counter > MAX_ITEMS) {
+        return null;
+      } else {
+        const title = <div className="ui grey sub header">{section.name || 'ingredients'}</div>;
+        counter+=ingredients.length;
+        return (
+          <div className="ingredients-section" key={i}>
+            { title }
+            <IngredientsList items={ingredients} maxItems={ shouldCollapse ? MAX_ITEMS : 100000}/>
           </div>
-        </div>
-      );
+        );
+      }
     });
 
     return <div className="ingredients-wrapper">
@@ -78,22 +59,67 @@ class Directions extends React.Component {
   constructor(props) {
     super(props);
     this.toggleCollapse = this.toggleCollapse.bind(this);
-    this.state = { collapsed: true };
+
+    const ingredients = this.props.ingredients || [];
+    const keywords = _sortBy(_uniq(_flatten(ingredients.map((section) => section.items))
+      .map((item) => item.name)), (keyword) => -keyword.length);
+    this.state = { collapsed: true, keywords };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const keywords = _sortBy(_uniq(_flatten(nextProps.ingredients.map((section) => section.items))
+      .map((item) => item.name)), (keyword) => -keyword.length);
+    this.setState({ keywords });
   }
 
   toggleCollapse() {
     this.setState({ collapsed: !this.state.collapsed });
   }
 
+  highlightKeywords(text) {
+    //console.log(text, this.state.keywords);
+    const keywords = this.state.keywords || [];
+    let result = [];
+    let matched = [];
+    keywords.forEach((keyword) => {
+      const regex = new RegExp(keyword);
+      const match = text.match(regex);
+      if (match) {
+        //console.log(text, keyword);
+        matched.push(keyword);
+      }
+    });
+
+    if (matched.length > 0) {
+      const splitRegex = new RegExp(`(${matched.join('|')})`);
+      const split = text.split(splitRegex);
+      //console.log(split);
+      split.forEach((words) => {
+        if (matched.indexOf(words) > -1) {
+          // TODO: somehow link it with the correct amount from
+          // ingredients.
+          // using the section name?
+          result.push(<a href={`/kitchen/${words}`} key={_uniqueId()}>{words}</a>);
+        } else {
+          result.push(words);
+        }
+      });
+    } else {
+      return text;
+    }
+
+    return result;
+  }
+
   render() {
     const directions = this.props.directions || [];
     const directionEls = directions.map((directionsList, i) => {
-      const title = <div className="ui grey sub header">{ directionsList.name || 'drections' }</div>;
+      const title = <div className="ui grey sub header">{ directionsList.name || 'directions' }</div>;
       const steps = directionsList.steps || [];
 
       const stepEls = steps.map((step, idx) => {
         if ((this.props.enableCollapse) && (this.state.collapsed && idx >= 2)) { return null };
-        return <div className="item" key={idx}>{step.content}</div>
+        return <div className="item" key={idx}>{this.highlightKeywords(step.content)}</div>
       });
 
       return (
@@ -126,33 +152,56 @@ class RecipeCard extends React.Component {
 
   render() {
     const recipe = this.props.recipe;
-    console.log(recipe);
+    //console.log(recipe);
     const ingredients = <Ingredients ingredients={recipe.ingredients} enableCollapse={this.props.enableCollapse}/>
-    const directions = <Directions directions={recipe.directions} enableCollapse={this.props.enableCollapse}/>
-    const content = (
-      <div className="ui card">
+    const directions = <Directions directions={recipe.directions}
+                                   ingredients={recipe.ingredients}
+                                   enableCollapse={this.props.enableCollapse}/>
+    let innerContent;
+    if (this.props.showImage) {
+      innerContent = (
         <div className="content">
-          <div className="header">
-            {recipe.name}
-            { recipe.servings && <span className="grey-text right floated">{recipe.servings}<i className="ui grey icon food"/></span> }
+          <div className="ui grid">
+            <div className="four wide column">
+              <img src={recipe.img}/>
+            </div>
+            <div className="twelve wide column">
+              { ingredients }
+              { directions }
+            </div>
           </div>
         </div>
-        { (this.props.showImage && recipe.img) && <div className="image" style={{ borderTop: '1px solid rgba(34,36,38,.1)'}}>
-          <img src={recipe.img}/>
-        </div> }
-        { recipe.source && <div className="image">
-          <div className="ui embed" data-url={recipe.source}/>
-        </div> }
-        { this.props.showActions && <div className="content actions">
-          <i className="ui right floated edit icon" onClick={this.props.onEditClick}/>
-          <i className="ui right floated maximize icon" onClick={this.props.onMaximizeClick}/>
-        </div> }
+      );
+    } else {
+      innerContent = (
         <div className="content">
           { ingredients }
-        </div>
-        <div className="content">
           { directions }
         </div>
+      )
+    }
+    const content = (
+      <div className="ui fluid card">
+        <div className="content">
+
+          <div className="header">
+          { this.props.showActions && <div className="actions">
+            <i className="ui edit icon" onClick={this.props.onEditClick}/>
+            <i className="ui maximize icon" onClick={this.props.onMaximizeClick}/>
+            <i className="ui plus icon" onClick={this.props.onAddClick}/>
+          </div> }
+          { recipe.servings && <span className="grey-text right floated">{recipe.servings}<i className="ui grey icon food"/></span> }
+
+            {recipe.name}
+
+
+          </div>
+        </div>
+        { /* todo: toggle when we add this */ }
+        { (recipe.source && false) && <div className="image">
+          <div className="ui embed" data-url={recipe.source}/>
+        </div> }
+        { innerContent }
         { recipe.source && <div className="content">
           { recipe.source.indexOf('youtube.com') > -1 && <i className="ui red youtube play icon"/>}<a href={recipe.source}>{recipe.source}</a>
         </div> }
@@ -160,7 +209,7 @@ class RecipeCard extends React.Component {
     );
 
     return (
-      <div className="recipe-card">
+      <div className="recipe-card" onClick={this.props.onCardClick}>
         { content }
       </div>
     );
@@ -173,7 +222,9 @@ RecipeCard.propTypes = {
   showActions: PropTypes.bool,
   showImage: PropTypes.bool,
   onMaximizeClick: PropTypes.func,
-  onEditClick: PropTypes.func
+  onEditClick: PropTypes.func,
+  onCardClick: PropTypes.func,
+  onAddClick: PropTypes.func
 }
 
 RecipeCard.defaultProps = {
@@ -182,7 +233,9 @@ RecipeCard.defaultProps = {
   showActions: true,
   showImage: true,
   onMaximizeClick: _noop,
-  onEditClick: _noop
+  onEditClick: _noop,
+  onCardClick: _noop,
+  onAddClick: _noop
 }
 
 export default RecipeCard;

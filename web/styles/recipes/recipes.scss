@@ -1,0 +1,54 @@
+.recipes-route-wrapper {
+  .shopping-list {
+    &.expanded + .api-recipes-list {
+      margin-left: 20%;
+    }
+  }
+
+  .api-recipes-list {
+    .recipe-card {
+
+      &:not(:last-child) {
+        height: 60px;
+      }
+
+      overflow-y: visible;
+
+      img {
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+      }
+
+      .ingredients-wrapper {
+        padding-bottom: 1em;
+        margin-bottom: 1em;
+      }
+
+    }
+
+    margin-bottom: 75px;
+  }
+
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
+    .add-recipe-button {
+      margin-left: 64px;
+      margin-right: 64px;
+
+    }
+  }
+}
+
+.api-add-recipe-form {
+  .recipe-card {
+    .ingredients-wrapper {
+      padding-bottom: 1em;
+      margin-bottom: 1em;
+    }
+  }
+}

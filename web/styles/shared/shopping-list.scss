@@ -1,0 +1,46 @@
+.shopping-list {
+  position: absolute;
+
+  left: 0; // to account for segment
+
+  &.expanded {
+    width: 20%;
+
+    .content {
+      display: block;
+    }
+  }
+
+  z-index: 1;
+
+  background-color: white;
+
+  &:hover {
+    background-color: rgba(255,255,255,.5);
+  }
+
+  .ui.segment {
+    height: 100%;
+    padding: .5em;
+    min-height: 30px;
+
+    .right.floated {
+      float: right;
+      margin-right: 0;
+    }
+  }
+
+  .ui.list {
+    margin: 20px 10px;
+  }
+
+  .content {
+    display: none;
+    margin-top: 5px;
+  }
+
+  .export-button {
+    text-align: center;
+    margin: 20px 0px;
+  }
+}

@@ -38,24 +38,19 @@ const handleResponse = (callback, error) => {
   }
 }
 
-const handleJSONResponse = (callback) => {
+const handleJSONResponse = (callback, err) => {
   return (res) => {
     const statusCode = res.statusCode;
     const contentType = res.headers['content-type'];
 
     let error;
-    if (statusCode !== 200) {
-      error = new Error(`Request Failed.\n` +
-        `Status Code: ${statusCode}`);
+    if (statusCode !== 200 && statusCode !== 201) {
+      console.log('Status Error:', statusCode);
+      res.resume();
+      err();
     } else if (!/^application\/json/.test(contentType)) {
       error = new Error(`Invalid content-type.\n` +
         `Expected application/json but received ${contentType}`);
-    }
-    if (error) {
-      console.log(error.message);
-      // consume response data to free up memory
-      res.resume();
-      return;
     }
 
     res.setEncoding('utf8');
@@ -92,19 +87,17 @@ const RequestWrapper = {
   post(hostname, path, data, done, err, headers={}, isHttps=true) {
     //console.log(hostname, path, data, headers, isHttps);
     const opts = options(hostname, path, headers, 'POST');
-    console.log('options', opts);
     const handler = isHttps ? https : http;
     const req = handler.request(
       opts,
-      handleResponse(done, err)
+      handleJSONResponse(done, err)
     );
 
     const postData = JSON.stringify(data);
-    console.log(postData);
 
     req.on('error', (e) => {
-      console.log(e);
-      err(e)
+      console.log('error', e);
+      err(e);
     });
 
     req.write(postData);

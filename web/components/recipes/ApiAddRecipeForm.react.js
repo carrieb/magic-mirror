@@ -139,7 +139,7 @@ class ApiAddRecipeForm extends React.Component {
 
     let preview = (
       <div className="recipe-preview">
-        <RecipeCard recipe={this.state.recipe} enableCollapse={false} showActions={false}/>
+        <RecipeCard recipe={this.state.recipe} showImage={false} enableCollapse={false} showActions={false}/>
       </div>
     );
 

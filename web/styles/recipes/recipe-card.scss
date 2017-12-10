@@ -4,12 +4,17 @@
       margin-bottom: 1em;
     }
 
-    .content.actions {
+    .actions {
+      float: right;
       padding-bottom: 0;
 
       & + .content {
         border-top: none;
       }
+    }
+
+    .keyword {
+      color: blue;
     }
   }
 }

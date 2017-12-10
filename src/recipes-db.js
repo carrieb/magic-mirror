@@ -16,7 +16,7 @@ function _documents(callback, error) {
   });
 }
 
-function getRecipes(done, error=noop) {
+function getAllRecipes(done, error=noop) {
   _documents((coll, db) => {
     coll.find().toArray((err, docs) => {
       if (err) error(err);
@@ -37,7 +37,7 @@ function uploadRecipe(recipe, done, error=noop) {
 }
 
 const RecipesDb = {
-  getRecipes,
+  getAllRecipes,
   uploadRecipe
 };
 
