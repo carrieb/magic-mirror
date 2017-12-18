@@ -103,6 +103,12 @@ router.get('/recipe/catalog', (req, res) => {
   RecipesDb.getAllRecipes((recipes) => {
     res.json(recipes);
   }, (err) => res.status(500).send('Failed to retrieve recipes.'));
-})
+});
+
+router.get('/recipe/:id', (req, res) => {
+  RecipesDb.getRecipeById(req.params.id, (recipe) => {
+    res.json(recipe);
+  }, (err) => res.status(500).send(`Failed to retrieve recipe with id [${req.params.id}]`));
+});
 
 module.exports = router;

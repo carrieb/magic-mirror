@@ -48,9 +48,6 @@ let recipes = [];
 
 const DEFAULT_RECIPE = _clone(KIMCHI_RECIPE); // no id set
 
-recipes.forEach((recipe) => recipe.id = _uniqueId());
-// TODO: fill in for recipe db ids
-
 const RecipesState = {
   DEFAULT_RECIPE,
   getRecipes() {
@@ -62,9 +59,7 @@ const RecipesState = {
   },
 
   getRecipeById(id) {
-    const found = _find(recipes, ['id', id]);
-    console.log(found);
-    return found;
+    return ApiWrapper.getRecipeById(id);
   }
 };
 

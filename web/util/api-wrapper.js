@@ -162,6 +162,13 @@ const ApiWrapper = {
     });
   },
 
+  getRecipeById(id) {
+    return $.ajax({
+      url: `/api/recipe/${id}`,
+      type: 'GET'
+    });
+  },
+
   exportShoppingList(items) {
     return $.ajax({
       url: '/api/export/shopping-list',

@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 
@@ -31,7 +31,7 @@ class ApiRecipesList extends React.Component {
   onEditClick(i) {
     return () => {
       const recipe = this.state.recipes[i];
-      this.props.history.push(`/recipes/edit/${recipe.id}`);
+      this.props.history.push(`/recipes/${recipe._id}/edit`);
     }
   }
 
@@ -54,11 +54,19 @@ class ApiRecipesList extends React.Component {
     }
   }
 
+  onExpandClick(i) {
+    return () => {
+      const recipe = this.state.recipes[i];
+      this.props.history.push(`/recipes/${recipe._id}`);
+    }
+  }
+
   render() {
     console.log(this.state.recipes);
     const recipeCards = this.state.recipes.map((recipe, i) =>
       <RecipeCard recipe={recipe}
                   key={i}
+                  onExpandClick={this.onExpandClick(i)}
                   onAddClick={this.onAddClick(i)}
                   onEditClick={this.onEditClick(i)}
                   onCardClick={this.onCardClick(i)}/>

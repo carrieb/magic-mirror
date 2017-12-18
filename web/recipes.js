@@ -11,6 +11,7 @@ import RecipesNavigation from 'components/recipes/RecipesNavigation.react';
 import ApiRecipesList from 'components/recipes/ApiRecipesList.react';
 import ApiAddRecipeForm from 'components/recipes/ApiAddRecipeForm.react';
 import ImportRecipeForm from 'components/recipes/import-recipe-form.react';
+import FullRecipeView from 'components/recipes/full-recipe-view.react';
 
 import ShoppingList from 'components/shared/shopping-list.react';
 
@@ -22,6 +23,7 @@ import 'styles/recipes/recipes.css';
 import 'sass/recipes/recipes.scss';
 
 import _find from 'lodash/find';
+import _clone from 'lodash/clone';
 
 class Recipes extends React.Component {
   constructor(props) {
@@ -31,7 +33,7 @@ class Recipes extends React.Component {
   }
 
   addRecipeToList(recipe) {
-    const shoppingList = this.state.shoppingList;
+    const shoppingList = _clone(this.state.shoppingList);
     const items = RecipeUtil.getAllIngredients(recipe);
     items.forEach((item) => {
       const found = _find(shoppingList, ['name', item.name]);
@@ -69,9 +71,10 @@ window.onload = function() {
       <div className="ui container recipes-container">
         <RecipesNavigation/>
         <Route path="/recipes" exact={true} component={Recipes}/>
-        <Route path="/recipes/edit/:id" component={ApiAddRecipeForm}/>
         <Route path="/recipes/add" component={ApiAddRecipeForm}/>
         <Route path="/recipes/import" component={ImportRecipeForm}/>
+        <Route path="/recipes/:id/edit" component={ApiAddRecipeForm}/>
+        <Route path="/recipes/:id" exact={true} component={FullRecipeView}/>
       </div>
     </Router>,
     document.getElementById("render-wrapper")

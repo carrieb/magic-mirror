@@ -11,6 +11,8 @@ import DirectionsEditor from 'components/recipes/directions/directions-editor.re
 
 import RecipesState from 'state/RecipesState';
 
+import ApiWrapper from 'util/api-wrapper';
+
 import _range from 'lodash/range';
 import _uniqueId from 'lodash/uniqueId';
 import _isEmpty from 'lodash/isEmpty';
@@ -30,32 +32,33 @@ class ApiAddRecipeForm extends React.Component {
   constructor(props) {
     super(props);
 
-    const id = this.props.match.params.id;
+
     this.updateDirections = this.updateDirections.bind(this);
-
-    console.log(id);
-
-    let recipe = RecipesState.getRecipeById(id);
-    if (_isEmpty(recipe)) {
-      console.log(recipe);
-      recipe = RecipesState.DEFAULT_RECIPE;
-    }
-    recipe.ingredients.forEach((section) => {
-      section.id = _uniqueId();
-      section.items.forEach((item) => {
-        item.id = _uniqueId();
-      });
-    });
-    recipe.directions.forEach((section) => {
-      section.id = _uniqueId();
-      section.steps.forEach((step) => {
-        step.id = _uniqueId();
-      })
-    });
+    this.saveRecipe = this.saveRecipe.bind(this);
 
     this.state = {
-      recipe
+      recipe: null
     }
+  }
+
+  componentWillMount() {
+    const id = this.props.match.params.id;
+    RecipesState.getRecipeById(id)
+      .done((recipe) => {
+        recipe.ingredients.forEach((section) => {
+          section.id = _uniqueId();
+          section.items.forEach((item) => {
+            item.id = _uniqueId();
+          });
+        });
+        recipe.directions.forEach((section) => {
+          section.id = _uniqueId();
+          section.steps.forEach((step) => {
+            step.id = _uniqueId();
+          })
+        });
+        this.setState({ recipe });
+      })
   }
 
   addIngedientsSection(ev) {
@@ -72,6 +75,8 @@ class ApiAddRecipeForm extends React.Component {
 
   saveRecipe() {
     console.log(this.state.recipe);
+    ApiWrapper.uploadRecipe(this.state.recipe)
+      .done(() => console.log('ok'));
   }
 
   handleFormRef(ref) {
@@ -104,8 +109,26 @@ class ApiAddRecipeForm extends React.Component {
     this.setState({ recipe });
   }
 
+  updateSource(ev) {
+    let recipe = this.state.recipe;
+    recipe.source = ev.target.value;
+    this.setState({ recipe });
+  }
+
   render() {
     //console.log(this.state.recipe);
+    const recipe = this.state.recipe || {};
+
+    if (_isEmpty(recipe)) {
+      return (
+        <div className="ui segment">
+          <div className="ui active dimmer">
+            <div className="ui small text loader">Loading</div>
+          </div>
+          <p></p>
+        </div>
+      );
+    }
 
     const form = (
       <form className="ui form" ref={(ref) => this.handleFormRef(ref)}>
@@ -117,8 +140,14 @@ class ApiAddRecipeForm extends React.Component {
 
         <div className="field">
           <label>Servings</label>
-          <input type="number" name="name"
+          <input type="number"
             value={this.state.recipe.servings} onChange={(ev) => this.updateServings(ev)}/>
+        </div>
+
+        <div className="field">
+          <label>Source</label>
+          <input type="text"
+            value={this.state.recipe.source} onChange={(ev) => this.updateSource(ev)}/>
         </div>
 
         <IngredientsEditor
@@ -131,7 +160,7 @@ class ApiAddRecipeForm extends React.Component {
 
         <button className="ui purple huge fluid button"
                 type="button"
-                onClick={() => this.saveRecipe()}>
+                onClick={this.saveRecipe}>
           Save Recipe
         </button>
       </form>
