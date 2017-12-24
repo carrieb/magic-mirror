@@ -20,6 +20,7 @@ class FullRecipeView extends React.Component {
 
   componentWillMount() {
     const id = this.props.match.params.id;
+    console.log('full view');
     RecipesState.getRecipeById(id)
       .done((recipe) => this.setState({ recipe }));
   }
@@ -31,7 +32,7 @@ class FullRecipeView extends React.Component {
   }
 
   edit() {
-    this.props.history.push(`/recipes/${this.props.match.params.id}/edit`);
+    this.props.history.push(`/recipes/r/${this.props.match.params.id}/edit`);
   }
 
   render() {
@@ -52,6 +53,7 @@ class FullRecipeView extends React.Component {
         <div className="ui segment">
 
           <h1>{recipe.name}<span className="right floated" onClick={this.edit}><i className="ui edit icon"/></span></h1>
+          { recipe.img && <div className="ui image"><img src={recipe.img}/></div> }
           { recipe.source && <div className="ui embed" data-url={recipe.source}/> }
           <Ingredients ingredients={recipe.ingredients}/>
           <Directions directions={recipe.directions} ingredients={recipe.ingredients}/>

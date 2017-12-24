@@ -21,13 +21,18 @@ class ImportRecipeForm extends React.Component {
     this.submitRecipe = this.submitRecipe.bind(this);
     this.fieldClassName = this.fieldClassName.bind(this);
     this.validate = this.validate.bind(this);
+    this.hideIngredientHelp = this.hideIngredientHelp.bind(this);
 
     let text = LocalStorageUtil.getLastImportText();
     console.log(text);
     if (_isEmpty(text)) {
       text = { ingredients: null, directions: null, name: null, source: null };
     }
-    this.state = { recipe: null, text, errors: {} };
+    this.state = { recipe: null, text, errors: {}, showIngredientHelp: true };
+  }
+
+  hideIngredientHelp() {
+    this.setState({ showIngredientHelp: false })
   }
 
   parse() {
@@ -112,6 +117,16 @@ class ImportRecipeForm extends React.Component {
                            onChange={this.onTextChange('source')}/>
                   </div>
                 </div>
+                { this.state.showIngredientHelp && <div className="ui info message">
+                  <i className="close icon" onClick={this.hideIngredientHelp}/>
+                  <div className="header">
+                    Ingredient Parsing Rules
+                  </div>
+                  <ul className="list">
+                    <li>Quantities must be listed <b>first</b>.</li>
+                    <li>Modifiers should go in <b>parens</b>.</li>
+                  </ul>
+                </div> }
                 <div className={ this.fieldClassName('ingredients') }>
                   <label>Ingredients</label>
                   <textarea rows={10}

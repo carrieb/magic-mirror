@@ -35,7 +35,7 @@ class Directions extends React.Component {
     let result = [];
     let matched = [];
     keywords.forEach((keyword) => {
-      const regex = new RegExp(keyword);
+      const regex = new RegExp(keyword, 'i');
       const match = text.match(regex);
       if (match) {
         //console.log(text, keyword);
@@ -44,15 +44,15 @@ class Directions extends React.Component {
     });
 
     if (matched.length > 0) {
-      const splitRegex = new RegExp(`(${matched.join('|')})`);
+      const splitRegex = new RegExp(`(${matched.join('|')})`, 'i');
       const split = text.split(splitRegex);
-      //console.log(split);
       split.forEach((words) => {
-        if (matched.indexOf(words) > -1) {
+        if (matched.indexOf(words.toLowerCase()) > -1) {
           // TODO: somehow link it with the correct amount from
           // ingredients.
           // using the section name?
-          result.push(<a href={`/kitchen/${words}`} key={_uniqueId()}>{words}</a>);
+          // TODO: make the url use lower cased snake-case for name
+          result.push(<a href={`/kitchen/${words.toLowerCase()}`} key={_uniqueId()}>{words}</a>);
         } else {
           result.push(words);
         }

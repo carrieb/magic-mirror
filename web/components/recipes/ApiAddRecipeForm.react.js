@@ -61,6 +61,15 @@ class ApiAddRecipeForm extends React.Component {
       })
   }
 
+  componentDidUpdate() {
+    $('textarea').each(function () {
+      this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
+    }).on('input', function () {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+  }
+
   addIngedientsSection(ev) {
     let recipe = this.state.recipe;
     recipe.ingredients.push([{}]);

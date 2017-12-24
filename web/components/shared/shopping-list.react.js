@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import IngredientsList from 'components/recipes/ingredients/ingredients-list.react';
 
 import KitchenState from 'state/KitchenState';
+import ShoppingListState from 'state/ShoppingListState';
 
 import 'sass/shared/shopping-list.scss';
 
@@ -20,33 +21,39 @@ class ShoppingList extends React.Component {
   constructor(props) {
     super(props);
     this.toggleExpansion = this.toggleExpansion.bind(this);
+    this.addItem = this.addItem.bind(this);
     this.export = this.export.bind(this);
-    this.state = { expanded: false, inventory: [], shared: [] };
+    this.state = {
+      expanded: false,
+      items: [],
+      inventory: [],
+      shared: []
+    };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!_isEmpty(nextProps.items)) {
-      this.setState({ expanded: true });
-
-      if (!_isEqual(nextProps.items, this.props.items)) {
-        this.compareItemsToInventory(nextProps.items);
-      }
-    }
+  addItem(item) {
+    const items = this.state.items;
+    items.push(item);
+    this.setState({ items, expanded: true });
+    this.compareItemsToInventory();
   }
 
   export() {
     //ApiWrapper.exportShoppingList(this.props.items);
-    this.compareItemsToInventory(this.props.items);
+    this.compareItemsToInventory();
   }
 
-  compareItemsToInventory(items) {
+  compareItemsToInventory() {
     console.log('comparing...');
     const inventory = this.state.inventory;
 
     const shared = {};
 
+    const items = this.state.items;
+
     items.forEach((listItem) => {
-      const found = _find(inventory, (inventoryItem) => inventoryItem.description.toLowerCase() === listItem.name.toLowerCase());
+      const name = listItem.name || listItem.description;
+      const found = _find(inventory, (inventoryItem) => inventoryItem.description.toLowerCase() === name.toLowerCase());
       if (found) {
         console.log(found);
         const inventoryQty = qty(found.quantity.amount, found.quantity.unit);
@@ -55,7 +62,7 @@ class ShoppingList extends React.Component {
         console.log(inventoryQty.toString(), listItemQty.toString());
         const diff = inventoryQty.sub(listItemQty);
         console.log(diff);
-        shared[listItem.name] = { found, diff };
+        shared[name] = { found, diff };
       }
     });
 
@@ -67,6 +74,8 @@ class ShoppingList extends React.Component {
     KitchenState.getKitchen((inventory) =>  {
       this.setState({ inventory });
     });
+
+    ShoppingListState.setShoppingList(this);
   }
 
   toggleExpansion() {
@@ -74,7 +83,7 @@ class ShoppingList extends React.Component {
   }
 
   render() {
-    console.log('shopping list', this.state.shared);
+    console.log('shopping list', this.state.items);
     return (
       <div className={`shopping-list ${this.state.expanded ? 'expanded' : ''}`}>
         <div className="ui fluid segment">
@@ -85,7 +94,7 @@ class ShoppingList extends React.Component {
             {/* ugh okay how are we gonna do this */}
             {/* i just made this beautiful class!!!!! */}
             {/* pass in another prop? like compareTo= */}
-            <IngredientsList items={this.props.items}/>
+            <IngredientsList items={this.state.items}/>
             <div className="export-button">
               <button className="ui icon button" onClick={this.export}>
                 <i className="ui share alternate square icon"/>
@@ -107,4 +116,31 @@ ShoppingList.defaultProps = {
   items: []
 }
 
-export default ShoppingList;
+function withShoppingList(WrappedComponent) {
+  return class extends React.Component {
+    constructor(props) {
+      super(props);
+      this.addItem = this.addItem.bind(this);
+      this.state = { shoppingList: [] };
+    }
+
+    addItem(item) {
+      const shoppingList = this.state.shoppingList;
+      shoppingList.push(item);
+      this.setState({ shoppingList });
+    }
+
+    render() {
+      return (
+        <div>
+          <ShoppingList items={this.state.shoppingList}/>
+          <WrappedComponent addToShoppingList={this.addItem}
+                            shoppingList={this.state.shoppingList}
+                            {...this.props} />
+        </div>
+      )
+    }
+  };
+}
+
+export { ShoppingList, withShoppingList };

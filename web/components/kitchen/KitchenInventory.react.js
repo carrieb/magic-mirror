@@ -5,7 +5,14 @@ import { Link } from 'react-router-dom';
 import KitchenState from 'state/KitchenState';
 import KitchenConstants from 'state/kitchen/kitchen-constants';
 
-import KitchenItemCard from 'components/kitchen/KitchenItemCard';
+import KitchenItemCard from 'components/kitchen/kitchen-item-card.react';
+
+import ShoppingList from 'components/shared/shopping-list.react';
+import ShoppingListState from 'state/ShoppingListState';
+
+import LocalStorageUtil from 'util/local-storage-util';
+
+import _concat from 'lodash/concat';
 
 import 'sass/kitchen/inventory.scss';
 
@@ -16,12 +23,16 @@ class KitchenInventory extends React.Component {
   constructor(props) {
     super(props);
 
+    this.onTagsChange = this.onTagsChange.bind(this);
+
     this.state = {
       kitchen: [],
       selectedItem: null,
       layout: 'Cards',
       categories: new Set(['Dairy', 'Produce', 'Meat', 'Leftovers', 'Dry Goods']),
-      zones: new Set(ALL_ZONES)
+      zones: new Set(ALL_ZONES),
+      tags: LocalStorageUtil.getKitchenTags(),
+      shoppingList: ShoppingListState.getItems()
     }
   }
 
@@ -49,26 +60,16 @@ class KitchenInventory extends React.Component {
     });
   }
 
-  toggleCategory(ev, category) {
-    const categories = this.state.categories;
-    if (categories.has(category)) {
-      categories.delete(category);
-    } else {
-      categories.add(category);
-    }
-    this.setState({ categories });
-    document.activeElement.blur();
+  onTagsChange(tags) {
+    LocalStorageUtil.saveKitchenTags(tags);
+    this.setState({ tags });
   }
 
-  toggleZone(ev, zone) {
-    const zones = this.state.zones;
-    if (zones.has(zone)) {
-      zones.delete(zone);
-    } else {
-      zones.add(zone);
-    }
-    this.setState({ zones });
-    document.activeElement.blur();
+  componentDidMount() {
+    $('.ui.dropdown').dropdown({
+      onChange: this.onTagsChange
+    });
+    $('.ui.dropdown').dropdown('set selected', this.state.tags)
   }
 
   componentDidUpdate() {
@@ -84,10 +85,11 @@ class KitchenInventory extends React.Component {
       let itemCards = this.state.kitchen
       .filter((item) => {
         let filtered = false;
-        if (item.zone && !this.state.zones.has(item.zone)) {
+        console.log(item.category, this.state.tags.indexOf(item.category))
+        if (item.zone && this.state.tags.indexOf(item.zone) === -1) {
           filtered = true;
         }
-        if (item.category && !this.state.categories.has(item.category)) {
+        if (item.category && this.state.tags.indexOf(item.category) === -1) {
           filtered = true;
         }
         return !filtered;
@@ -140,69 +142,48 @@ class KitchenInventory extends React.Component {
         </table>
       );
     }
-
-    // TODO: add ability to add any item custom
-    const animatedButtonClass = (isActive) => `ui ${isActive ? 'active ' : ''} vertical animated icon button`;
-    const animatedButton = (name, isActive, onClick, imgSrc) => {
-      return (
-        <div className={ animatedButtonClass(isActive(name)) }
-          key={name}
-          tabIndex="0"
-          onClick={onClick}>
-          <div className="hidden content"><img src={imgSrc}/></div>
-          <div className="visible content">{name}</div>
-        </div>
-      );
-    }
-
-    const zoneButtons = ALL_ZONES.map((zone) => animatedButton(zone, (z) => this.state.zones.has(z), (ev) => this.toggleZone(ev, zone), `/images/kitchen/${zone.toLowerCase()}.png`));
-    const categoryButtons = ALL_CATEGORIES.map((cat) => animatedButton(cat, (c) => this.state.categories.has(c), (ev) => this.toggleCategory(ev, cat), `/images/kitchen/${cat.toLowerCase()}.png`));
+    const item = (name) => <div key={name} className="item" data-value={name}>
+      <img src={`/images/kitchen/${name.toLowerCase()}.png`}/>
+      {name}
+    </div>;
 
     const layoutClassName = (layout) => `ui ${this.state.layout === layout ? 'disabled active' : ''} vertical animated icon button`;
     return (
       <div className="kitchen-inventory">
+        <ShoppingList items={this.state.shoppingList} />
+        <div className="inventory-wrapper">
         <div className="header">
-          <div className="ui grid">
-            <div className="row">
-              <div className="ui four wide column">
-                <div className="ui basic fluid buttons">
-                  <div className={layoutClassName('Cards')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
-                    <div className="hidden content">Cards</div>
-                    <div className="visible content">
-                      <i className="grid layout icon"/>
-                    </div>
-                  </div>
-                  <div className={layoutClassName('List')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
-                    <div className="hidden content">List</div>
-                    <div className="visible content">
-                      <i className="list layout icon"/>
-                    </div>
-                  </div>
+          <div className="tags-wrapper">
+            <div className="ui fluid multiple search selection dropdown">
+              <input type="hidden" name="tags"/>
+              <i className="dropdown icon"/>
+              <div className="default text">Select Tags</div>
+                <div className="menu">
+                  { ALL_ZONES.map(item) }
+                  { ALL_CATEGORIES.map(item) }
                 </div>
-              </div>
-              <div className="ui twelve wide column">
-                <div className="ui basic fluid buttons zone-buttons">
-                  { zoneButtons }
-                </div>
-              </div>
             </div>
-
-            <div className="row">
-              <div className="ui sixteen wide column">
-                <div className="ui basic fluid buttons category-buttons">
-                  { categoryButtons }
-                </div>
-              </div>
-            </div>
-
-
           </div>
 
-
+          <div className="ui basic fluid buttons">
+            <div className={layoutClassName('Cards')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
+              <div className="hidden content">Cards</div>
+              <div className="visible content">
+                <i className="grid layout icon"/>
+              </div>
+            </div>
+            <div className={layoutClassName('List')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
+              <div className="hidden content">List</div>
+              <div className="visible content">
+                <i className="list layout icon"/>
+              </div>
+            </div>
+          </div>
 
         </div>
         <div className="content">
           { inventory }
+        </div>
         </div>
         <div className="footer">
           <Link to="/kitchen/new">

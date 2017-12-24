@@ -71,10 +71,10 @@ window.onload = function() {
       <div className="ui container recipes-container">
         <RecipesNavigation/>
         <Route path="/recipes" exact={true} component={Recipes}/>
-        <Route path="/recipes/add" component={ApiAddRecipeForm}/>
-        <Route path="/recipes/import" component={ImportRecipeForm}/>
-        <Route path="/recipes/:id/edit" component={ApiAddRecipeForm}/>
-        <Route path="/recipes/:id" exact={true} component={FullRecipeView}/>
+        <Route path="/recipes/add" exact={true} component={ApiAddRecipeForm}/>
+        <Route path="/recipes/import" exact={true} component={ImportRecipeForm}/>
+        <Route path="/recipes/r/:id/edit" exact={true} component={ApiAddRecipeForm}/>
+        <Route path="/recipes/r/:id" exact={true} component={FullRecipeView}/>
       </div>
     </Router>,
     document.getElementById("render-wrapper")

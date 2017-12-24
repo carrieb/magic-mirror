@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import uniqueId from 'lodash/uniqueId';
 import _noop from 'lodash/noop';
+import _startCase from 'lodash/startCase';
+
+import ShoppingListState from 'state/ShoppingListState';
 
 import { Link } from 'react-router-dom';
 
@@ -12,10 +15,16 @@ import 'sass/kitchen/food-card.scss';
 class KitchenItemCard extends React.Component {
   constructor(props) {
     super(props);
+    this.addToShoppingList = this.addToShoppingList.bind(this);
+
     this.state = {
       flipped: false,
       id: uniqueId()
     };
+  }
+
+  addToShoppingList() {
+    ShoppingListState.addItem(this.props.foodItem);
   }
 
   // $(this.card).transition({
@@ -41,7 +50,7 @@ class KitchenItemCard extends React.Component {
     const content = (
       <div className="content">
         <div className="header">
-          <span className="title">{foodItem.description}</span>
+          <span className="title">{_startCase(foodItem.description)}</span>
         </div>
         <div className="meta">
           <a>{zone}</a><br/>
@@ -59,9 +68,10 @@ class KitchenItemCard extends React.Component {
       <div className="extra content">
         <span className="left floated">
           <i className="star icon" onClick={this.props.star}></i>
-          <Link to={`/kitchen/${foodItem.description}`}>
+          <Link to={`/kitchen/item/${foodItem.description}`}>
             <i className="grey link setting icon"></i>
           </Link>
+          <i className="plus icon" onClick={this.addToShoppingList}/>
         </span>
         <span className="right floated">
           { lastImport }

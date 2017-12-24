@@ -1,37 +1,96 @@
 import _isEmpty from 'lodash/isEmpty';
 import _startsWith from 'lodash/startsWith';
 
-function parseIngredient(text) {
-  const idx = text.indexOf(' ');
-  const quantity = text.substring(0, idx).trim();
-  const rest = text.substring(idx).trim();
-  let amt = '';
-  let unit = '';
-  for (var i = 0; i < quantity.length; i++) {
-    const c = quantity.charAt(i);
-    if (!isNaN(c) || c === '/' || c === '~') {
-      amt += c;
-    } else {
-      unit += c;
+function parseNumber(str) {
+  if (str.indexOf('/') > -1) {
+    const parts = str.trim().split('/');
+    return parseFloat(parts[0]) / parseFloat(parts[1]);
+  } else {
+    switch (str) {
+      case '½':
+        return 0.5;
+      case '⅓':
+        return 1.0 / 3.0;
+      case '¼':
+        return 0.25;
+      default:
+        return parseFloat(str);
     }
   }
-  if (amt.indexOf('/') > -1) {
-    if (amt === '1/2') amt = 0.5;
-    if (amt === '1/3') amt = 0.33;
-    if (amt === '1/4') amt = 0.25;
-  } else if (amt.indexOf('~') > -1) {
-    const split = amt.split('~');
-    const bottom = parseInt(split[0]);
-    const top = parseInt(split[1]);
-    amt = (bottom + top * 1.0) / 2;
+}
+
+function parseAmount(str) {
+  const pieces = str.split(' ');
+  let total = 0.0;
+
+  pieces.forEach((amtStr) => {
+    const amt = parseNumber(amtStr);
+    total += amt;
+  });
+
+  return total;
+}
+
+function parseUnit(str) {
+  let res = str;
+  if (str.endsWith('s')) {
+    res = str.substring(0, str.length - 1);
+  }
+  if (res === 'tsp' || res === 'teaspoon') {
+    return 'tsp';
+  } else if (res === 'tbsp' || res === 'tablespoon') {
+    return 'tbsp';
+  } else if (res === 'cup') {
+    return 'cup';
+  } else if (res === 'gram') {
+    return 'gram';
   } else {
-    amt = parseInt(amt);
+    return null;
   }
-  console.log(quantity, rest, amt, unit);
-  const result = { name: rest.toLowerCase(), quantity: { amount: amt }};
-  if (!_isEmpty(unit)) {
-    result.quantity.unit = unit;
+}
+
+function parseIngredientDetails(str) {
+  if (str.indexOf('(') > -1) {
+    const split = str.split('(');
+    const name = split[0].trim();
+    const rest = split[1].trim();
+    const modifier = rest.substring(0, rest.length - 1);
+    return { name, modifier };
+  } else {
+    return { name: str, modifier: null };
   }
+}
+
+function parseQuantity(text) {
+  const amountRegex = new RegExp('([1-9,½,¼,⅓,\/, ]+)');
+  const match = text.match(amountRegex);
+  if (match) {
+    const amtStr = match[0].trim();
+    const other = text.substring(amtStr.length).trim();
+    const amount = parseAmount(amtStr);
+    const split = other.split(' ', 1);
+    const unitStr = split[0].trim();
+    const unit = parseUnit(unitStr);
+    const rest = other.substring(unitStr.length).trim();
+    return { amount, unit, rest }
+  } else {
+    return { amount: 0, unit: 'gram' };
+  }
+}
+
+function parseIngredient(text) {
+  const parsedQ = parseQuantity(text);
+  const details = parseIngredientDetails(parsedQ.rest);
+  console.log(details);
+
+  const result = {
+    name: details.name,
+    modifier: details.modifier,
+    quantity: {
+      amount: parsedQ.amount,
+      unit: parsedQ.unit
+    }
+  };
   return result;
 }
 
@@ -75,6 +134,15 @@ const RecipeParser = {
     return result;
   },
 
+  startsWithQuantity(line) {
+    const firstChar = line[0];
+    if (!isNaN(firstChar)) {
+      return true;
+    } else {
+      return firstChar === '½' || firstChar === '¼' || firstChar === '⅓';
+    }
+  },
+
   parseIngredients(text) {
     const lines = text ? text.split('\n') : [];
     console.log(lines);
@@ -82,7 +150,9 @@ const RecipeParser = {
     let section = 0;
     let counter = 0;
     lines.forEach((line) => {
+      console.log(line);
       if (line.indexOf(',') > -1) {
+          console.log('splitting over commas');
           const split = line.split(',');
           console.log(split);
           split.forEach((ingr) => {
@@ -91,7 +161,8 @@ const RecipeParser = {
             counter++;
           });
       } else {
-        if (isNan(line[0])) {
+        if (this.startsWithQuantity(line)) {
+          // is a number
           const ingredient = parseIngredient(line.trim());
           result[section].items.push(ingredient);
           counter++;
@@ -100,15 +171,19 @@ const RecipeParser = {
             result[section].name = line;
           }
 
+
           else {
             counter = 0;
             section++;
+            console.log(result);
             result[section].name = line;
             result.push({ items: [] });
           }
         }
       }
     });
+
+    console.log('parsed ingredients', result);
 
     return result;
   }

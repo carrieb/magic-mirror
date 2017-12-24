@@ -10,22 +10,21 @@ import AddItemsForm from 'components/kitchen/AddItemsForm.react';
 
 import KitchenNavigation from 'components/kitchen/KitchenNavigation.react';
 import KitchenInventory from 'components/kitchen/KitchenInventory.react';
+import KitchenDashboard from 'components/kitchen/kitchen-dashboard.react';
 
 import MessagingUtil from 'util/messaging-util';
 
-MessagingUtil.subscribeDevice();
-
-import 'styles/kitchen.css';
-
+//MessagingUtil.subscribeDevice();
 
 window.onload = function() {
   ReactDOM.render(
     <Router history={history}>
       <div className="ui container kitchen-container">
         <KitchenNavigation/>
-        <Route exact path="/kitchen" component={KitchenInventory}/>
+        <Route exact path="/kitchen" component={KitchenDashboard}/>
+        <Route path="/kitchen/inventory" component={KitchenInventory}/>
         <Route path="/kitchen/unpack" component={AddItemsForm}/>
-        <Route path="/kitchen/:foodName" component={FoodEditorHandler}/>
+        <Route path="/kitchen/item/:foodName" component={FoodEditorHandler}/>
       </div>
     </Router>,
     document.getElementById("render-wrapper")

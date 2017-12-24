@@ -5,6 +5,8 @@ import ApiWrapper from '../../util/api-wrapper';
 import KitchenState from '../../state/KitchenState';
 import KitchenConstants from 'state/kitchen/kitchen-constants';
 
+import LocalStorageUtil from 'util/local-storage-util';
+
 import ControlledItemEditor from 'components/kitchen/controlled-item-editor.react';
 
 import uniqueId from 'lodash/uniqueId';
@@ -21,6 +23,8 @@ class FoodEditorHandler extends React.Component {
     const name = this.props.match.params.foodName;
     const foodItem = _clone(KitchenState.DEFAULT_ITEM);
     foodItem.description = name;
+    foodItem.zone = LocalStorageUtil.getLastZone() || foodItem.zone;
+    foodItem.category = LocalStorageUtil.getLastCategory() || foodItem.category;
 
     this.handleFormRef = this.handleFormRef.bind(this);
     this.updateImage = this.updateImage.bind(this);
@@ -108,6 +112,8 @@ class FoodEditorHandler extends React.Component {
     ApiWrapper.updateFood(food)
       .done((insertedId) => {
         const foodItem = this.state.foodItem;
+        LocalStorageUtil.saveZone(foodItem.zone);
+        LocalStorageUtil.saveCategory(foodItem.category);
         if (_isString(insertedId)) {
           console.log('updated food', insertedId);
           foodItem._id = insertedId;

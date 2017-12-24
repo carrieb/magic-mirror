@@ -20,7 +20,7 @@ class KitchenNavigation extends React.Component {
               <i className="shopping  basket icon"/>
               <i className="inverted corner upload icon"/>
             </i>
-            Upload Receipt
+            Upload Items From Receipt
           </a>
         </div>
       </div>

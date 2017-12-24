@@ -31,7 +31,7 @@ class ApiRecipesList extends React.Component {
   onEditClick(i) {
     return () => {
       const recipe = this.state.recipes[i];
-      this.props.history.push(`/recipes/${recipe._id}/edit`);
+      this.props.history.push(`/recipes/r/${recipe._id}/edit`);
     }
   }
 
@@ -57,7 +57,7 @@ class ApiRecipesList extends React.Component {
   onExpandClick(i) {
     return () => {
       const recipe = this.state.recipes[i];
-      this.props.history.push(`/recipes/${recipe._id}`);
+      this.props.history.push(`/recipes/r/${recipe._id}`);
     }
   }
 

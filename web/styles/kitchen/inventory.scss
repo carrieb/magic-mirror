@@ -1,36 +1,52 @@
-div.kitchen-inventory {
+.shopping-list.expanded + .inventory-wrapper {
+  margin-left: 100px;
+}
 
-  div.header {
+.inventory-wrapper {
+  margin-bottom: 70px;
+
+  > div.header {
     margin-bottom: 10px;
     padding-top: 10px;
     padding-bottom: 10px;
+    background-color: white;
+    padding: 20px;
+    border: solid 1px rgba(0, 0, 0, .20);
+    border-radius: 5px;
 
-    div.ui.grid {
-      div.row {
-        padding: 0;
+    .tags-wrapper {
+      margin-bottom: 5px;
+
+      .item {
+        img {
+          max-height: 20px;
+          vertical-align: middle;
+        }
       }
-      div.column {
-        padding-top: 5px;
-        padding-bottom: 5px;
 
-        + div.column {
-          padding-left: 0;
+      .label {
+        img {
+          max-height: 15px;
+          margin-right: 10px;
         }
       }
     }
 
-    .ui.animated.button {
-      .visible.content {
-        margin-right: 5px;
+    .buttons {
+      .button.active, .button.active:hover {
+        background-color: white !important;
       }
-    }
 
-    .zone-buttons, .category-buttons {
-      img {
-        max-height: 16px;
+      .button, .button:hover {
+        background-color: rgba(255, 255, 255, .25) !important;
       }
     }
   }
+}
+
+div.kitchen-inventory {
+
+
 
   > div.content {
     margin-bottom: 75px;

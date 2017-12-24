@@ -9,13 +9,14 @@ class Ingredient extends React.Component {
     const whole = q.amount - remainder;
     let amt = whole === 0 ? '' : whole + ' ';
     if (remainder === .75) { amt += '3/4 '; }
-    if (remainder === .33) { amt += '1/3 '; }
-    if (remainder === .25) { amt += '1/4 '; }
-    if (remainder === .5) { amt += '1/2 '; }
+    if (remainder === .33) { amt += '⅓ '; }
+    if (remainder === .25) { amt += '¼ '; }
+    if (remainder === .5) { amt += '½ '; }
     const quantity = <span>{amt}{q.unit}{(q.amount > 1 && q.unit)&& 's'}</span>;
+    const name = item.name || item.description;
     return (
       <span>
-        <b>{quantity}</b>{q.unit && ' of '}{item.modifier} <a href={`/kitchen/${item.name}`}>{item.name}</a>
+        <b>{quantity}</b>{q.unit && ' of '}{item.modifier} <a href={`/kitchen/${name}`}>{name.toLowerCase()}</a>
       </span>
     );
   }
