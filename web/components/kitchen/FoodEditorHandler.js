@@ -9,6 +9,8 @@ import LocalStorageUtil from 'util/local-storage-util';
 
 import ControlledItemEditor from 'components/kitchen/controlled-item-editor.react';
 
+import KitchenItemFeed from 'components/kitchen/item/kitchen-item-feed.react';
+
 import uniqueId from 'lodash/uniqueId';
 import _isEmpty from 'lodash/isEmpty';
 import _isString from 'lodash/isString';
@@ -201,10 +203,17 @@ class FoodEditorHandler extends React.Component {
 
     return (
       <div className="food-editor-container">
-        { image }
-        { header }
-        { this.state.error && <div className="error-text">{this.state.error}</div>}
-        <div className="content">{ content }</div>
+        <div className="ui stackable grid">
+          <div className="six wide column">
+            { image }
+            <KitchenItemFeed item={this.state.foodItem}/>
+          </div>
+          <div className="ten wide column">
+            { header }
+            { this.state.error && <div className="error-text">{this.state.error}</div>}
+            <div className="content">{ content }</div>
+          </div>
+        </div>
       </div>
     );
   }

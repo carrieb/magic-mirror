@@ -7,7 +7,7 @@ import KitchenConstants from 'state/kitchen/kitchen-constants';
 
 import KitchenItemCard from 'components/kitchen/kitchen-item-card.react';
 
-import ShoppingList from 'components/shared/shopping-list.react';
+import { ShoppingList } from 'components/shared/shopping-list.react';
 import ShoppingListState from 'state/ShoppingListState';
 
 import LocalStorageUtil from 'util/local-storage-util';

@@ -1,4 +1,11 @@
 .food-editor-container {
+  .dimmable.image {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    border: solid 1px lightgrey;
+  }
+
   img {
     border-radius: 10px;
   }
@@ -13,6 +20,10 @@
     i.dropdown.icon {
       padding-top: 15px !important;
     }
+  }
+
+  .kitchen-item-feed {
+    margin-top: 20px;
   }
 
 }

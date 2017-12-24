@@ -5,6 +5,7 @@ import moment from 'moment';
 import uniqueId from 'lodash/uniqueId';
 import _noop from 'lodash/noop';
 import _startCase from 'lodash/startCase';
+import _kebabCase from 'lodash/kebabCase';
 
 import ShoppingListState from 'state/ShoppingListState';
 
@@ -25,6 +26,7 @@ class KitchenItemCard extends React.Component {
 
   addToShoppingList() {
     ShoppingListState.addItem(this.props.foodItem);
+    this.props.handlePlusClick(this.props.foodItem);
   }
 
   // $(this.card).transition({
@@ -68,7 +70,7 @@ class KitchenItemCard extends React.Component {
       <div className="extra content">
         <span className="left floated">
           <i className="star icon" onClick={this.props.star}></i>
-          <Link to={`/kitchen/item/${foodItem.description}`}>
+          <Link to={`/kitchen/item/${_kebabCase(foodItem.description)}`}>
             <i className="grey link setting icon"></i>
           </Link>
           <i className="plus icon" onClick={this.addToShoppingList}/>
@@ -92,11 +94,13 @@ class KitchenItemCard extends React.Component {
 
 KitchenItemCard.propTypes = {
   foodItem: PropTypes.object.isRequired,
-  star: PropTypes.func
+  star: PropTypes.func,
+  handlePlusClick: PropTypes.func
 };
 
 KitchenItemCard.defaultProps = {
-  star: _noop
+  star: _noop,
+  handlePlusClick: _noop
 }
 
 export default KitchenItemCard;

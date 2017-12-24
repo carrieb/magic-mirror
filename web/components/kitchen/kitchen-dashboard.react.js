@@ -41,10 +41,10 @@ class KitchenDashboard extends React.Component {
       const expiration = item.expiration || {};
       if (!_isEmpty(expiration)) {
         const expireDate = now.add(expiration.length, expiration.delta + 's');
-        console.log(expireDate);
+        //console.log(expireDate);
         return expireDate.unix();
       } else {
-        console.log('now', now);
+        //console.log('now', now);
         return now.unix();
       }
     });
@@ -68,7 +68,8 @@ class KitchenDashboard extends React.Component {
         if (i < 10) {
           // TODO: pass in star handler?
           return <KitchenItemCard key={`expiring_soon_${i}`}
-                                  foodItem={item}/>
+                                  foodItem={item}
+                                  handlePlusClick={this.props.addToShoppingList}/>
         }
         else {
           return null;

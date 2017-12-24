@@ -13,7 +13,7 @@ import ApiAddRecipeForm from 'components/recipes/ApiAddRecipeForm.react';
 import ImportRecipeForm from 'components/recipes/import-recipe-form.react';
 import FullRecipeView from 'components/recipes/full-recipe-view.react';
 
-import ShoppingList from 'components/shared/shopping-list.react';
+import { ShoppingList } from 'components/shared/shopping-list.react';
 
 import RecipeUtil from 'util/recipe-util';
 

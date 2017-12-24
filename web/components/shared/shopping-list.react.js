@@ -39,8 +39,8 @@ class ShoppingList extends React.Component {
   }
 
   export() {
-    //ApiWrapper.exportShoppingList(this.props.items);
     this.compareItemsToInventory();
+    //ApiWrapper.exportShoppingList(this.props.items);
   }
 
   compareItemsToInventory() {
@@ -125,6 +125,7 @@ function withShoppingList(WrappedComponent) {
     }
 
     addItem(item) {
+      console.log('shopping add', item);
       const shoppingList = this.state.shoppingList;
       shoppingList.push(item);
       this.setState({ shoppingList });

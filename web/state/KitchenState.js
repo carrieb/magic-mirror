@@ -1,6 +1,8 @@
 import ApiWrapper from '../util/api-wrapper';
 import find from 'lodash/find';
 
+import _kebabCase from 'lodash/kebabCase';
+
 let loadedKitchen = null;
 
 const loadKitchen = (callback) => {
@@ -19,7 +21,7 @@ const deleteFood = (id, callback) => {
 }
 
 const findFoodByName = (name) => {
-  return find(loadedKitchen, (item) => item.description === name);
+  return find(loadedKitchen, (item) => _kebabCase(item.description) === _kebabCase(name));
 };
 
 const executeWhenLoaded = (callback) => {
