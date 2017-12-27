@@ -63,12 +63,11 @@ const ApiWrapper = {
     });
   },
 
-  getKitchen(callback) {
-    $.ajax('/api/kitchen')
-    .done((res) => {
-      //console.log('/kitchen response', res);
-      callback(res);
-    });
+  getKitchen() {
+    return $.ajax('/api/kitchen')
+      .done((res) => {
+        //console.log('/kitchen response', res);
+      });
   },
 
   submitCrop(filename, crop, callback) {

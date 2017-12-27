@@ -1,9 +1,23 @@
 div.food-card.ui.card {
+
+  .icon {
+    transition: color .1s ease;
+
+    &.setting:hover {
+      color: #000000;
+    }
+
+    &.plus:hover {
+      color: #0E6EB8;
+    }
+  }
+
   .header {
     .title {
       max-width: 80%;
     }
   }
+
   .image {
     background: white;
 
@@ -14,6 +28,18 @@ div.food-card.ui.card {
       margin: auto;
       max-width: 100%;
       border-radius: 10px;
+    }
+  }
+
+  .header {
+    span:not(.title){
+      float: right;
+    }
+
+    img {
+      max-height: 30px !important;
+      width: auto;
+      cursor: pointer;
     }
   }
 }

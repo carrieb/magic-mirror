@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import IngredientsList from 'components/recipes/ingredients/ingredients-list.react';
 
-import KitchenState from 'state/KitchenState';
+import { KitchenState, withKitchen } from 'state/KitchenState';
 import ShoppingListState from 'state/ShoppingListState';
 
 import 'sass/shared/shopping-list.scss';
@@ -11,6 +11,7 @@ import 'sass/shared/shopping-list.scss';
 import _isEmpty from 'lodash/isEmpty';
 import _isEqual from 'lodash/isEqual';
 import _find from 'lodash/find';
+import _values from 'lodash/values';
 
 import ApiWrapper from 'util/api-wrapper';
 
@@ -20,13 +21,13 @@ import qty from 'js-quantities';
 class ShoppingList extends React.Component {
   constructor(props) {
     super(props);
+
     this.toggleExpansion = this.toggleExpansion.bind(this);
     this.addItem = this.addItem.bind(this);
     this.export = this.export.bind(this);
+
     this.state = {
       expanded: false,
-      items: [],
-      inventory: [],
       shared: []
     };
   }
@@ -44,12 +45,10 @@ class ShoppingList extends React.Component {
   }
 
   compareItemsToInventory() {
-    console.log('comparing...');
-    const inventory = this.state.inventory;
+    const inventory = this.props.inventory;
+    const items = this.props.items;
 
     const shared = {};
-
-    const items = this.state.items;
 
     items.forEach((listItem) => {
       const name = listItem.name || listItem.description;
@@ -70,20 +69,12 @@ class ShoppingList extends React.Component {
     this.setState({ shared });
   }
 
-  componentWillMount() {
-    KitchenState.getKitchen((inventory) =>  {
-      this.setState({ inventory });
-    });
-
-    ShoppingListState.setShoppingList(this);
-  }
-
   toggleExpansion() {
     this.setState({ expanded: !this.state.expanded });
   }
 
   render() {
-    console.log('shopping list', this.state.items);
+    //console.log('shopping list', this.props.items);
     return (
       <div className={`shopping-list ${this.state.expanded ? 'expanded' : ''}`}>
         <div className="ui fluid segment">
@@ -94,7 +85,7 @@ class ShoppingList extends React.Component {
             {/* ugh okay how are we gonna do this */}
             {/* i just made this beautiful class!!!!! */}
             {/* pass in another prop? like compareTo= */}
-            <IngredientsList items={this.state.items}/>
+            <IngredientsList items={this.props.items}/>
             <div className="export-button">
               <button className="ui icon button" onClick={this.export}>
                 <i className="ui share alternate square icon"/>
@@ -117,7 +108,7 @@ ShoppingList.defaultProps = {
 }
 
 function withShoppingList(WrappedComponent) {
-  return class extends React.Component {
+  return withKitchen(class ShoppingListContainer extends React.Component {
     constructor(props) {
       super(props);
       this.addItem = this.addItem.bind(this);
@@ -134,14 +125,14 @@ function withShoppingList(WrappedComponent) {
     render() {
       return (
         <div>
-          <ShoppingList items={this.state.shoppingList}/>
+          <ShoppingList items={this.state.shoppingList} inventory={_values(this.state.kitchen)}/>
           <WrappedComponent addToShoppingList={this.addItem}
                             shoppingList={this.state.shoppingList}
                             {...this.props} />
         </div>
       )
     }
-  };
+  });
 }
 
 export { ShoppingList, withShoppingList };

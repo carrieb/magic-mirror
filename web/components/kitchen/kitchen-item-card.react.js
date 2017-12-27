@@ -7,6 +7,7 @@ import _noop from 'lodash/noop';
 import _startCase from 'lodash/startCase';
 import _kebabCase from 'lodash/kebabCase';
 
+import { withKitchen } from 'state/KitchenState';
 import ShoppingListState from 'state/ShoppingListState';
 
 import { Link } from 'react-router-dom';
@@ -40,23 +41,26 @@ class KitchenItemCard extends React.Component {
   }
 
   render() {
-    const foodItem = this.props.foodItem;
+    const foodItem = this.props.kitchenIndex[this.props.itemId] || {};
     let zone = foodItem.zone || 'Fridge';
     let category = foodItem.category || 'Condiment';
 
     let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
     const image = (
-      <div className="image"><img src={imageUrl}/></div>
+      <div className="image">
+        { foodItem.starred && <div className="ui yellow left corner label"><i className="star icon"/></div> }
+        <img src={imageUrl}/>
+      </div>
     );
 
     const content = (
       <div className="content">
         <div className="header">
+          <span data-tooltip={category} data-position="right center"><img src={`/images/kitchen/${category}.png`}/></span>
           <span className="title">{_startCase(foodItem.description)}</span>
         </div>
         <div className="meta">
           <a>{zone}</a><br/>
-          <a>{category}</a>
         </div>
       </div>
     );
@@ -69,15 +73,14 @@ class KitchenItemCard extends React.Component {
     const extraContent = (
       <div className="extra content">
         <span className="left floated">
-          <i className="star icon" onClick={this.props.star}></i>
+          <i className={`${foodItem.starred ? 'yellow' : '' } star icon`} onClick={this.props.star(foodItem._id, !foodItem.starred)}></i>
           <Link to={`/kitchen/item/${_kebabCase(foodItem.description)}`}>
-            <i className="grey link setting icon"></i>
+            <i className="link setting icon"></i>
           </Link>
-          <i className="plus icon" onClick={this.addToShoppingList}/>
+          <i className="plus link icon" onClick={this.addToShoppingList}/>
         </span>
         <span className="right floated">
           { lastImport }
-          <i className="trash icon" onClick={(ev) => this.handleTrashClick()}></i>
         </span>
       </div>
     );
@@ -94,6 +97,7 @@ class KitchenItemCard extends React.Component {
 
 KitchenItemCard.propTypes = {
   foodItem: PropTypes.object.isRequired,
+  itemId: PropTypes.string.isRequired,
   star: PropTypes.func,
   handlePlusClick: PropTypes.func
 };
@@ -103,4 +107,4 @@ KitchenItemCard.defaultProps = {
   handlePlusClick: _noop
 }
 
-export default KitchenItemCard;
+export default withKitchen(KitchenItemCard);
