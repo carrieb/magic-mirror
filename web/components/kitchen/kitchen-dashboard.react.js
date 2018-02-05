@@ -75,9 +75,6 @@ class KitchenDashboard extends React.Component {
 
     return (
       <div className="kitchen-dashboard-wrapper">
-        <Link to="/kitchen/inventory">
-          <button className="ui basic fluid button">Inventory</button>
-        </Link>
         <div className="ui segment">
           <h2 className="ui header">
             <i className="red warning sign icon"/>

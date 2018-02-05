@@ -1,0 +1,9 @@
+.kitchen-navigation {
+  .subheader {
+    padding: 8px 10px !important;
+
+    &.active {
+      background-color: rgba(0,0,0,0.03) !important;
+    }
+  }
+}

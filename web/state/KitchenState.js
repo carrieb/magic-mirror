@@ -1,129 +1,99 @@
-import ApiWrapper from '../util/api-wrapper';
-import _find from 'lodash/find';
+import ApiWrapper from 'util/api-wrapper';
 
-import _kebabCase from 'lodash/kebabCase';
 import _clone from 'lodash/clone';
+import _debounce from 'lodash/debounce';
 
 import React from 'react';
 
-let loadedKitchen = null;
-let kitchenRequest = null;
+let loadedItems = [];
+let loadedKitchen = {};
 
-const findFoodByName = (name) => {
-  return _find(loadedKitchen, (item) => _kebabCase(item.description) === _kebabCase(name));
+const DEFAULT_ITEM = {
+  description: 'new item',
+  quantity: {
+    unit: 'cup',
+    amount: 1
+  },
+  expiration: {
+    delta: 'week',
+    length: 1
+  },
+  servingSize: {
+    unit: 'cup',
+    amount: 1
+  },
+  category: 'Dry Goods',
+  zone: 'Pantry',
+  price: 1.00
 };
 
-const executeWhenLoaded = (callback) => {
-  if (loadedKitchen === null) {
-    loadKitchen(callback);
-  } else {
-    callback();
-  }
-};
+let listeners = [];
 
 const KitchenState = {
-  DEFAULT_ITEM: {
-    description: 'new item',
-    quantity: {
-      unit: 'cup',
-      amount: 1
-    },
-    expiration: {
-      delta: 'week',
-      length: 1
-    },
-    servingSize: {
-      unit: 'cup',
-      amount: 1
-    },
-    category: 'Dry Goods',
-    zone: 'Pantry',
-    price: 1.00
-  },
+  done: (items) => {
+    loadedItems = items;
 
-  getKitchen(callback) {
-    executeWhenLoaded(() => {
-      callback(loadedKitchen)
+    const kitchen = {};
+    items.forEach((item) => {
+      kitchen[item._id] = item;
+    });
+    loadedKitchen = kitchen;
+
+    console.log('kitchen state loaded', loadedItems, loadedKitchen, listeners);
+    listeners.forEach((callback) => {
+      callback(loadedKitchen);
     });
   },
 
-  findFood(foodName, callback) {
-    executeWhenLoaded(() => {
-      const foodItem = findFoodByName(foodName);
-      callback(foodItem);
+  debouncedRequest: _debounce(() => {
+    console.log('kitchen state submitting ajax request');
+    ApiWrapper.getKitchen()
+      .done(KitchenState.done);
+  }, 5000, {
+    leading: true,
+    trailing: false
+  }),
+
+  getKitchen() {
+    this.debouncedRequest();
+  },
+
+  addChangeListener(callback) {
+    listeners.push(callback);
+  },
+
+  removeChangeListener(callback) {
+    listeners = listeners.filter((cb) => {
+      !Object.is(cb, callback)
     });
-  },
-
-  trashFood(id, callback) {
-    deleteFood(id, (kitchen) => {
-      callback(kitchen);
-    });
-  },
-
-  updateImage(foodName, imageUrl) {
-    findFoodByName(foodName).img = imageUrl;
-  },
-
-  addItem(item) {
-    // TODO: include API call here
-    loadedKitchen.push(item);
   }
-}
+};
 
 function withKitchen(WrappedComponent) {
   return class extends React.Component {
     constructor(props) {
       super(props);
-      this.addItem = this.addItem.bind(this);
-      this.star = this.star.bind(this);
 
       this.state = {
-        kitchen: {}
+        kitchen: loadedKitchen
       }
     }
 
     componentWillMount() {
-      console.log('mounting', WrappedComponent.name, loadedKitchen === null, kitchenRequest === null);
-      if (loadedKitchen === null && kitchenRequest === null) {
-        kitchenRequest = ApiWrapper.getKitchen()
-          .done((items) => {
-            console.log('done', WrappedComponent.name, items)
-            loadedKitchen = items;
-            // TODO: build index
-            const kitchen = {};
-            items.forEach((item) => {
-              kitchen[item._id] = item;
-            });
-            this.setState({
-              kitchen
-            });
-          });
-      } else if (loadedKitchen === null) {
-        console.log(WrappedComponent.name, kitchenRequest);
-        kitchenRequest.done((items) => {
-          // TODO: build index
-          console.log('done - existing request', WrappedComponent.name, items)
-          const kitchen = {};
-          items.forEach((item) => {
-            kitchen[item._id] = item;
-          });
-          this.setState({
-            kitchen
-          });
-        });
-      } else {
-        //console.log('already loaded', WrappedComponent.name, loadedKitchen)
-        const items = loadedKitchen;
-        // TODO: build index
-        const kitchen = {};
-        items.forEach((item) => {
-          kitchen[item._id] = item;
-        });
-        this.setState({
-          kitchen
-        });
-      }
+      console.log('withKitchen will mount', WrappedComponent.name);
+      KitchenState.addChangeListener(this.handleChange);
+      KitchenState.getKitchen();
     }
+
+    componentWillUnmount() {
+      KitchenState.removeChangeListener(this.handleChange);
+    }
+
+    handleChange = (kitchen) => {
+      this.setState({
+        kitchen
+      });
+    };
 
     addItem(item) {
       const kitchen = _clone(this.state.kitchen);
@@ -145,11 +115,11 @@ function withKitchen(WrappedComponent) {
       return (
         <WrappedComponent addItem={this.addItem}
                           star={this.star}
-                          kitchenIndex={this.state.kitchen}
+                          kitchenIndex={loadedKitchen}
                           {...this.props}/>
       );
     }
   };
 }
 
-export { KitchenState, withKitchen };
+export { KitchenState, withKitchen, DEFAULT_ITEM };

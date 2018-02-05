@@ -35,7 +35,8 @@ const LocalStorageUtil = {
   },
 
   getKitchenTags() {
-    return _get(KITCHEN_TAGS_KEY).split(',')
+    const res = _get(KITCHEN_TAGS_KEY);
+    return res;
   },
 
   getLastZone() {

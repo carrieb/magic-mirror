@@ -6,4 +6,13 @@
   }
 
   margin-bottom: 50px;
+
+  .segment {
+    > h2.header {
+      > i {
+        font-size: 1em;
+        vertical-align: text-top;
+      }
+    }
+  }
 }

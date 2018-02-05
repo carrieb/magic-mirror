@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
-import KitchenState from 'state/KitchenState';
+import { withKitchen } from 'state/KitchenState';
 import KitchenConstants from 'state/kitchen/kitchen-constants';
 
 import KitchenItemCard from 'components/kitchen/kitchen-item-card.react';
@@ -12,7 +12,8 @@ import ShoppingListState from 'state/ShoppingListState';
 
 import LocalStorageUtil from 'util/local-storage-util';
 
-import _concat from 'lodash/concat';
+import _kebabCase from 'lodash/kebabCase';
+import _isEqual from 'lodash/isEqual';
 
 import 'sass/kitchen/inventory.scss';
 
@@ -23,10 +24,7 @@ class KitchenInventory extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onTagsChange = this.onTagsChange.bind(this);
-
     this.state = {
-      kitchen: [],
       selectedItem: null,
       layout: 'Cards',
       categories: new Set(['Dairy', 'Produce', 'Meat', 'Leftovers', 'Dry Goods']),
@@ -36,18 +34,8 @@ class KitchenInventory extends React.Component {
     }
   }
 
-  componentWillMount() {
-    KitchenState.getKitchen((kitchen) => {
-      console.log(kitchen);
-      this.setState({ kitchen });
-    });
-  }
-
   delete(id) {
-    KitchenState.trashFood(id, (kitchen) => {
-      console.log(kitchen);
-      this.setState({ kitchen, selectedItem: null });
-    });
+
   }
 
   star(id) {
@@ -60,16 +48,20 @@ class KitchenInventory extends React.Component {
     });
   }
 
-  onTagsChange(tags) {
-    LocalStorageUtil.saveKitchenTags(tags);
-    this.setState({ tags });
-  }
+  onTagsChange = (tags) => {
+    const split = tags.split(',');
+    LocalStorageUtil.saveKitchenTags(split);
+    if (!_isEqual(split, this.state.tags)) {
+      console.log(split, this.state.tags);
+      this.setState({ tags: split });
+    }
+  };
 
   componentDidMount() {
+    $('.ui.dropdown').dropdown('set selected', this.state.tags)
     $('.ui.dropdown').dropdown({
       onChange: this.onTagsChange
     });
-    $('.ui.dropdown').dropdown('set selected', this.state.tags)
   }
 
   componentDidUpdate() {
@@ -79,13 +71,14 @@ class KitchenInventory extends React.Component {
   }
 
   render() {
+    console.log('kitchen inventory render', this.props.kitchenIndex);
     let inventory = null;
 
     if (this.state.layout === 'Cards') {
-      let itemCards = this.state.kitchen
+      let itemCards = Object.keys(this.props.kitchenIndex)
+        .map((key) => this.props.kitchenIndex[key])
       .filter((item) => {
         let filtered = false;
-        console.log(item.category, this.state.tags.indexOf(item.category))
         if (item.zone && this.state.tags.indexOf(item.zone) === -1) {
           filtered = true;
         }
@@ -96,7 +89,7 @@ class KitchenInventory extends React.Component {
       })
       .map((foodItem, idx) => {
         return (
-          <KitchenItemCard foodItem={foodItem}
+          <KitchenItemCard id={foodItem._id}
                            delete={(id) => this.delete(id)}
                            key={idx}/>
         );
@@ -143,7 +136,7 @@ class KitchenInventory extends React.Component {
       );
     }
     const item = (name) => <div key={name} className="item" data-value={name}>
-      <img src={`/images/kitchen/${name.toLowerCase()}.png`}/>
+      <img src={`/images/kitchen/${_kebabCase(name.toLowerCase())}.png`}/>
       {name}
     </div>;
 
@@ -186,7 +179,7 @@ class KitchenInventory extends React.Component {
         </div>
         </div>
         <div className="footer">
-          <Link to="/kitchen/new">
+          <Link to="/kitchen/item/new">
             <button className="ui large purple button">Add Item</button>
           </Link>
         </div>
@@ -195,4 +188,4 @@ class KitchenInventory extends React.Component {
   }
 }
 
-export default KitchenInventory;
+export default withKitchen(KitchenInventory);

@@ -41,11 +41,12 @@ class KitchenItemCard extends React.Component {
   }
 
   render() {
-    const foodItem = this.props.kitchenIndex[this.props.itemId] || {};
+    const foodItem = this.props.kitchenIndex[this.props.id] || {};
+    console.log('kitchen item card render', foodItem);
     let zone = foodItem.zone || 'Fridge';
     let category = foodItem.category || 'Condiment';
 
-    let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
+    let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/images/no-image.svg';
     const image = (
       <div className="image">
         { foodItem.starred && <div className="ui yellow left corner label"><i className="star icon"/></div> }
@@ -56,7 +57,7 @@ class KitchenItemCard extends React.Component {
     const content = (
       <div className="content">
         <div className="header">
-          <span data-tooltip={category} data-position="right center"><img src={`/images/kitchen/${category}.png`}/></span>
+          <span data-tooltip={category} data-position="right center"><img src={`/images/kitchen/${_kebabCase(category.toLowerCase())}.png`}/></span>
           <span className="title">{_startCase(foodItem.description)}</span>
         </div>
         <div className="meta">
@@ -96,8 +97,7 @@ class KitchenItemCard extends React.Component {
 }
 
 KitchenItemCard.propTypes = {
-  foodItem: PropTypes.object.isRequired,
-  itemId: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
   star: PropTypes.func,
   handlePlusClick: PropTypes.func
 };

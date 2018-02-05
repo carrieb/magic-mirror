@@ -30,8 +30,7 @@ module.exports = [{
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         use: [{
-          loader: 'babel-loader',
-          options: { presets: ['react', 'es2015']}
+          loader: 'babel-loader'
         }]
       }
     ]
@@ -47,7 +46,8 @@ module.exports = [{
      components: path.join(__dirname, 'web', 'components'),
      styles: path.join(__dirname, 'public', 'styles'),
      sass: path.join(__dirname, 'web', 'styles'),
-     state: path.join(__dirname, 'web', 'state')
+     state: path.join(__dirname, 'web', 'state'),
+     util: path.join(__dirname, 'web', 'util')
    }
  }
 }];

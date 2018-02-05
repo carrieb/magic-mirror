@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom'
 
 import ApiWrapper from '../../util/api-wrapper';
-import KitchenState from '../../state/KitchenState';
+import { DEFAULT_ITEM, KitchenState, withKitchen } from 'state/KitchenState';
 import KitchenConstants from 'state/kitchen/kitchen-constants';
 
 import LocalStorageUtil from 'util/local-storage-util';
@@ -21,9 +21,11 @@ import 'sass/kitchen/food-editor.scss';
 class FoodEditorHandler extends React.Component {
   constructor(props) {
     super(props);
+    console.log('food editor', props);
 
     const name = this.props.match.params.foodName;
-    const foodItem = _clone(KitchenState.DEFAULT_ITEM);
+    const foodItem = _clone(DEFAULT_ITEM);
+
     foodItem.description = name;
     foodItem.zone = LocalStorageUtil.getLastZone() || foodItem.zone;
     foodItem.category = LocalStorageUtil.getLastCategory() || foodItem.category;
@@ -41,7 +43,9 @@ class FoodEditorHandler extends React.Component {
   }
 
   componentWillMount() {
-    this.loadItem();
+    if (this.state.foodItem === null) {
+      this.loadItem();
+    }
   }
 
   componentDidUpdate() {
@@ -51,14 +55,15 @@ class FoodEditorHandler extends React.Component {
     }
   }
 
-  loadItem() {
+  loadItem = () => {
     const name = this.props.match.params.foodName;
-    KitchenState.findFood(name, (foodItem) => {
-      if (!_isEmpty(foodItem)) {
-        this.setState({ foodItem });
-      }
-    });
-  }
+    // TODO: if it wasn't already loaded, try to find it via API
+    // KitchenState.findFood(name, (foodItem) => {
+    //   if (!_isEmpty(foodItem)) {
+    //     this.setState({ foodItem });
+    //   }
+    // });
+  };
 
   updateFoodItem(field, value) {
     const foodItem = this.state.foodItem;
@@ -134,7 +139,7 @@ class FoodEditorHandler extends React.Component {
     foodItem.description = this.nameInput.innerText;
     this.setState({ editingName: false });
     // TODO: WARN/FAIL if we already have an item named this
-    this.props.history.push(`/kitchen/${foodItem.description}`);
+    this.props.history.push(`/kitchen/item/${foodItem.description}`);
   }
 
   handleKeypress(ev) {
@@ -172,7 +177,7 @@ class FoodEditorHandler extends React.Component {
        </h4>
     );
 
-    let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
+    let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/images/no-image.svg';
     const image = (
       <div className="blurring dimmable image" ref={(r) => this.handleDimmerRef(r)}>
         <div className="ui inverted dimmer">
@@ -221,4 +226,4 @@ class FoodEditorHandler extends React.Component {
 
 
 
-export default withRouter(FoodEditorHandler);
+export default withRouter(withKitchen(FoodEditorHandler));
