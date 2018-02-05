@@ -40,13 +40,11 @@ const KitchenState = {
     loadedKitchen = kitchen;
 
     console.log('kitchen state loaded', loadedItems, loadedKitchen, listeners);
-    listeners.forEach((callback) => {
-      callback(loadedKitchen);
-    });
+    KitchenState.alertListeners();
   },
 
   debouncedRequest: _debounce(() => {
-    console.log('kitchen state submitting ajax request');
+    //console.log('kitchen state submitting ajax request');
     ApiWrapper.getKitchen()
       .done(KitchenState.done);
   }, 5000, {
@@ -58,6 +56,13 @@ const KitchenState = {
     this.debouncedRequest();
   },
 
+  star(id, starred) {
+    const item = loadedKitchen[id];
+    item.starred = starred;
+    loadedKitchen[id] = item;
+    this.alertListeners();
+  },
+
   addChangeListener(callback) {
     listeners.push(callback);
   },
@@ -65,6 +70,12 @@ const KitchenState = {
   removeChangeListener(callback) {
     listeners = listeners.filter((cb) => {
       !Object.is(cb, callback)
+    });
+  },
+
+  alertListeners() {
+    listeners.forEach((callback) => {
+      callback(loadedKitchen);
     });
   }
 };
@@ -80,7 +91,7 @@ function withKitchen(WrappedComponent) {
     }
 
     componentWillMount() {
-      console.log('withKitchen will mount', WrappedComponent.name);
+      //console.log('withKitchen will mount', WrappedComponent.name);
       KitchenState.addChangeListener(this.handleChange);
       KitchenState.getKitchen();
     }
@@ -101,15 +112,9 @@ function withKitchen(WrappedComponent) {
       this.setState(kitchen);
     }
 
-    star(id, starred=true) {
-      return () => {
-        const kitchen = _clone(this.state.kitchen);
-        const item = kitchen[id];
-        item.starred = starred;
-        kitchen[id] = item;
-        this.setState({ kitchen });
-      }
-    }
+    star = (id, starred) => {
+      KitchenState.star(id, starred);
+    };
 
     render() {
       return (

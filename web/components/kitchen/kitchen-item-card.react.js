@@ -42,7 +42,7 @@ class KitchenItemCard extends React.Component {
 
   render() {
     const foodItem = this.props.kitchenIndex[this.props.id] || {};
-    console.log('kitchen item card render', foodItem);
+    //console.log('kitchen item card render', foodItem);
     let zone = foodItem.zone || 'Fridge';
     let category = foodItem.category || 'Condiment';
 
@@ -74,7 +74,7 @@ class KitchenItemCard extends React.Component {
     const extraContent = (
       <div className="extra content">
         <span className="left floated">
-          <i className={`${foodItem.starred ? 'yellow' : '' } star icon`} onClick={this.props.star(foodItem._id, !foodItem.starred)}></i>
+          <i className={`${foodItem.starred ? 'yellow' : '' } star icon`} onClick={() => { this.props.star(foodItem._id, !foodItem.starred)} }></i>
           <Link to={`/kitchen/item/${_kebabCase(foodItem.description)}`}>
             <i className="link setting icon"></i>
           </Link>
