@@ -44,6 +44,7 @@ class RepeatableComponent extends React.Component {
       <div className="repeated-component">
         { this.props.showRemoveSelf && <div className="ui top attached teal icon button" onClick={ this.props.onRemoveSelf }>
           <i className="minus icon"></i>
+          { this.props.removeSelfText }
         </div> }
         <div className="ui attached segment">
           { this.props.children }

@@ -9,6 +9,12 @@ class Dropdown extends React.Component {
       }
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.defaultValue !== this.props.defaultValue) {
+      $(this.dropdown).dropdown('set selected', this.props.defaultValue);
+    }
+  }
+
   render() {
     const className = `ui ${this.props.className || ''} dropdown`;
     return (

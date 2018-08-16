@@ -11,6 +11,10 @@ const fs = require('fs')
 
 const Config = require('./config');
 
+const saveJSONFile = (outputPath, content) => {
+  jsonfile.writeFile(outputPath, content, (err) => console.error('error', err));
+}
+
 const saveTessaractOutput = (filename, obj) => {
   const outputPath = path.join(Config.getBaseDir(), 'tmp', 'tesseract-output', filename + '.json');
   jsonfile.writeFile(outputPath, obj.lines.map((line) => {
@@ -67,6 +71,9 @@ const ReceiptProcessor = {
   cropAndProcess(filename, x, y, width, height, rotate, callback, error) {
     const inputPath = path.join(Config.getBaseDir(), 'tmp', 'images', filename);
     const outputPath = path.join(Config.getBaseDir(), 'tmp', 'processed-images', filename);
+
+    // TODO: trigger a python processing script?
+    // OR: update threshold to be around 40? (based on python otsu/iso/min)
     fs.stat(inputPath, (err, stats) => {
       if (err) error();
       else {
@@ -88,6 +95,7 @@ const ReceiptProcessor = {
 
   extractText(filename, callback, error) {
     console.log(filename);
+    // TODO: separate out file name & path
     const inputPath = path.join(Config.getBaseDir(), 'tmp', 'processed-images', filename);
     const jsonOutputPath = path.join(Config.getBaseDir(), 'tmp', 'tesseract-output', filename + '.json');
     console.log(`input: ${inputPath}`);
@@ -116,6 +124,35 @@ const ReceiptProcessor = {
           callback(items);
         });
       }
+    });
+  },
+
+  runTessaractOnce(path, outputPath, callback, error) {
+    fs.stat(outputPath, (err, stats) => {
+
+      if (err) {
+
+        Tesseract
+        .recognize(path)
+        .progress((p) => console.log('progress', p))
+        .catch(err => console.error('error', err))
+        .then((result) => {
+          console.log('Successfully got text with Tesseract');
+          const minified = result.lines.map((line) => {
+            return { text: line.text.trim() }
+          });
+          saveJSONFile(outputPath, minified);
+          callback(minified);
+        });
+
+      } else {
+
+        jsonfile.readFile(outputPath, (err, obj) => {
+          callback(obj);
+        });
+
+      }
+
     });
   }
 }

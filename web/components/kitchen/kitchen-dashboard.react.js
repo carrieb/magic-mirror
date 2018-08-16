@@ -27,6 +27,8 @@ class KitchenDashboard extends React.Component {
   expiringSoonItems() {
     const now = moment();
     const items = _values(this.props.kitchenIndex);
+    // TODO: this should really include a "last acquired date" to determine what's going bad
+    // requires storing/sending it on the server end
     return _sortBy(items, (item) => {
       const expiration = item.expiration || {};
       if (!_isEmpty(expiration)) {
@@ -40,7 +42,13 @@ class KitchenDashboard extends React.Component {
 
   starredItems() {
     const items = _values(this.props.kitchenIndex);
-    return items.filter((item) => item.starred);
+    const filtered = items.filter((item) => item.starred);
+    console.log('starred:', filtered)
+    return filtered;
+  }
+
+  componentDidMount() {
+    $('.ui.accordion').accordion();
   }
 
   render() {
@@ -51,7 +59,7 @@ class KitchenDashboard extends React.Component {
         // TODO: pass in star handler?
         return <KitchenItemCard key={`expiring_soon_${i}`}
                                 foodItem={item}
-                                itemId={item._id}
+                                id={item._id || 'fake id'}
                                 handlePlusClick={this.props.addToShoppingList}/>
       }
       else {
@@ -59,13 +67,13 @@ class KitchenDashboard extends React.Component {
       }
     });
 
-    expiringSoonItems = <div className="ui five cards">{ expiringItems }</div>;
+    expiringSoonItems = <div className="ui five doubling cards">{ expiringItems }</div>;
 
     const starredItems = this.starredItems().map((item, i) => {
       if (i < 10) {
         // TODO: pass in star handler?
         return <KitchenItemCard key={`starred_${i}`}
-                                itemId={item._id}
+                                id={item._id || 'fake id'}
                                 foodItem={item}/>
       }
       else {
@@ -75,18 +83,36 @@ class KitchenDashboard extends React.Component {
 
     return (
       <div className="kitchen-dashboard-wrapper">
-        <div className="ui segment">
-          <h2 className="ui header">
-            <i className="red warning sign icon"/>
-            Expiring Soon
-          </h2>
-          { expiringSoonItems }
+        <div className="ui fluid vertical accordion menu expiring-soon">
+          <div className="item">
+            <a className="title">
+              <i className="dropdown icon"/>
+              <h2>
+                <i className="red warning sign icon"/>
+                Expiring Soon
+              </h2>
+            </a>
+
+            <div className="content">
+              { }
+            </div>
+          </div>
         </div>
-        <div className="ui segment">
-          <h2 className="ui header">
-            <i className="yellow star icon"/>
-            Starred
-          </h2>
+
+        <div className="ui fluid vertical accordion menu starred">
+          <div className="item">
+            <a className="title">
+              <i className="dropdown icon"/>
+              <h2>
+                <i className="yellow star icon"/>
+                Starred
+              </h2>
+            </a>
+
+            <div className="content">
+              { starredItems }
+            </div>
+          </div>
         </div>
       </div>
     );

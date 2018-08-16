@@ -7,7 +7,7 @@ import _noop from 'lodash/noop';
 import _startCase from 'lodash/startCase';
 import _kebabCase from 'lodash/kebabCase';
 
-import { withKitchen } from 'state/KitchenState';
+import { withKitchen, DEFAULT_ITEM } from 'state/KitchenState';
 import ShoppingListState from 'state/ShoppingListState';
 
 import { Link } from 'react-router-dom';
@@ -41,28 +41,28 @@ class KitchenItemCard extends React.Component {
   }
 
   render() {
-    const foodItem = this.props.kitchenIndex[this.props.id] || {};
-    //console.log('kitchen item card render', foodItem);
-    let zone = foodItem.zone || 'Fridge';
-    let category = foodItem.category || 'Condiment';
+    const foodItem = this.props.kitchenIndex[this.props.id] || DEFAULT_ITEM;
+    console.log(foodItem);
+    const out = foodItem.quantity.amount === 0;
 
     let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/images/no-image.svg';
     const image = (
       <div className="image">
         { foodItem.starred && <div className="ui yellow left corner label"><i className="star icon"/></div> }
-        <img src={imageUrl}/>
+        <img className={out ? 'out-overlay' : ''} src={imageUrl}/>
       </div>
     );
 
     const content = (
       <div className="content">
         <div className="header">
-          <span data-tooltip={category} data-position="right center"><img src={`/images/kitchen/${_kebabCase(category.toLowerCase())}.png`}/></span>
+          <span data-tooltip={foodItem.category} data-position="right center"><img src={`/images/kitchen/${_kebabCase(foodItem.category.toLowerCase())}.png`}/></span>
           <span className="title">{_startCase(foodItem.description)}</span>
         </div>
         <div className="meta">
-          <a>{zone}</a><br/>
+          <a>{foodItem.zone}</a><br/>
         </div>
+        { out && <div style={{ color: 'red' }}>Out of stock</div>}
       </div>
     );
 
@@ -97,14 +97,7 @@ class KitchenItemCard extends React.Component {
 }
 
 KitchenItemCard.propTypes = {
-  id: PropTypes.string.isRequired,
-  star: PropTypes.func,
-  handlePlusClick: PropTypes.func
+  id: PropTypes.string.isRequired
 };
-
-KitchenItemCard.defaultProps = {
-  star: _noop,
-  handlePlusClick: _noop
-}
 
 export default withKitchen(KitchenItemCard);

@@ -14,15 +14,19 @@ class Directions extends React.Component {
     this.toggleCollapse = this.toggleCollapse.bind(this);
 
     const ingredients = this.props.ingredients || [];
+
     const keywords = _sortBy(_uniq(_flatten(ingredients.map((section) => section.items))
-      .map((item) => item.name)), (keyword) => -keyword.length);
+      .map((item) => item.name)), (keyword) => keyword ? -keyword.length : 0);
+
     this.state = { collapsed: true, keywords };
   }
 
   componentWillReceiveProps(nextProps) {
-    const keywords = _sortBy(_uniq(_flatten(nextProps.ingredients.map((section) => section.items))
-      .map((item) => item.name)), (keyword) => -keyword.length);
-    this.setState({ keywords });
+    if (nextProps.ingredients) {
+      const keywords = _sortBy(_uniq(_flatten(nextProps.ingredients.map((section) => section.items))
+        .map((item) => item.name)), (keyword) => keyword ? -keyword.length : 0);
+      this.setState({ keywords });
+    }
   }
 
   toggleCollapse() {
@@ -31,6 +35,10 @@ class Directions extends React.Component {
 
   highlightKeywords(text) {
     //console.log(text, this.state.keywords);
+    if (text && text.length > 0) {
+      return text;
+    }
+
     const keywords = this.state.keywords || [];
     let result = [];
     let matched = [];
@@ -66,6 +74,7 @@ class Directions extends React.Component {
 
   render() {
     const directions = this.props.directions || [];
+
     const directionEls = directions.map((directionsList, i) => {
       const title = <div className="ui grey sub header">{ directionsList.name || 'directions' }</div>;
       const steps = directionsList.steps || [];

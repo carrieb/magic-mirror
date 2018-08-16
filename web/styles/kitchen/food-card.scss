@@ -20,9 +20,12 @@ div.food-card.ui.card {
 
   .image {
     background: white;
-
-
+    
     img {
+      &.out-overlay {
+        filter: blur(3.5px);
+      }
+
       max-height: 200px;
       width: auto;
       margin: auto;

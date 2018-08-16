@@ -35,3 +35,14 @@ Searches `/config` for properties files.
 * `wunderlist api` for list data.
 
 [wireframe design](https://wireframe.cc/Cdvuhh)
+
+TODO:
+** rename -db to -dao?
+* additional item fields:
+** brand?
+** store?
+** nutrition info? link?
+* add "recipes that use this" section
+** sorty by amount in kitchen
+* add historical feed info when edits are made
+* transfer DB contents to raspberry pi

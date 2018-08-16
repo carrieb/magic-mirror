@@ -3,39 +3,25 @@ const mongo = require('mongodb');
 const MongoClient = mongo.MongoClient;
 const assert = require('assert');
 
-const noop = require('lodash/noop');
+const _noop = require('lodash/noop');
 const _has = require('lodash/has');
 
-function _connect(error) {
-  MongoClient.connect(RECIPE_DB_URL, error);
-}
-
-function _documents(callback, error) {
-  _connect((err, db) => {
+function getAllRecipes(dbs, done, error=_noop) {
+  const db = dbs.recipes;
+  const coll = db.collection('documents');
+  coll.find().toArray((err, docs) => {
     if (err) error(err);
-    const coll = db.collection('documents');
-    callback(coll, db);
+    done(docs);
   });
 }
 
-function getAllRecipes(done, error=noop) {
-  _documents((coll, db) => {
-    coll.find().toArray((err, docs) => {
-      if (err) error(err);
-      done(docs);
-      db.close();
-    });
-  }, error);
-}
-
-function getRecipeById(rawId, done, error=noop) {
-  _documents((coll, db) => {
-    const id = new mongo.ObjectID(rawId);
-    coll.findOne({ '_id': id }, (err, res) => {
-      if (err) error();
-      done(res);
-      db.close()
-    });
+function getRecipeById(dbs, rawId, done, error=_noop) {
+  const db = dbs.recipes;
+  const coll = db.collection('documents');
+  const id = new mongo.ObjectID(rawId);
+  coll.findOne({ '_id': id }, (err, res) => {
+    if (err) error(err);
+    done(res);
   });
 }
 

@@ -9,7 +9,7 @@ let loadedItems = [];
 let loadedKitchen = {};
 
 const DEFAULT_ITEM = {
-  description: 'new item',
+  description: 'default new item',
   quantity: {
     unit: 'cup',
     amount: 1
@@ -106,21 +106,33 @@ function withKitchen(WrappedComponent) {
       });
     };
 
-    addItem(item) {
+    addItem = (item) => {
       const kitchen = _clone(this.state.kitchen);
       kitchen[item._id] = item;
       this.setState(kitchen);
     }
 
+    updateItem = (id, item) => {
+      const kitchen = _clone(this.state.kitchen);
+      kitchen[id] = item;
+      this.setState(kitchen);
+    }
+
     star = (id, starred) => {
-      KitchenState.star(id, starred);
+      return ApiWrapper.star(id, starred)
+        .done(() => {
+          const kitchen = _clone(this.state.kitchen);
+          kitchen[id].starred = starred;
+          this.setState(kitchen);
+        });
     };
 
     render() {
       return (
         <WrappedComponent addItem={this.addItem}
+                          updateItem={this.updateItem}
                           star={this.star}
-                          kitchenIndex={loadedKitchen}
+                          kitchenIndex={this.state.kitchen}
                           {...this.props}/>
       );
     }

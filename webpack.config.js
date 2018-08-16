@@ -15,10 +15,6 @@ module.exports = [{
   module: {
     rules: [
       {
-        test: /\.json$/,
-        use: ['json-loader']
-      },
-      {
         test: /\.scss$/,
         use: ['style-loader', 'css-loader?url=false', 'sass-loader']
       },

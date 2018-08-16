@@ -16,7 +16,7 @@ class Ingredient extends React.Component {
     const name = item.name || item.description;
     return (
       <span>
-        <b>{quantity}</b>{q.unit && ' of '}{item.modifier} <a href={`/kitchen/${name}`}>{name.toLowerCase()}</a>
+        <b>{quantity}</b>{q.unit && ' of '}{item.modifier} <a href={`/kitchen/${name}`}>{ name ? name.toLowerCase() : '???' }</a>
       </span>
     );
   }

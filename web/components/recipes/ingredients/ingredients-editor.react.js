@@ -5,34 +5,31 @@ import RepeatableComponent from 'components/common/repeatable-component.react';
 
 import IngredientsInputs from 'components/recipes/ingredients/ingredients-inputs.react';
 
+import { EMPTY_INGREDIENT } from 'state/RecipesState';
+
 import 'sass/recipes/ingredients-editor.scss';
 
 import _uniqueId from 'lodash/uniqueId';
+import _cloneDeep from 'lodash/cloneDeep';
 
 class Section extends React.Component {
-  constructor(props) {
-    super(props);
-    this.updateName = this.updateName.bind(this);
-    this.updateIngredient = this.updateIngredient.bind(this);
-    this.addIngedient = this.addIngedient.bind(this);
-    this.deleteIngredient = this.deleteIngredient.bind(this);
-  }
-
-  updateIngredient(i, ingredient) {
+  updateIngredient = (i, ingredient) => {
     const section = this.props.section;
     section.items[i] = ingredient;
     this.props.updateSection(section);
   }
 
-  addIngedient() {
+  addIngedient = () => {
     const section = this.props.section;
     const ingredients = section.items || [];
-    ingredients.push({ id: _uniqueId() });
+    const ingredient = _cloneDeep(EMPTY_INGREDIENT);
+    ingredient.id = _uniqueId();
+    ingredients.push(ingredient);
     section.items = ingredients;
     this.props.updateSection(section);
   }
 
-  deleteIngredient(idx) {
+  deleteIngredient = (idx) => {
     const section = this.props.section;
     const ingredients = section.items;
     const filtered = ingredients.filter((ingredient, i) => i === idx);
@@ -41,7 +38,7 @@ class Section extends React.Component {
     this.props.updateSection(section);
   }
 
-  updateName(ev) {
+  updateName = (ev) => {
     const section = this.props.section;
     section.name = ev.target.value;
     this.props.updateSection(section);
@@ -60,11 +57,12 @@ class Section extends React.Component {
                                           onChange={ this.updateIngredient }
                                           onAdd={ this.addIngedient }
                                           onRemoveSelf={ this.props.deleteSection }
-                                          onRemove={ this.deleteIngredient }>
+                                          onRemove={ this.deleteIngredient }
+                                          removeSelfText="Remove Section">
                                           { this.props.totalSections > 1 && nameInput }
     </RepeatableComponent>
     return (
-      <div className="ui vertical segment directions-section">
+      <div className="ui vertical segment ingredients-section">
         { repeated }
       </div>
     );
@@ -82,13 +80,13 @@ class IngredientsEditor extends React.Component {
     this.state = { collapsed: this.props.ingredients.length == 0 }
   }
 
-  toggleCollapsed() {
+  toggleCollapsed = () => {
     this.setState({ collapsed: !this.state.collapsed });
-  }
+  };
 
-  addSection() {
+  addSection = () => {
     const ingr = this.props.ingredients;
-    ingr.push({ key: _uniqueId(), items: [ { key: _uniqueId() } ] });
+    ingr.push({ id: _uniqueId(), items: [] });
     this.props.updateIngredients(ingr);
   }
 
@@ -125,16 +123,18 @@ class IngredientsEditor extends React.Component {
         <div>{ sections }</div>
         <button type="button"
           className="ui olive mini fluid button add-ingredient-button"
-          onClick={() => this.addSection()}>
+          onClick={this.addSection}>
             ADD SECTION
         </button>
       </div>
     );
 
     const caret = this.state.collapsed ? 'edit' : 'check';
-    const icon = <i className={`${caret} icon`}
-      style={{ float: 'right', margin: '0' }}
-      onClick={() => this.toggleCollapsed()}/>
+    const text = this.state.collapsed ? 'Edit' : 'Done';
+    const icon = <span style={{ float: 'right', margin: '0' }} onClick={this.toggleCollapsed}>
+      <i className={`${caret} icon`}/>
+      { text }
+    </span>
     return (
       <div className="ingredients-editor">
         <h4>{ icon }Ingredients</h4>

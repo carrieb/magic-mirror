@@ -9,9 +9,8 @@ const WunderlistApi = require('../src/api/wunderlist-api')
 const CalendarApi = require('../src/api/calendar-api')
 const GuildWars2Api = require('../src/api/gw2-api')
 
-const GuildWars2DB = require('../src/gw2-db')
-const FoodDb = require('../src/food-db');
-const RecipesDb = require('../src/recipes-db');
+const GuildWars2DB = require('../src/dbs/gw2-db');
+const RecipesDb = require('../src/dbs/recipes-db');
 
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
@@ -85,30 +84,11 @@ router.get('/guildwars/wallet', cache('1 day'), (req, res) => {
   );
 });
 
-router.get('/kitchen', (req, res) => {
-  FoodDb.getKitchen(
-    (result) => res.json(result),
-    (err) => res.status(500).send('Failed to get kitchen.')
-  );
-});
-
 router.post('/recipe', jsonParser, (req, res) => {
   RecipesDb.uploadRecipe(req.body.recipe, (id) => {
     // TODO: obfuscate somehow
     res.json(id);
   }, (err) => res.status(500).send('Failed to upload recipe.'))
-});
-
-router.get('/recipe/catalog', (req, res) => {
-  RecipesDb.getAllRecipes((recipes) => {
-    res.json(recipes);
-  }, (err) => res.status(500).send('Failed to retrieve recipes.'));
-});
-
-router.get('/recipe/:id', (req, res) => {
-  RecipesDb.getRecipeById(req.params.id, (recipe) => {
-    res.json(recipe);
-  }, (err) => res.status(500).send(`Failed to retrieve recipe with id [${req.params.id}]`));
 });
 
 module.exports = router;

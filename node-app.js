@@ -4,7 +4,14 @@ const path = require('path');
 
 const api = require('./routes/api');
 const routes = require('./routes/routes');
+const kitchen = require('./routes/kitchen');
+const recipes = require('./routes/recipes');
 
+const Config = require('./src/config.js');
+const initDbs = require('./src/dbs');
+
+app.use('/api/kitchen', kitchen);
+app.use('/api/recipes', recipes);
 app.use('/api', api);
 app.use('/', routes);
 
@@ -15,6 +22,13 @@ app.use('/processed-images', express.static(path.join(__dirname, 'tmp', 'process
 app.use('/dist', express.static(path.join(__dirname, 'semantic', 'dist')));
 app.use('/dist', express.static(path.join(__dirname, 'node_modules', 'cropperjs', 'dist')));
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+initDbs().then(dbs => {
+  app.locals.dbs = dbs;
+  console.log('env:', app.get('env'));
+
+  app.listen(3000, () => {
+    console.log(`Node.js app magic-mirror is listening at http://localhost:${3000}`);
+  });
+}).catch(err => {
+  console.error(err);
 });

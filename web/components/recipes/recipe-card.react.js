@@ -56,14 +56,14 @@ class RecipeCard extends React.Component {
         <div className="content">
 
           <div className="header">
-          { this.props.showActions && <div className="actions">
-            <i className="ui edit icon" onClick={this.props.onEditClick}/>
-            <i className="ui maximize icon" onClick={this.props.onExpandClick}/>
-            <i className="ui plus icon" onClick={this.props.onAddClick}/>
-          </div> }
-          { recipe.servings && <span className="grey-text right floated">{recipe.servings}<i className="ui grey icon food"/></span> }
+            { this.props.showActions && <div className="actions">
+              <i className="ui edit icon" onClick={this.props.onEditClick}/>
+              <i className="ui maximize icon" onClick={this.props.onExpandClick}/>
+              <i className="ui plus icon" onClick={this.props.onAddClick}/>
+            </div> }
+            { recipe.servings > 0 && <span className="grey-text right floated">{recipe.servings}<i className="ui grey icon food"/></span> }
 
-            {recipe.name}
+            {recipe.name || ''}
 
 
           </div>

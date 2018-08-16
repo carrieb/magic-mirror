@@ -14,21 +14,30 @@ import KitchenItemFeed from 'components/kitchen/item/kitchen-item-feed.react';
 import uniqueId from 'lodash/uniqueId';
 import _isEmpty from 'lodash/isEmpty';
 import _isString from 'lodash/isString';
+import _isEqual from 'lodash/isEqual'
 import _clone from 'lodash/clone';
+import _lowerCase from 'lodash/lowerCase';
+import _find from 'lodash/find';
 
 import 'sass/kitchen/food-editor.scss';
 
 class FoodEditorHandler extends React.Component {
   constructor(props) {
     super(props);
-    console.log('food editor', props);
+    console.log('food editor props', props);
 
-    const name = this.props.match.params.foodName;
-    const foodItem = _clone(DEFAULT_ITEM);
+    const name = _lowerCase(this.props.match.params.foodName);
+    let foodItem = _clone(DEFAULT_ITEM);
+    // try looking it up in the kitchen index
+    const loadedItem = this.lookupDetails(name);
 
-    foodItem.description = name;
-    foodItem.zone = LocalStorageUtil.getLastZone() || foodItem.zone;
-    foodItem.category = LocalStorageUtil.getLastCategory() || foodItem.category;
+    if (!_isEmpty(loadedItem)) {
+      foodItem = loadedItem;
+    } else {
+      foodItem.description = name;
+      foodItem.zone = LocalStorageUtil.getLastZone() || DEFAULT_ITEM.zone;
+      foodItem.category = LocalStorageUtil.getLastCategory() || DEFAULT_ITEM.category;
+    }
 
     this.handleFormRef = this.handleFormRef.bind(this);
     this.updateImage = this.updateImage.bind(this);
@@ -42,16 +51,34 @@ class FoodEditorHandler extends React.Component {
     };
   }
 
+  lookupDetails = (name) => _find(this.props.kitchenIndex,
+      (item) => _lowerCase(item.description) === name);
+
   componentWillMount() {
     if (this.state.foodItem === null) {
       this.loadItem();
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
+    console.log('did update', prevProps, this.props);
     if (this.state.editingName) {
       // focus on that span
       $(this.nameInput).focus();
+    }
+
+    if (this.props.match.params.foodName !== prevProps.match.params.foodName) {
+      const me = _find(this.props.kitchenIndex,
+        (item) => _lowerCase(item.description) === this.state.foodItem.description);
+      this.setState({ foodItem: me });
+    }
+
+    if (!_isEqual(prevProps.kitchenIndex, this.props.kitchenIndex)) {
+      // attempt to look myself up
+      const me = _find(this.props.kitchenIndex,
+        (item) => _lowerCase(item.description) === this.state.foodItem.description);
+      this.setState({ foodItem: me });
+      // TODO: don't do this if i've already started editing?
     }
   }
 
@@ -121,12 +148,15 @@ class FoodEditorHandler extends React.Component {
         const foodItem = this.state.foodItem;
         LocalStorageUtil.saveZone(foodItem.zone);
         LocalStorageUtil.saveCategory(foodItem.category);
-        if (_isString(insertedId)) {
-          console.log('updated food', insertedId);
+        if (_isEmpty(food._id)) {
+          console.log('upserted food', insertedId);
           foodItem._id = insertedId;
-          KitchenState.addItem(food);
+          this.props.addItem(food);
+        } else {
+          this.props.updateItem(food._id, food);
         }
-        this.props.history.push('/kitchen')
+
+        this.props.history.goBack();
       });
   }
 
@@ -159,7 +189,7 @@ class FoodEditorHandler extends React.Component {
     //     ref={(ref) => this.nameInput = ref}/>
     // </div>);
 
-    console.log(foodItem);
+    console.log('render editor handler', foodItem, this.props);
 
     const headerContent = this.state.editingName
       ? <div>

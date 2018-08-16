@@ -9,7 +9,7 @@ const history = createHistory();
 import RecipesNavigation from 'components/recipes/RecipesNavigation.react';
 
 import ApiRecipesList from 'components/recipes/ApiRecipesList.react';
-import ApiAddRecipeForm from 'components/recipes/ApiAddRecipeForm.react';
+import RecipeEditor from 'components/recipes/recipe-editor.react';
 import ImportRecipeForm from 'components/recipes/import-recipe-form.react';
 import FullRecipeView from 'components/recipes/full-recipe-view.react';
 
@@ -71,9 +71,9 @@ window.onload = function() {
       <div className="ui container recipes-container">
         <RecipesNavigation/>
         <Route path="/recipes" exact={true} component={Recipes}/>
-        <Route path="/recipes/add" exact={true} component={ApiAddRecipeForm}/>
+        <Route path="/recipes/add" exact={true} component={RecipeEditor}/>
         <Route path="/recipes/import" exact={true} component={ImportRecipeForm}/>
-        <Route path="/recipes/r/:id/edit" exact={true} component={ApiAddRecipeForm}/>
+        <Route path="/recipes/r/:id/edit" exact={true} component={RecipeEditor}/>
         <Route path="/recipes/r/:id" exact={true} component={FullRecipeView}/>
       </div>
     </Router>,

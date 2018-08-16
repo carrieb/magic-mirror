@@ -67,7 +67,8 @@ const ApiWrapper = {
     return $.ajax('/api/kitchen')
       .done((res) => {
         //console.log('/kitchen response', res);
-      });
+      })
+      .fail((err) => alert(err));
   },
 
   submitCrop(filename, crop, callback) {
@@ -105,7 +106,7 @@ const ApiWrapper = {
   },
 
   updateFood(food) {
-    return $.ajax('/food-item', {
+    return $.ajax('/api/kitchen/food', {
       data: JSON.stringify({ item: food }),
       type: 'PUT',
       contentType: 'application/json; charset=utf-8'
@@ -114,7 +115,7 @@ const ApiWrapper = {
 
   trashFood(id) {
     console.log(id)
-    return $.ajax('/food-trash', {
+    return $.ajax('/api/kitchen/trash', {
       data: JSON.stringify({ id }),
       type: 'DELETE',
       contentType: 'application/json; charset=utf-8'
@@ -123,7 +124,7 @@ const ApiWrapper = {
 
   uploadFoodImage(form, onProgress=noop) {
     return $.ajax({
-      url: '/food-image',
+      url: '/api/kitchen/image',
       type: 'POST',
       data: new FormData(form),
       cache: false,
@@ -153,9 +154,9 @@ const ApiWrapper = {
     });
   },
 
-  getRecipeCatalog() {
+  getRecipes() {
     return $.ajax({
-      url: '/api/recipe/catalog',
+      url: '/api/recipes/',
       type: 'GET',
       contentType: 'application/json; charset=utf-8'
     });
@@ -163,7 +164,7 @@ const ApiWrapper = {
 
   getRecipeById(id) {
     return $.ajax({
-      url: `/api/recipe/${id}`,
+      url: `/api/recipes/${id}`,
       type: 'GET'
     });
   },
@@ -174,6 +175,13 @@ const ApiWrapper = {
       type: 'POST',
       data: JSON.stringify({ items }),
       contentType: 'application/json; charset=utf-8'
+    });
+  },
+
+  star(id, starred) {
+    return $.ajax({
+      url: `/api/kitchen/star/${id}?s=${starred ? '1' : '0'}`,
+      type: 'GET'
     });
   }
 }

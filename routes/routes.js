@@ -19,23 +19,10 @@ const receiptStorage = multer.diskStorage({
 });
 const receiptUpload = multer({ storage: receiptStorage });
 
-const foodImageStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, dir + '/tmp/food-images')
-  },
-  filename: (req, file, cb) => {
-    cb(null, req.body.filename + path.extname(file.originalname));
-  }
-});
-const foodImageUpload = multer({ storage: foodImageStorage })
-
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
-// GOOGLE
-
 const CalendarApi = require('../src/api/calendar-api');
-const FoodDb = require('../src/food-db.js');
 
 router.get('/google-auth', (req, res) => {
   res.redirect(CalendarApi.generateAuthUrl() + "&prompt=consent");
@@ -73,27 +60,6 @@ router.post('/receipt', receiptUpload.single('receipt'), function (req, res, nex
   res.redirect(`/process-receipt/crop/${req.file.filename}`);
 });
 
-router.put('/food-item', jsonParser, (req, res) => {
-  console.log(req.body.item);
-  FoodDb.updateItem(req.body.item, (id) => res.send(id));
-});
-
-router.delete('/food-trash', jsonParser, (req, res) => {
-  console.log(req.query);
-  console.log(req.body);
-  FoodDb.removeItem(req.body.id, () => res.send('OK'));
-});
-
-router.post('/food-image', foodImageUpload.single('image'), function (req, res, next) {
-  //console.log(req.file);
-  console.log(req.body.filename);
-  console.log(req.file.filename);
-  FoodDb.updateImage(req.body.filename, req.file.filename, () => {
-    res.send(req.file.filename);
-  });
-  // TODO: save name into db lookup using req.body.filename and set to req.file.filename
-});
-
 router.post('/crop', jsonParser, (req, res) => {
   console.log(req.body);
   // TODO: get image, crop using req.body, rotate right, save in tmp/processed-images
@@ -109,13 +75,6 @@ router.get('/extract', (req, res) => {
     res.send(items);
   }, () => {
     res.status(404).send(`A processed image for ${req.query.filename} not found.`);
-  });
-});
-
-router.post('/items', jsonParser, (req, res) => {
-  // TODO: store new things into DB
-  FoodDb.storeNewItems(req.body.items, () => {
-    res.send('OK');
   });
 });
 

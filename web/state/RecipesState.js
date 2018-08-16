@@ -48,10 +48,28 @@ let recipes = [];
 
 const DEFAULT_RECIPE = _clone(KIMCHI_RECIPE); // no id set
 
+const EMPTY_RECIPE = {
+  name: '',
+  img: '',
+  source: '',
+  servings: 0,
+  ingredients: [],
+  directions: []
+}
+
+const EMPTY_INGREDIENT = {
+  name: '',
+  quantity: {
+    amount: 0,
+    unit: ''
+  },
+  modifier: ''
+}
+
 const RecipesState = {
   DEFAULT_RECIPE,
   getRecipes() {
-    return ApiWrapper.getRecipeCatalog()
+    return ApiWrapper.getRecipes()
       .then((catalog) => {
         recipes = catalog;
         return catalog;
@@ -63,4 +81,4 @@ const RecipesState = {
   }
 };
 
-export default RecipesState;
+module.exports = { RecipesState, EMPTY_RECIPE, EMPTY_INGREDIENT};

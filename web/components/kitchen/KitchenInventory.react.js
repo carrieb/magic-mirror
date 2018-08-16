@@ -23,14 +23,16 @@ const ALL_ZONES = KitchenConstants.ALL_ZONES;
 class KitchenInventory extends React.Component {
   constructor(props) {
     super(props);
+    console.log('inventory construction');
 
     this.state = {
       selectedItem: null,
       layout: 'Cards',
       categories: new Set(['Dairy', 'Produce', 'Meat', 'Leftovers', 'Dry Goods']),
       zones: new Set(ALL_ZONES),
-      tags: LocalStorageUtil.getKitchenTags(),
-      shoppingList: ShoppingListState.getItems()
+      tags: LocalStorageUtil.getKitchenTags() || [],
+      shoppingList: ShoppingListState.getItems() || [],
+      includeOutOfStock: false
     }
   }
 
@@ -68,10 +70,16 @@ class KitchenInventory extends React.Component {
     if (this.state.layout === 'table') {
       $('table').tablesort();
     }
+
+    console.log(localStorage.getItem('scroll'))
+  }
+
+  componentWillUnmount() {
+    localStorage.setItem('scroll', window.scrollY);
   }
 
   render() {
-    console.log('kitchen inventory render', this.props.kitchenIndex);
+    console.log('kitchen inventory render', Object.keys(this.props.kitchenIndex).length);
     let inventory = null;
 
     if (this.state.layout === 'Cards') {
@@ -85,11 +93,14 @@ class KitchenInventory extends React.Component {
         if (item.category && this.state.tags.indexOf(item.category) === -1) {
           filtered = true;
         }
+        if (!this.state.includeOutOfStock && item.quantity.amount === 0) {
+          filtered = true;
+        }
         return !filtered;
       })
       .map((foodItem, idx) => {
         return (
-          <KitchenItemCard id={foodItem._id}
+          <KitchenItemCard id={foodItem._id || 'fake id'}
                            delete={(id) => this.delete(id)}
                            key={idx}/>
         );
@@ -171,6 +182,14 @@ class KitchenInventory extends React.Component {
                 <i className="list layout icon"/>
               </div>
             </div>
+          </div>
+
+          <div className="ui toggle checkbox" style={{ marginTop: '10px' }}>
+            <input type="checkbox"
+                   name="public"
+                   checked={this.state.includeOutOfStock}
+                   onClick={ () => this.setState({ includeOutOfStock: !this.state.includeOutOfStock })}/>
+            <label>Include out of stock items</label>
           </div>
 
         </div>

@@ -14,7 +14,6 @@ class IngredientsInputs extends React.Component {
 
   render() {
     const value = this.props.value;
-    const quantity = value.quantity || {};
     return <div className="ingredients-fields">
       <div className="fields">
 
@@ -27,13 +26,13 @@ class IngredientsInputs extends React.Component {
                 step="0.25"
                 placeholder="1"
                 onChange={(ev) => this.handleChange(ev, 'quantity.amount')}
-                value={quantity.amount}/>
+                value={value.quantity.amount}/>
             </div>
             <div className="field">
               <input type="text"
                 placeholder="pkg"
                 onChange={(ev) => this.handleChange(ev, 'quantity.unit')}
-                value={quantity.unit}/>
+                value={value.quantity.unit}/>
             </div>
           </div>
         </div>

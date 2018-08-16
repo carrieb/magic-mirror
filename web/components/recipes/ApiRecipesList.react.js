@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 
 import RecipeCard from 'components/recipes/recipe-card.react';
-import RecipesState from 'state/RecipesState';
+import { RecipesState } from 'state/RecipesState';
 
 import _concat from 'lodash/concat';
 import _noop from 'lodash/noop';

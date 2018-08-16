@@ -3,6 +3,7 @@ const SHOPPING_LIST_KEY = 'shoppingList:';
 const KITCHEN_TAGS_KEY = 'kitchenTags:';
 const LAST_ZONE_KEY = 'zone:';
 const LAST_CATEGORY_KEY = 'category:';
+const NEW_RECIPE_BEING_EDITED = 'newRecipeBeingEdited:';
 
 function _set(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
@@ -47,12 +48,20 @@ const LocalStorageUtil = {
     return _get(LAST_CATEGORY_KEY);
   },
 
+  getNewRecipeBeingEdited() {
+    return _get(NEW_RECIPE_BEING_EDITED);
+  },
+
   saveZone(zone) {
     _set(LAST_ZONE_KEY, zone);
   },
 
   saveCategory(category) {
     _set(LAST_CATEGORY_KEY, category);
+  },
+
+  saveNewRecipeBeingEdited(recipe) {
+    _set(NEW_RECIPE_BEING_EDITED, recipe);
   }
 };
 

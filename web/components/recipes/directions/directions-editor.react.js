@@ -9,17 +9,19 @@ import _uniqueId from 'lodash/uniqueId';
 import 'sass/recipes/directions-editor.scss';
 
 class Step extends React.Component {
-  constructor(props) {
-    super(props);
-    this.updateContent = this.updateContent.bind(this);
-  }
-
-  updateContent(ev) {
+  updateContent = (ev) => {
     const content = ev.target.value;
     const step = this.props.step;
     step.content = content;
     this.props.onChange(step);
-  }
+  };
+
+  updateDependencies = (ev) => {
+    const content = ev.target.value;
+    const step = this.props.step;
+    step.dependencies = content.split(', ');
+    this.props.onChange(step);
+  };
 
   render() {
     //console.log('step', this.props);
@@ -30,9 +32,18 @@ class Step extends React.Component {
              value={ step.content }
              onChange={ this.updateContent }/>
     </div>;
+
+    console.log(step);
+    const dependenciesInput = <div className="field">
+      <label>Depends on:</label>
+      <input type="text" value={ step.dependencies ? step.dependencies.join(', ') : '' }
+             onChange={ this.updateDependencies }/>
+    </div>;
+
     return (
       <div className="step">
         { stepInput }
+        { dependenciesInput }
       </div>
     );
   }
@@ -88,7 +99,8 @@ class Section extends React.Component {
                                           onAdd={ this.addStep }
                                           showRemoveSelf={ this.props.totalSections > 1 }
                                           onRemoveSelf={ this.props.deleteSection }
-                                          onRemove={ this.deleteStep }>
+                                          onRemove={ this.deleteStep }
+                                          removeSelfText="Remove Section">
                                           { this.props.totalSections > 1 && nameInput }
     </RepeatableComponent>
     return (
@@ -104,7 +116,15 @@ class DirectionsEditor extends React.Component {
     super(props);
     this.addSection = this.addSection.bind(this);
     this.updateSection = this.updateSection.bind(this);
+
+    this.state = {
+      collapsed: true
+    }
   }
+
+  toggleCollapsed = () => {
+    this.setState({ collapsed: !this.state.collapsed });
+  };
 
   deleteSection(i) {
     return () => {
@@ -140,17 +160,27 @@ class DirectionsEditor extends React.Component {
       );
     });
 
+    const content = <div>
+      { directionsSections }
+      <div style={{ textAlign: 'center' }}>
+        <button className="ui fluid blue mini button"
+                type="button"
+                onClick={this.addSection}>
+          ADD SECTION
+        </button>
+      </div>
+    </div>
+
+    const caret = this.state.collapsed ? 'edit' : 'check';
+    const text = this.state.collapsed ? 'Edit' : 'Done';
+    const icon = <span style={{ float: 'right', margin: '0' }} onClick={() => this.toggleCollapsed()}>
+      <i className={`${caret} icon`}/>
+      { text }
+    </span>
     return (
       <div className="directions-editor">
-        <h4>Directions</h4>
-        { directionsSections }
-        <div style={{ textAlign: 'center' }}>
-          <button className="ui blue mini button"
-                  type="button"
-                  onClick={this.addSection}>
-            ADD SECTION
-          </button>
-        </div>
+        <h4>{icon}Directions</h4>
+        { !this.state.collapsed && content }
       </div>
     );
   }

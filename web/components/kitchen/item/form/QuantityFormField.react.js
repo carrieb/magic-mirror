@@ -39,8 +39,6 @@ class QuantityFormField extends React.Component {
         onDropdownChange={(value, text, choice) => this.onUnitChange(value, text, choice)}>
         <input value={this.props.quantity ? this.props.quantity.amount : ''}
           type="number"
-          placeholder="3"
-          min="1"
           onChange={(ev) => this.onAmountChange(ev)}/>
       </InputDropdownGroup>
     );

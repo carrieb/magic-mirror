@@ -5,6 +5,7 @@ import RecipesState from 'state/RecipesState';
 
 import Directions from 'components/recipes/directions/directions-display.react';
 import Ingredients from 'components/recipes/ingredients/ingredients-display.react';
+import Timeline from 'components/recipes/timeline/timeline.react';
 
 import _isEmpty from 'lodash/isEmpty';
 
@@ -52,11 +53,17 @@ class FullRecipeView extends React.Component {
       <div className="full-recipe-view">
         <div className="ui segment">
 
-          <h1>{recipe.name}<span className="right floated" onClick={this.edit}><i className="ui edit icon"/></span></h1>
+          <h1>
+            <span className="right floated" onClick={this.edit}><i className="ui edit icon"/></span>
+            {recipe.name}
+          </h1>
+
           { recipe.img && <div className="ui image"><img src={recipe.img}/></div> }
           { recipe.source && <div className="ui embed" data-url={recipe.source}/> }
+          
           <Ingredients ingredients={recipe.ingredients}/>
           <Directions directions={recipe.directions} ingredients={recipe.ingredients}/>
+          <Timeline directions={recipe.directions}/>
         </div>
       </div>
     );
