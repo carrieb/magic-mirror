@@ -9,6 +9,8 @@ import QuantityFormField from './item/form/QuantityFormField.react';
 
 import KitchenConstants from 'state/kitchen/kitchen-constants';
 
+import _kebabCase from 'lodash/kebabCase';
+
 class ItemEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -17,7 +19,7 @@ class ItemEditor extends React.Component {
   render() {
     const valueToOption = (val) => (
       <div className="item" data-value={val} key={val}>
-        <img className="ui mini avatar image" src={`/images/kitchen/${val.toLowerCase()}.png`}/>
+        <img className="ui mini avatar image" src={`/images/kitchen/${_kebabCase(val.toLowerCase())}.png`}/>
         {val}
       </div>
     );
@@ -53,7 +55,7 @@ class ItemEditor extends React.Component {
         </div>
         <div className="eleven wide column">
           <Dropdown className="fluid selection category-dropdown"
-                    defaultValue={ this.props.foodItem.category }
+                    value={ [this.props.foodItem.category] }
                     options={{ onChange: (value, text, choice) => this.props.onChange('category', value) }}>
             { categoryOptions }
           </Dropdown>
@@ -64,7 +66,7 @@ class ItemEditor extends React.Component {
         </div>
         <div className="eleven wide column">
           <Dropdown className="fluid selection zone-dropdown"
-                    defaultValue={ this.props.foodItem.zone }
+                    value={ [this.props.foodItem.zone] }
                     options={{ onChange: (value, text, choice) => this.props.onChange('zone', value) }}>
             { zoneOptions }
           </Dropdown>

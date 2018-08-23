@@ -29,7 +29,7 @@ class KitchenDashboard extends React.Component {
     const items = _values(this.props.kitchenIndex);
     // TODO: this should really include a "last acquired date" to determine what's going bad
     // requires storing/sending it on the server end
-    return _sortBy(items, (item) => {
+    return _sortBy(items.filter(item => item.quantity ? item.quantity.amount > 0 : true), (item) => {
       const expiration = item.expiration || {};
       if (!_isEmpty(expiration)) {
         const expireDate = now.add(expiration.length, expiration.delta + 's');
@@ -54,32 +54,19 @@ class KitchenDashboard extends React.Component {
   render() {
     let expiringSoonItems;
 
-    const expiringItems = this.expiringSoonItems().map((item, i) => {
-      if (i < 10) {
-        // TODO: pass in star handler?
+    const expiringItems = this.expiringSoonItems().slice(0, 10).map((item, i) => {
         return <KitchenItemCard key={`expiring_soon_${i}`}
                                 foodItem={item}
                                 id={item._id || 'fake id'}
                                 handlePlusClick={this.props.addToShoppingList}/>
-      }
-      else {
-        return null;
-      }
     });
 
-    expiringSoonItems = <div className="ui five doubling cards">{ expiringItems }</div>;
-
-    const starredItems = this.starredItems().map((item, i) => {
-      if (i < 10) {
-        // TODO: pass in star handler?
-        return <KitchenItemCard key={`starred_${i}`}
-                                id={item._id || 'fake id'}
-                                foodItem={item}/>
-      }
-      else {
-        return null;
-      }
-    });
+    const starredItems = this.starredItems().slice(0, 10).map((item, i) => {
+      // TODO: pass in star handler?
+      return <KitchenItemCard key={`starred_${i}`}
+                              id={item._id || 'fake id'}
+                              foodItem={item}/>
+    })
 
     return (
       <div className="kitchen-dashboard-wrapper">
@@ -94,7 +81,9 @@ class KitchenDashboard extends React.Component {
             </a>
 
             <div className="content">
-              { }
+              { expiringItems.length > 0 ?
+                <div className="ui five doubling cards">{ expiringItems }</div> :
+                'Congrats! No items expiring soon.' }
             </div>
           </div>
         </div>
@@ -110,7 +99,9 @@ class KitchenDashboard extends React.Component {
             </a>
 
             <div className="content">
-              { starredItems }
+              { starredItems.length > 0 ?
+                 <div className="ui five doubling cards">{ starredItems }</div> :
+                'No currently starred items.' }
             </div>
           </div>
         </div>

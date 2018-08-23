@@ -46,3 +46,5 @@ TODO:
 ** sorty by amount in kitchen
 * add historical feed info when edits are made
 * transfer DB contents to raspberry pi
+* update icons
+** pack i like that isn't free : https://www.flaticon.com/family/basic-rounded/lineal-color 

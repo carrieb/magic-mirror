@@ -85,15 +85,12 @@ function withKitchen(WrappedComponent) {
     constructor(props) {
       super(props);
 
+      KitchenState.addChangeListener(this.handleChange);
+      KitchenState.getKitchen();
+
       this.state = {
         kitchen: loadedKitchen
       }
-    }
-
-    componentWillMount() {
-      //console.log('withKitchen will mount', WrappedComponent.name);
-      KitchenState.addChangeListener(this.handleChange);
-      KitchenState.getKitchen();
     }
 
     componentWillUnmount() {

@@ -12,7 +12,7 @@ const multer  = require('multer');
 const path = require('path');
 const foodImageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, dir + '/tmp/food-images')
+    cb(null, Config.getBaseDir() + '/tmp/food-images')
   },
   filename: (req, file, cb) => {
     cb(null, req.body.filename + path.extname(file.originalname));

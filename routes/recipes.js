@@ -14,6 +14,13 @@ router.get('/', (req, res) => {
   }, (err) => res.status(500).send(`Failed to retrieve recipes. ${err.message}`));
 });
 
+router.post('/add', jsonParser, (req, res) => {
+  RecipesDb.uploadRecipe(res.app.locals.dbs, req.body.recipe, (id) => {
+    // TODO: obfuscate somehow
+    res.json(id);
+  }, (err) => res.status(500).send('Failed to upload recipe.'))
+});
+
 router.get('/:id', (req, res) => {
   RecipesDb.getRecipeById(res.app.locals.dbs, req.params.id, (recipe) => {
     res.json(recipe);

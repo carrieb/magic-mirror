@@ -6,14 +6,22 @@ import { withKitchen } from 'state/KitchenState';
 import KitchenConstants from 'state/kitchen/kitchen-constants';
 
 import KitchenItemCard from 'components/kitchen/kitchen-item-card.react';
+import CardLayout from 'components/kitchen/card-layout.react';
+import ListLayout from 'components/kitchen/list-layout.react';
+import ImageOption from 'components/kitchen/image-option.react';
 
 import { ShoppingList } from 'components/shared/shopping-list.react';
 import ShoppingListState from 'state/ShoppingListState';
 
 import LocalStorageUtil from 'util/local-storage-util';
 
+import SearchItemsByNameDropdown from 'components/kitchen/search-items-by-name-dropdown.react';
+import Dropdown from 'components/common/dropdown.react';
+
 import _kebabCase from 'lodash/kebabCase';
 import _isEqual from 'lodash/isEqual';
+import _clone from 'lodash/clone';
+import _values from 'lodash/values';
 
 import 'sass/kitchen/inventory.scss';
 
@@ -23,47 +31,16 @@ const ALL_ZONES = KitchenConstants.ALL_ZONES;
 class KitchenInventory extends React.Component {
   constructor(props) {
     super(props);
-    console.log('inventory construction');
 
     this.state = {
       selectedItem: null,
       layout: 'Cards',
-      categories: new Set(['Dairy', 'Produce', 'Meat', 'Leftovers', 'Dry Goods']),
-      zones: new Set(ALL_ZONES),
-      tags: LocalStorageUtil.getKitchenTags() || [],
-      shoppingList: ShoppingListState.getItems() || [],
-      includeOutOfStock: false
+      categories: LocalStorageUtil.getInventoryFilterCategories() || _clone(ALL_CATEGORIES),
+      zones: LocalStorageUtil.getInventoryFilterZones() || _clone(ALL_ZONES),
+      shoppingList: [], // todo: remove? should be all encapsulated in withShoppingList HOC
+      includeOutOfStock: false,
+      groupByCategory: false
     }
-  }
-
-  delete(id) {
-
-  }
-
-  star(id) {
-    // TODO: ..
-  }
-
-  toggleLayout() {
-    this.setState({
-      layout: this.state.layout === 'Cards' ? 'List' : 'Cards'
-    });
-  }
-
-  onTagsChange = (tags) => {
-    const split = tags.split(',');
-    LocalStorageUtil.saveKitchenTags(split);
-    if (!_isEqual(split, this.state.tags)) {
-      console.log(split, this.state.tags);
-      this.setState({ tags: split });
-    }
-  };
-
-  componentDidMount() {
-    $('.ui.dropdown').dropdown('set selected', this.state.tags)
-    $('.ui.dropdown').dropdown({
-      onChange: this.onTagsChange
-    });
   }
 
   componentDidUpdate() {
@@ -71,33 +48,62 @@ class KitchenInventory extends React.Component {
       $('table').tablesort();
     }
 
-    console.log(localStorage.getItem('scroll'))
+    //console.log(localStorage.getItem('scroll'))
   }
 
   componentWillUnmount() {
-    localStorage.setItem('scroll', window.scrollY);
+    localStorage.setItem('scroll:', window.scrollY);
+  }
+
+  toggleLayout = () => {
+    this.setState({
+      layout: this.state.layout === 'Cards' ? 'List' : 'Cards'
+    });
+  };
+
+  onZonesChange = (raw) => {
+    const zones = raw.split(',');
+    LocalStorageUtil.saveInventoryFilterZones(zones);
+    if (!_isEqual(zones, this.state.zones)) {
+      console.log(zones, this.state.zones);
+      this.setState({ zones });
+    }
+  }
+
+  onCategoriesChange = (raw) => {
+    const categories = raw.split(',');
+    console.log(categories);
+    LocalStorageUtil.saveInventoryFilterCategories(categories);
+    if (!_isEqual(categories, this.state.categories)) {
+      console.log(categories, this.state.categories);
+      this.setState({ categories });
+    }
+  }
+
+  filteredItems = () => {
+    return _values(this.props.kitchenIndex)
+    .filter((item) => {
+      let filtered = false;
+      if (item.zone && this.state.zones.indexOf(item.zone) === -1) {
+        filtered = true;
+      }
+      if (item.category && this.state.categories.indexOf(item.category) === -1) {
+        filtered = true;
+      }
+      if (!this.state.includeOutOfStock && item.quantity.amount === 0) {
+        filtered = true;
+      }
+      return !filtered;
+    })
   }
 
   render() {
-    console.log('kitchen inventory render', Object.keys(this.props.kitchenIndex).length);
+    console.log('kitchen inventory render', this.state, Object.keys(this.props.kitchenIndex).length);
     let inventory = null;
 
     if (this.state.layout === 'Cards') {
-      let itemCards = Object.keys(this.props.kitchenIndex)
-        .map((key) => this.props.kitchenIndex[key])
-      .filter((item) => {
-        let filtered = false;
-        if (item.zone && this.state.tags.indexOf(item.zone) === -1) {
-          filtered = true;
-        }
-        if (item.category && this.state.tags.indexOf(item.category) === -1) {
-          filtered = true;
-        }
-        if (!this.state.includeOutOfStock && item.quantity.amount === 0) {
-          filtered = true;
-        }
-        return !filtered;
-      })
+      // TODO: move this to be rendered in the card layout?
+      const cards = this.filteredItems()
       .map((foodItem, idx) => {
         return (
           <KitchenItemCard id={foodItem._id || 'fake id'}
@@ -106,17 +112,11 @@ class KitchenInventory extends React.Component {
         );
       });
 
-      inventory = (
-        <div className="kitchen-inventory">
-          { itemCards.length > 0 ?
-            <div className="ui six doubling cards">{ itemCards }</div> :
-            <div className="ui fluid card"><div className="content">Nothing in inventory.</div></div> }
-        </div>
-      );
+      inventory = <CardLayout grouped={this.state.groupByCategory}>{ cards }</CardLayout>;
     }
 
     if (this.state.layout === 'List') {
-      const itemRows = this.state.kitchen.map((foodItem, idx) => {
+      const rows = this.state.kitchen.map((foodItem, idx) => {
         let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
         return (
           <tr key={idx} className="food-item-row">
@@ -126,30 +126,11 @@ class KitchenInventory extends React.Component {
           </tr>
         )
       });
-      inventory = (
-        <table className="ui sortable unstackable table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Name </th>
-              <th></th>
-            </tr>
-          </thead>
-            <tbody>
-            { itemRows }
-            </tbody>
-          <tfoot>
-            <tr>
-              <th>{this.state.kitchen.length} Items</th>
-            </tr>
-          </tfoot>
-        </table>
-      );
+
+      inventory = <ListLayout>{ rows }</ListLayout>;
     }
-    const item = (name) => <div key={name} className="item" data-value={name}>
-      <img src={`/images/kitchen/${_kebabCase(name.toLowerCase())}.png`}/>
-      {name}
-    </div>;
+
+    const imageOption = (name) => <ImageOption key={name} name={name}/>;
 
     const layoutClassName = (layout) => `ui ${this.state.layout === layout ? 'disabled active' : ''} vertical animated icon button`;
     return (
@@ -157,17 +138,17 @@ class KitchenInventory extends React.Component {
         <ShoppingList items={this.state.shoppingList} />
         <div className="inventory-wrapper">
         <div className="header">
-          <div className="tags-wrapper">
-            <div className="ui fluid multiple search selection dropdown">
-              <input type="hidden" name="tags"/>
-              <i className="dropdown icon"/>
-              <div className="default text">Select Tags</div>
-                <div className="menu">
-                  { ALL_ZONES.map(item) }
-                  { ALL_CATEGORIES.map(item) }
-                </div>
-            </div>
-          </div>
+          <SearchItemsByNameDropdown/>
+          <Dropdown className="ui fluid multiple search selection dropdown categories"
+                    options={{ onChange: this.onCategoriesChange }}
+                    value={this.state.categories}>
+              { ALL_CATEGORIES.map(imageOption) }
+          </Dropdown>
+          <Dropdown className="ui fluid multiple search selection dropdown zones"
+                    options={{ onChange: this.onZonesChange }}
+                    value={this.state.zones}>
+              { ALL_ZONES.map(imageOption) }
+          </Dropdown>
 
           <div className="ui basic fluid buttons">
             <div className={layoutClassName('Cards')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
@@ -184,12 +165,20 @@ class KitchenInventory extends React.Component {
             </div>
           </div>
 
-          <div className="ui toggle checkbox" style={{ marginTop: '10px' }}>
+          <div className="ui toggle checkbox">
             <input type="checkbox"
                    name="public"
                    checked={this.state.includeOutOfStock}
                    onClick={ () => this.setState({ includeOutOfStock: !this.state.includeOutOfStock })}/>
             <label>Include out of stock items</label>
+          </div>
+
+          <div className="ui fluid toggle checkbox">
+            <input type="checkbox"
+                   name="public"
+                   checked={this.state.groupByCategory}
+                   onClick={ () => this.setState({ groupByCategory: !this.state.groupByCategory })}/>
+            <label>Group by category</label>
           </div>
 
         </div>

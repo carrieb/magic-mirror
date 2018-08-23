@@ -1,6 +1,14 @@
 import _isEmpty from 'lodash/isEmpty';
 import _startsWith from 'lodash/startsWith';
 
+const quantityUnits = ['小さじ', 'tsp', 'teaspoon', 'tsps', 'teaspoons',
+  '大さじ', 'tbsp', 'tablespoon', 'tbsps', 'tablespoons',
+  'hunk', 'hunks', 'clove', 'cloves',
+  'cup', 'gram', 'cups', 'grams', '片分', '少々',
+  'oz', 'ounces', 'lb', 'lbs'];
+
+const extraWords = ['of'];
+
 function parseNumber(str) {
   if (str.indexOf('/') > -1) {
     const parts = str.trim().split('/');
@@ -31,25 +39,8 @@ function parseAmount(str) {
   return total;
 }
 
-function parseUnit(str) {
-  let res = str;
-  if (str.endsWith('s')) {
-    res = str.substring(0, str.length - 1);
-  }
-  if (res === 'tsp' || res === 'teaspoon') {
-    return 'tsp';
-  } else if (res === 'tbsp' || res === 'tablespoon') {
-    return 'tbsp';
-  } else if (res === 'cup') {
-    return 'cup';
-  } else if (res === 'gram') {
-    return 'gram';
-  } else {
-    return null;
-  }
-}
-
 function parseIngredientDetails(str) {
+  //console.log('parsing ingredients from:', str);
   if (str.indexOf('(') > -1) {
     const split = str.split('(');
     const name = split[0].trim();
@@ -81,7 +72,7 @@ function parseQuantity(text) {
 function parseIngredient(text) {
   const parsedQ = parseQuantity(text);
   const details = parseIngredientDetails(parsedQ.rest);
-  console.log(details);
+  //console.log(details);
 
   const result = {
     name: details.name,
@@ -97,7 +88,7 @@ function parseIngredient(text) {
 const RecipeParser = {
   parseDirections(text) {
     const split = text ? text.split('\n') : [];
-    console.log(split);
+    //console.log(split);
     const result = [ { steps: [] } ];
     let section = 0;
     let counter = 0;
@@ -134,56 +125,84 @@ const RecipeParser = {
     return result;
   },
 
-  startsWithQuantity(line) {
+  tryAndParseQuantity(line) {
+    let quantityRegex = '^([\\d+|½|¼|⅓|\\d+\\/\\d+|\\s]+)';
+    quantityRegex += `(${quantityUnits.join('|')})?(.*)`;
+    quantityRegex = new RegExp(quantityRegex);
+    const match = quantityRegex.exec(line);
     const firstChar = line[0];
-    if (!isNaN(firstChar)) {
-      return true;
+    if (match) {
+      const amount = match[1] ? match[1].trim() : 0;
+      // TODO: parse the amount
+      const unit = match[2] ? match[2].trim() : null;
+      const rest = match[3].trim();
+
+      return { amount, unit, rest };
     } else {
-      return firstChar === '½' || firstChar === '¼' || firstChar === '⅓';
+      return null;
     }
   },
 
-  parseIngredients(text) {
-    const lines = text ? text.split('\n') : [];
-    console.log(lines);
+  parseIngredients(text, splitOverCommas=false) {
     const result = [ { items: [] } ];
+    const lines = text ? text.split('\n') : [];
+
+    //console.log(lines);
+
     let section = 0;
-    let counter = 0;
+    let index = 0;
+    let expectingHeader = true;
+
     lines.forEach((line) => {
-      console.log(line);
-      if (line.indexOf(',') > -1) {
-          console.log('splitting over commas');
+      //console.log(line);
+
+      if (line.indexOf(',') > -1 && splitOverCommas) {
+          //console.log('splitting over commas');
           const split = line.split(',');
-          console.log(split);
+          //console.log(split);
           split.forEach((ingr) => {
-            const ingredient = parseIngredient(ingr.trim());
-            result[section].items.push(ingredient);
-            counter++;
+            const ingredient = parseIngredientDetails(ingr.trim());
+            result[section].items.push({
+              quantity: {
+                amount: quantity.amount,
+                unit: quantity.unit
+              },
+              description: ingredient.name,
+              modifier: ingredient.modifier
+            });
+            index++;
           });
       } else {
-        if (this.startsWithQuantity(line)) {
-          // is a number
-          const ingredient = parseIngredient(line.trim());
-          result[section].items.push(ingredient);
-          counter++;
+        const quantity = this.tryAndParseQuantity(line);
+        // TODO: handle new lines for sections
+
+        if (quantity) {
+          const ingredient = parseIngredientDetails(quantity.rest);
+          const item = {
+            quantity: {
+              amount: quantity.amount,
+              unit: quantity.unit
+            },
+            description: ingredient.name,
+            modifier: ingredient.modifier
+          };
+          //console.log(item);
+          result[section].items.push(item);
+
+          expectingHeader = false;
+          index++;
+          //console.log(result);
         } else {
-          if (counter === 0) {
+          // TODO: check if sections is working right
+          if (expectingHeader && index === 0) {
             result[section].name = line;
-          }
-
-
-          else {
-            counter = 0;
-            section++;
-            console.log(result);
-            result[section].name = line;
-            result.push({ items: [] });
+            expectingHeader = false;
           }
         }
       }
     });
 
-    console.log('parsed ingredients', result);
+    //console.log('parsed ingredients', result);
 
     return result;
   }

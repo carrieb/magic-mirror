@@ -25,28 +25,28 @@ function getRecipeById(dbs, rawId, done, error=_noop) {
   });
 }
 
-function uploadRecipe(recipe, done, error=noop) {
-  _documents((coll, db) => {
-    if (_has(recipe, '_id')) {
-      const rawId = recipe._id;
-      const id = new mongo.ObjectID(rawId);
-      delete recipe._id;
-      coll.updateOne({ '_id' : id }, { '$set': recipe })
-        .then((res) => {
-          done(rawId);
-          db.close();
-        })
-        .catch((e) => {
-          console.log(e);
-        })
-    } else {
-      coll.insertOne(recipe)
-        .then((res) => {
-          done(res.insertedId);
-          db.close();
-        })
-    }
-  }, error);
+function uploadRecipe(dbs, recipe, done, error=noop) {
+  const db = dbs.recipes;
+  const coll = db.collection('documents');
+
+  if (_has(recipe, '_id')) {
+    // perform update
+    const rawId = recipe._id;
+    const id = new mongo.ObjectID(rawId);
+    delete recipe._id;
+
+    coll.updateOne({ '_id' : id }, { '$set': recipe })
+      .then((res) => {
+        done(rawId);
+      })
+      .catch(error);
+  } else {
+    // perform insert
+    coll.insertOne(recipe)
+      .then((res) => {
+        done(res.insertedId);
+      })
+  }
 }
 
 const RecipesDb = {

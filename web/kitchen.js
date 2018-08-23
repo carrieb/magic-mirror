@@ -12,7 +12,7 @@ import KitchenNavigation from 'components/kitchen/KitchenNavigation.react';
 import KitchenInventory from 'components/kitchen/KitchenInventory.react';
 import KitchenDashboard from 'components/kitchen/kitchen-dashboard.react';
 
-import MessagingUtil from 'util/messaging-util';
+//import MessagingUtil from 'util/messaging-util';
 
 //MessagingUtil.subscribeDevice();
 

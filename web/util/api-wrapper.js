@@ -147,7 +147,7 @@ const ApiWrapper = {
 
   uploadRecipe(recipe) {
     return $.ajax({
-      url: '/api/recipe',
+      url: '/api/recipes/add',
       type: 'POST',
       data: JSON.stringify({ recipe }),
       contentType: 'application/json; charset=utf-8'

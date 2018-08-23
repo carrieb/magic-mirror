@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom'
 
 import ApiWrapper from '../../util/api-wrapper';
-import { DEFAULT_ITEM, KitchenState, withKitchen } from 'state/KitchenState';
+import { DEFAULT_ITEM, withKitchen } from 'state/KitchenState';
 import KitchenConstants from 'state/kitchen/kitchen-constants';
 
 import LocalStorageUtil from 'util/local-storage-util';
@@ -18,6 +18,7 @@ import _isEqual from 'lodash/isEqual'
 import _clone from 'lodash/clone';
 import _lowerCase from 'lodash/lowerCase';
 import _find from 'lodash/find';
+import _values from 'lodash/values';
 
 import 'sass/kitchen/food-editor.scss';
 
@@ -43,6 +44,8 @@ class FoodEditorHandler extends React.Component {
     this.updateImage = this.updateImage.bind(this);
     this.updateFoodItem = this.updateFoodItem.bind(this);
 
+    console.log('constructor', foodItem);
+
     this.state = {
       foodItem,
       id: uniqueId(),
@@ -64,32 +67,41 @@ class FoodEditorHandler extends React.Component {
     console.log('did update', prevProps, this.props);
     if (this.state.editingName) {
       // focus on that span
+      console.log('focusing on name input');
       $(this.nameInput).focus();
     }
 
     if (this.props.match.params.foodName !== prevProps.match.params.foodName) {
+      console.log(`props foodName change, finding ${this.state.foodItem.description} in the kitchen index`)
+      console.log(_values(this.props.kitchenIndex).map((item) => {
+        return item.description
+      }).sort())
       const me = _find(this.props.kitchenIndex,
         (item) => _lowerCase(item.description) === this.state.foodItem.description);
-      this.setState({ foodItem: me });
+      if (!_isEmpty(me)) {
+        console.log('found', me);
+        this.setState({ foodItem: me });
+      }
     }
 
     if (!_isEqual(prevProps.kitchenIndex, this.props.kitchenIndex)) {
       // attempt to look myself up
+
+      console.log(`kitchen index update, finding ${this.state.foodItem.description} in the kitchen index`)
+      console.log(_values(this.props.kitchenIndex).map((item) => {
+        return item.description
+      }).sort())
       const me = _find(this.props.kitchenIndex,
-        (item) => _lowerCase(item.description) === this.state.foodItem.description);
-      this.setState({ foodItem: me });
-      // TODO: don't do this if i've already started editing?
+        (item) => _lowerCase(item.description) === _lowerCase(this.state.foodItem.description));
+      if (!_isEmpty(me)) {
+        console.log('found', me);
+        this.setState({ foodItem: me });
+      }
     }
   }
 
   loadItem = () => {
     const name = this.props.match.params.foodName;
-    // TODO: if it wasn't already loaded, try to find it via API
-    // KitchenState.findFood(name, (foodItem) => {
-    //   if (!_isEmpty(foodItem)) {
-    //     this.setState({ foodItem });
-    //   }
-    // });
   };
 
   updateFoodItem(field, value) {
@@ -122,7 +134,6 @@ class FoodEditorHandler extends React.Component {
         const foodItem = this.state.foodItem;
         foodItem.img = filename;
         this.setState({ foodItem });
-        KitchenState.updateImage(this.props.match.params.foodName, filename);
       }).fail(() => {
         console.error('failed');
       });
@@ -156,7 +167,8 @@ class FoodEditorHandler extends React.Component {
           this.props.updateItem(food._id, food);
         }
 
-        this.props.history.goBack();
+        // why did I want to do this? doesn't work if we're adding a new item because of how /new works
+        // this.props.history.goBack();
       });
   }
 
@@ -168,6 +180,8 @@ class FoodEditorHandler extends React.Component {
     const foodItem = this.state.foodItem;
     foodItem.description = this.nameInput.innerText;
     this.setState({ editingName: false });
+    // TODO: add this item in the kitchen then navigate
+
     // TODO: WARN/FAIL if we already have an item named this
     this.props.history.push(`/kitchen/item/${foodItem.description}`);
   }
@@ -188,6 +202,9 @@ class FoodEditorHandler extends React.Component {
     //     defaultValue={foodItem.description}
     //     ref={(ref) => this.nameInput = ref}/>
     // </div>);
+
+    // TODO: add warning message if creating a new item (no _id)
+    // but there's already something in the kithen index.
 
     console.log('render editor handler', foodItem, this.props);
 

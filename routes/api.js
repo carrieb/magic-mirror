@@ -84,11 +84,4 @@ router.get('/guildwars/wallet', cache('1 day'), (req, res) => {
   );
 });
 
-router.post('/recipe', jsonParser, (req, res) => {
-  RecipesDb.uploadRecipe(req.body.recipe, (id) => {
-    // TODO: obfuscate somehow
-    res.json(id);
-  }, (err) => res.status(500).send('Failed to upload recipe.'))
-});
-
 module.exports = router;

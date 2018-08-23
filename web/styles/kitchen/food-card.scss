@@ -20,7 +20,7 @@ div.food-card.ui.card {
 
   .image {
     background: white;
-    
+
     img {
       &.out-overlay {
         filter: blur(3.5px);
@@ -40,7 +40,7 @@ div.food-card.ui.card {
     }
 
     img {
-      max-height: 30px !important;
+      max-height: 50px !important;
       width: auto;
       cursor: pointer;
     }

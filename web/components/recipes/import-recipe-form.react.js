@@ -9,19 +9,13 @@ import RecipeCard from 'components/recipes/recipe-card.react';
 import ApiWrapper from 'util/api-wrapper';
 import LocalStorageUtil from 'util/local-storage-util';
 import _isEmpty from 'lodash/isEmpty';
+import _isEqual from 'lodash/isEqual';
 
 import 'sass/recipes/import-recipe-form.scss';
 
 class ImportRecipeForm extends React.Component {
   constructor(props) {
     super(props);
-
-    this.parse = this.parse.bind(this);
-    this.onTextChange = this.onTextChange.bind(this);
-    this.submitRecipe = this.submitRecipe.bind(this);
-    this.fieldClassName = this.fieldClassName.bind(this);
-    this.validate = this.validate.bind(this);
-    this.hideIngredientHelp = this.hideIngredientHelp.bind(this);
 
     let text = LocalStorageUtil.getLastImportText();
     console.log(text);
@@ -31,38 +25,43 @@ class ImportRecipeForm extends React.Component {
     this.state = { recipe: null, text, errors: {}, showIngredientHelp: true };
   }
 
-  hideIngredientHelp() {
-    this.setState({ showIngredientHelp: false })
+  componentDidUpdate(prevProps, prevState) {
+    if (!_isEqual(this.state.receipe, prevState.receipe)) {
+      this.validate();
+    }
   }
 
-  parse() {
-    const valid = this.validate();
-    console.log('parse', valid);
-    if (valid) { LocalStorageUtil.saveLastImportText(this.state.text); }
+  hideIngredientHelp = () => {
+    this.setState({ showIngredientHelp: false })
+  };
+
+  parse = () => {
+    LocalStorageUtil.saveLastImportText(this.state.text);
     const directions = RecipeParser.parseDirections(this.state.text.directions);
-    const ingredients = RecipeParser.parseIngredients(this.state.text.ingredients);
+    const ingredients = RecipeParser.parseIngredients(this.state.text.ingredients, false);
     const recipe = {
       name: this.state.text.name,
       source: this.state.text.source,
       directions,
       ingredients
     };
-    this.setState({ recipe });
-  }
 
-  onTextChange(field) {
+    this.setState({ recipe });
+  };
+
+  onTextChange = (field) => {
     return (ev) => {
       const val = ev.target.value;
       const text = this.state.text;
       text[field] = val;
       this.setState({ text, errors: {} });
     }
-  }
+  };
 
-  submitRecipe() {
-    const valid = this.validate();
-    console.log(valid);
-    if (valid) {
+  submitRecipe = () => {
+    const errors = this.validate();
+    console.log(errors);
+    if (_isEmpty(errors)) {
         ApiWrapper.uploadRecipe(this.state.recipe)
         .done(() => {
           console.log('woot');
@@ -71,16 +70,18 @@ class ImportRecipeForm extends React.Component {
         })
         .fail(() => { console.error('oh no') });
     }
-  }
+  };
 
-  validate() {
+  validate = () => {
     const errors = this.state.errors;
     if (_isEmpty(this.state.text.name)) {
       errors.name = 'Name is required.';
     }
     if (_isEmpty(this.state.recipe)) {
       // hasn't pressed 'parse' yet;
-      return false;
+      errors.recipe = 'Recipe has not been parsed.';
+      this.setState({ errors });
+      return errors;
     }
     if (_isEmpty(this.state.recipe.directions)) {
       errors.directions = 'Directions are required.';
@@ -89,12 +90,11 @@ class ImportRecipeForm extends React.Component {
       errors.ingredients = 'Ingredients are required.';
     }
     this.setState({ errors });
-    return _isEmpty(errors);
-  }
+  };
 
-  fieldClassName(field) {
+  fieldClassName = (field) => {
     return `field ${this.state.errors[field] ? 'error' : ''}`;
-  }
+  };
 
   render() {
     return (
@@ -147,10 +147,12 @@ class ImportRecipeForm extends React.Component {
               </form>
             </div>
             <div className="column">
-              { this.state.recipe &&
-               <div className="ui right-aligned basic segment" style={{ padding: 0, textAlign: 'right' }}>
-                <button onClick={this.submitRecipe} className={`ui green icon button ${_isEmpty(this.state.errors) ? '' : 'disabled' }`}>
-                Looks Good! <i className="ui check icon"/>
+              { (_isEmpty(this.state.errors) && !_isEmpty(this.state.recipe)) &&
+               <div className="ui right-aligned basic segment"
+                    style={{ padding: 0, textAlign: 'right' }}>
+                <button onClick={this.submitRecipe}
+                        className={`ui green icon button ${_isEmpty(this.state.errors) ? '' : 'disabled' }`}>
+                        Looks Good! <i className="ui check icon"/>
                </button></div>}
               { this.state.recipe &&
                 <RecipeCard recipe={this.state.recipe}

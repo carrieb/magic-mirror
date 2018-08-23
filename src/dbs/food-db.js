@@ -7,6 +7,8 @@ const moment = require('moment-timezone');
 const assign = require('lodash/assign');
 const noop = require('lodash/noop');
 
+// TODO: create a
+
 const FoodDb = {
 
   updateItem(dbs, item, callback, error=noop) {
@@ -14,20 +16,33 @@ const FoodDb = {
     const coll = db.collection('items');
 
     // update
+
     const o_id = new mongo.ObjectID(item._id);
-    coll.updateOne({
-      "_id": o_id
-    }, {
-      "$set": {
-        description: item.description.trim(),
-        expiration: item.expiration,
-        servingSize: item.servingSize,
-        quantity: item.quantity,
-        category: item.category.trim(),
-        zone: item.zone.trim()
-      }
-    })
-    .then(callback);
+    if (item._id) {
+      coll.updateOne({
+        "_id": o_id
+      }, {
+        "$set": {
+          description: item.description.trim(),
+          expiration: item.expiration,
+          servingSize: item.servingSize,
+          quantity: item.quantity,
+          category: item.category.trim(),
+          zone: item.zone.trim()
+        }
+      })
+      .then(callback)
+      .catch((err) => {
+        console.log(err);
+      })
+    } else {
+      coll.insertOne(item)
+        .then(callback)
+        .catch((err) => {
+          console.log(err);
+        })
+    }
+
   },
 
   removeItem(dbs, id, callback, error=noop) {
@@ -90,8 +105,8 @@ const FoodDb = {
     const db = dbs.food;
     const coll = db.collection('items');
     coll.updateOne({ description: foodName }, { "$set": { img: imageUrl } }).then((error, result) => {
-      console.log(error);
-      console.log(result);
+      //console.log(error);
+      //console.log(result);
       done();
     });
   },
@@ -110,8 +125,8 @@ const FoodDb = {
     const coll = db.collection('items');
     console.log(id, starred);
     coll.updateOne({ "_id":  new mongo.ObjectID(id) }, { "$set": { starred: starred } }).then((error, result) => {
-      console.log(error);
-      console.log(result);
+      //console.log(error);
+      //console.log(result);
       done();
     });
   }

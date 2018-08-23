@@ -30,7 +30,9 @@ class KitchenNavigation extends React.Component {
       <div className="ui secondary menu kitchen-navigation">
         { this.routeHeaderItem('/kitchen', 'Kitchen') }
         { this.routeHeaderItem('/kitchen/inventory', 'Inventory', true) }
-        { this.routeHeaderItem('/recipes', 'Recipes') }
+        <div className="header item">
+          <a href="/recipes">Recipes</a>
+        </div>
         <div className="right menu">
           <a className="item" href="/process-receipt">
             <i className="icons icon">
