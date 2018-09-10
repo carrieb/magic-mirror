@@ -1,4 +1,6 @@
 .recipes-route-wrapper {
+  margin-bottom: 100px;
+
   .shopping-list {
     &.expanded + .api-recipes-list {
       margin-left: 20%;
@@ -7,13 +9,6 @@
 
   .api-recipes-list {
     .recipe-card {
-
-      &:not(:last-child) {
-        height: 60px;
-      }
-
-      overflow-y: visible;
-
       img {
         max-width: 100%;
         width: 100%;
@@ -26,21 +21,6 @@
       }
 
     }
-
-    margin-bottom: 75px;
-  }
-
-  .footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-
-    .add-recipe-button {
-      margin-left: 64px;
-      margin-right: 64px;
-
-    }
   }
 }
 
@@ -51,4 +31,8 @@
       margin-bottom: 1em;
     }
   }
+}
+
+.slick-prev:before, .slick-next:before {
+  color: #2185d0 !important;
 }

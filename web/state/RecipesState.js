@@ -1,8 +1,12 @@
 import _clone from 'lodash/clone';
 import _uniqueId from 'lodash/uniqueId';
 import _find from 'lodash/find';
+import _debounce from 'lodash/debounce';
+import _assign from 'lodash/assign';
 
 import ApiWrapper from 'util/api-wrapper';
+
+import React from 'react';
 
 const KIMCHI_RECIPE = {
   name: 'Honey-Kimchi Dried Squid',
@@ -52,6 +56,7 @@ const EMPTY_RECIPE = {
   name: '',
   img: '',
   source: '',
+  category: '',
   servings: 0,
   ingredients: [],
   directions: []
@@ -66,19 +71,89 @@ const EMPTY_INGREDIENT = {
   modifier: ''
 }
 
+let listeners = [];
+let loadedRecipes = [];
+let loadedRecipesIndex = {};
+
 const RecipesState = {
   DEFAULT_RECIPE,
+
   getRecipes() {
-    return ApiWrapper.getRecipes()
-      .then((catalog) => {
-        recipes = catalog;
-        return catalog;
-      });
+    this.debouncedRequest();
   },
 
-  getRecipeById(id) {
-    return ApiWrapper.getRecipeById(id);
+  debouncedRequest: _debounce(() => {
+    //console.log('kitchen state submitting ajax request');
+    ApiWrapper.getRecipes()
+      .done(RecipesState.done);
+  }, 5000, {
+    leading: true,
+    trailing: false
+  }),
+
+  done: (recipes) => {
+    loadedRecipes = recipes;
+
+    const recipesIndex = {};
+    recipes.forEach((recipe) => {
+      recipesIndex[recipe._id] = _assign(_clone(EMPTY_RECIPE), recipe);
+    });
+    loadedRecipesIndex = recipesIndex
+
+    console.log('recipe state loaded', loadedRecipes, loadedRecipesIndex, listeners);
+    RecipesState.alertListeners();
+  },
+
+  addChangeListener(callback) {
+    listeners.push(callback);
+  },
+
+  removeChangeListener(callback) {
+    listeners = listeners.filter((cb) => {
+      !Object.is(cb, callback)
+    });
+  },
+
+  alertListeners() {
+    listeners.forEach((callback) => {
+      callback(loadedRecipes, loadedRecipesIndex);
+    });
   }
 };
 
-module.exports = { RecipesState, EMPTY_RECIPE, EMPTY_INGREDIENT};
+function withRecipes(WrappedComponent) {
+  return class extends React.Component {
+    constructor(props) {
+      super(props);
+
+      RecipesState.addChangeListener(this.handleChange);
+      RecipesState.getRecipes();
+
+      this.state = {
+        recipes: loadedRecipes,
+        recipesIndex: loadedRecipesIndex
+      }
+    }
+
+    componentWillUnmount() {
+      RecipesState.removeChangeListener(this.handleChange);
+    }
+
+    handleChange = (recipes, recipesIndex) => {
+      this.setState({
+        recipes,
+        recipesIndex
+      });
+    };
+
+    render() {
+      return (
+        <WrappedComponent recipes={this.state.recipes}
+                          recipesIndex={this.state.recipesIndex}
+                          {...this.props}/>
+      );
+    }
+  };
+}
+
+module.exports = { withRecipes, RecipesState, EMPTY_RECIPE, EMPTY_INGREDIENT};

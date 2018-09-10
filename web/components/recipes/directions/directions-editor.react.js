@@ -33,7 +33,7 @@ class Step extends React.Component {
              onChange={ this.updateContent }/>
     </div>;
 
-    console.log(step);
+    //console.log(step);
     const dependenciesInput = <div className="field">
       <label>Depends on:</label>
       <input type="text" value={ step.dependencies ? step.dependencies.join(', ') : '' }
@@ -118,7 +118,7 @@ class DirectionsEditor extends React.Component {
     this.updateSection = this.updateSection.bind(this);
 
     this.state = {
-      collapsed: true
+      collapsed: false
     }
   }
 

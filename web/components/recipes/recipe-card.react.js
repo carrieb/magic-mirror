@@ -9,6 +9,7 @@ import _flatten from 'lodash/flatten';
 import _sortBy from 'lodash/sortBy';
 import _uniq from 'lodash/uniq';
 import _uniqueId from 'lodash/uniqueId';
+import _isEmpty from 'lodash/isEmpty';
 
 import 'sass/recipes/recipe-card.scss';
 
@@ -29,7 +30,7 @@ class RecipeCard extends React.Component {
                                    ingredients={recipe.ingredients}
                                    enableCollapse={this.props.enableCollapse}/>
     let innerContent;
-    if (this.props.showImage) {
+    if (this.props.showImage && !_isEmpty(recipe.img)) {
       innerContent = (
         <div className="content">
           <div className="ui grid">

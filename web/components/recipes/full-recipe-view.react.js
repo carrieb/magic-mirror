@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 
-import RecipesState from 'state/RecipesState';
+import { withRecipes, RecipesState } from 'state/RecipesState';
 
 import Directions from 'components/recipes/directions/directions-display.react';
 import Ingredients from 'components/recipes/ingredients/ingredients-display.react';
@@ -60,7 +60,7 @@ class FullRecipeView extends React.Component {
 
           { recipe.img && <div className="ui image"><img src={recipe.img}/></div> }
           { recipe.source && <div className="ui embed" data-url={recipe.source}/> }
-          
+
           <Ingredients ingredients={recipe.ingredients}/>
           <Directions directions={recipe.directions} ingredients={recipe.ingredients}/>
           <Timeline directions={recipe.directions}/>

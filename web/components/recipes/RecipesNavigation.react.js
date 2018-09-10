@@ -18,7 +18,17 @@ class RecipesNavigation extends React.Component {
                 <i className="browser icon"/>
                 <i className="inverted corner upload icon"/>
               </i>
-              Import Recipe
+              Import
+            </NavLink>
+          </div>
+
+          <div className="item">
+            <NavLink to="/recipes/add">
+              <i className="icons icon">
+                <i className="browser icon"/>
+                <i className="inverted corner plus icon"/>
+              </i>
+              Add
             </NavLink>
           </div>
         </div>

@@ -4,20 +4,24 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 import RepeatableComponent from 'components/common/repeatable-component.react';
+import TextInput from 'components/common/text-input.react';
 
 import RecipeCard from 'components/recipes/recipe-card.react';
 import IngredientsEditor from 'components/recipes/ingredients/ingredients-editor.react';
 import DirectionsEditor from 'components/recipes/directions/directions-editor.react';
 
-import { RecipesState, EMPTY_RECIPE } from 'state/RecipesState';
+import { withRecipes, EMPTY_RECIPE } from 'state/RecipesState';
 
 import ApiWrapper from 'util/api-wrapper';
 import LocalStorageUtil from 'util/local-storage-util';
+import InputUtil from 'util/input-util';
 
 import _range from 'lodash/range';
 import _uniqueId from 'lodash/uniqueId';
 import _isEmpty from 'lodash/isEmpty';
+import _isEqual from 'lodash/isEqual';
 import _clone from 'lodash/clone';
+import _startCase from 'lodash/startCase';
 
 class DirectionsFields extends React.Component {
   render() {
@@ -34,49 +38,56 @@ class RecipeEditor extends React.Component {
   constructor(props) {
     super(props);
 
+    let showSavedRecipeAlert = false;
     const id = props.match.params.id;
-
-    this.state = {
-      recipe: _clone(EMPTY_RECIPE),
-      loading: id ? true : false,
-      preview: id ? true : false,
-      showSavedRecipeAlert: false
-    }
-  }
-
-  componentWillMount() {
-    const id = this.props.match.params.id;
-
+    let loading = id ? true : false;
+    let recipe = _clone(EMPTY_RECIPE);
     if (id) {
-      RecipesState.getRecipeById(id)
-        .done((recipe) => {
-
-          // have to give sections & items fake ids for correct react rendering
-          recipe.ingredients.forEach((section) => {
-            section.id = _uniqueId();
-            section.items.forEach((item) => {
-              item.id = _uniqueId();
-            });
-          });
-
-          recipe.directions.forEach((section) => {
-            section.id = _uniqueId();
-            section.steps.forEach((step) => {
-              step.id = _uniqueId();
-            })
-          });
-
-          this.setState({ recipe });
-        })
+      recipe = props.recipesIndex[id];
+      if (!_isEmpty(recipe)) {
+        loading = false;
+      }
     } else {
       const savedRecipe = LocalStorageUtil.getNewRecipeBeingEdited();
       if (!_isEmpty(savedRecipe)) {
-        this.setState({ recipe: savedRecipe, showSavedRecipeAlert: true });
+        showSavedRecipeAlert = true;
+        recipe = savedRecipe;
       }
+    }
+
+    this.state = {
+      recipe,
+      loading,
+      preview: false,
+      showSavedRecipeAlert
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const id = this.props.match.params.id;
+    if (id &&
+      !_isEmpty(this.props.recipesIndex[id]) &&
+      !_isEqual(this.props.recipesIndex[id], prevProps.recipesIndex[id])
+    ) {
+        const recipe = this.props.recipesIndex[id];
+        // have to give sections & items fake ids for correct react rendering
+        recipe.ingredients.forEach((section) => {
+          section.id = _uniqueId();
+          section.items.forEach((item) => {
+            item.id = _uniqueId();
+          });
+        });
+
+        recipe.directions.forEach((section) => {
+          section.id = _uniqueId();
+          section.steps.forEach((step) => {
+            step.id = _uniqueId();
+          })
+        });
+        this.setState({ recipe, loading: false });
+    }
+
+    // wth is this for ???
     $('textarea').each(function () {
       this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
     }).on('input', function () {
@@ -103,59 +114,24 @@ class RecipeEditor extends React.Component {
       });
   };
 
-  addIngedientsSection = (ev) => {
-    let recipe = this.state.recipe;
-    recipe.ingredients.push([{}]);
-    LocalStorageUtil.saveNewRecipeBeingEdited(recipe);
-    this.setState({ recipe });
-  };
+  updateRecipeField = (field, transform=null) => {
+    return (ev) => {
+      let recipe = this.state.recipe;
+      const newValue = transform ? transform(ev.target.value) : ev.target.value;
+      recipe[field] = newValue;
+      // TODO: why do I need this again?
+      LocalStorageUtil.saveNewRecipeBeingEdited(recipe);
+      this.setState({ recipe });
+    }
+  }
 
-  addDirectionsSection = (ev) => {
-    let recipe = this.state.recipe;
-    recipe.directions.push([{}]);
-    LocalStorageUtil.saveNewRecipeBeingEdited(recipe);
-    this.setState({ directionsSections: this.state.directionsSections + 1, recipe })
-  };
-
-  updateIngredients = (ingredients) => {
-    console.log(ingredients);
-    const recipe = this.state.recipe;
-    recipe.ingredients = ingredients;
-    LocalStorageUtil.saveNewRecipeBeingEdited(recipe);
-    this.setState({ recipe });
-  };
-
-  updateDirections = (directions) => {
-    console.log(directions);
-    const recipe = this.state.recipe;
-    recipe.directions = directions;
-    LocalStorageUtil.saveNewRecipeBeingEdited(recipe);
-    this.setState({ recipe });
-  };
-
-  handleNameChange = (ev) => {
-    let recipe = this.state.recipe;
-    recipe.name = ev.target.value;
-    LocalStorageUtil.saveNewRecipeBeingEdited(recipe);
-    this.setState({ recipe });
-  };
-
-  updateServings = (ev) => {
-    let recipe = this.state.recipe;
-    recipe.servings = parseInt(ev.target.value);
-    LocalStorageUtil.saveNewRecipeBeingEdited(recipe);
-    this.setState({ recipe });
-  };
-
-  updateSource = (ev) => {
-    let recipe = this.state.recipe;
-    recipe.source = ev.target.value;
-    LocalStorageUtil.saveNewRecipeBeingEdited(recipe);
-    this.setState({ recipe });
-  };
+  recipeInput = (key, transform=null) =>
+    <TextInput labelText={ _startCase(key) }
+               value={ this.state.recipe[key] }
+               onChange={ this.updateRecipeField(key, transform) }/>
 
   render() {
-    console.log(this.state.recipe);
+    console.log('recipe-editor render', this.state.recipe, this.state.loading);
     const recipe = this.state.recipe;
 
     if (this.state.loading) {
@@ -171,30 +147,17 @@ class RecipeEditor extends React.Component {
 
     const form = (
       <form className="ui form" ref={this.handleFormRef}>
-        <div className="field">
-          <label>Recipe Name</label>
-          <input type="text" name="name"
-            value={recipe.name} onChange={this.handleNameChange}/>
-        </div>
-
-        <div className="field">
-          <label>Servings</label>
-          <input type="number"
-            value={recipe.servings} onChange={this.updateServings}/>
-        </div>
-
-        <div className="field">
-          <label>Source</label>
-          <input type="text"
-            value={recipe.source} onChange={this.updateSource}/>
-        </div>
+        { this.recipeInput('name') }
+        { this.recipeInput('servings', parseInt) }
+        { this.recipeInput('source') }
+        { this.recipeInput('category') }
 
         <IngredientsEditor
-          updateIngredients={this.updateIngredients}
+          updateIngredients={ this.updateRecipeField('ingredients') }
           ingredients={recipe.ingredients}/>
 
         <DirectionsEditor
-          updateDirections={this.updateDirections}
+          updateDirections={ this.updateRecipeField('directions') }
           directions={recipe.directions}/>
 
         <button className="ui purple huge fluid button"
@@ -217,8 +180,8 @@ class RecipeEditor extends React.Component {
     if (this.state.preview) {
       content = (
         <div className="ui two column grid">
-          <div className="eight wide column">{ form }</div>
-          <div className="eight wide column">{ preview }</div>
+          <div className="ten wide column">{ form }</div>
+          <div className="six wide column">{ preview }</div>
         </div>
       );
     } else {
@@ -243,4 +206,4 @@ class RecipeEditor extends React.Component {
   }
 }
 
-export default RecipeEditor;
+export default withRecipes(RecipeEditor);

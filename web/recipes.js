@@ -7,18 +7,16 @@ import createHistory from 'history/createBrowserHistory';
 const history = createHistory();
 
 import RecipesNavigation from 'components/recipes/RecipesNavigation.react';
+import SearchRecipesByNameDropdown from 'components/recipes/search-recipes-by-name-dropdown.react';
 
-import ApiRecipesList from 'components/recipes/ApiRecipesList.react';
+import RecipesList from 'components/recipes/recipes-list.react';
 import RecipeEditor from 'components/recipes/recipe-editor.react';
 import ImportRecipeForm from 'components/recipes/import-recipe-form.react';
 import FullRecipeView from 'components/recipes/full-recipe-view.react';
 
-import { ShoppingList } from 'components/shared/shopping-list.react';
+import { ShoppingList, withShoppingList } from 'components/shared/shopping-list.react';
 
 import RecipeUtil from 'util/recipe-util';
-
-// TODO: migrate to sass
-import 'styles/recipes/recipes.css';
 
 import 'sass/recipes/recipes.scss';
 
@@ -26,40 +24,11 @@ import _find from 'lodash/find';
 import _clone from 'lodash/clone';
 
 class Recipes extends React.Component {
-  constructor(props) {
-    super(props);
-    this.addRecipeToList = this.addRecipeToList.bind(this);
-    this.state = { shoppingList: [] }
-  }
-
-  addRecipeToList(recipe) {
-    const shoppingList = _clone(this.state.shoppingList);
-    const items = RecipeUtil.getAllIngredients(recipe);
-    items.forEach((item) => {
-      const found = _find(shoppingList, ['name', item.name]);
-      if (found) {
-        // TODO: add to quantity
-      } else {
-        shoppingList.push(item);
-      }
-    })
-    this.setState({ shoppingList });
-  }
-
   render() {
     return (
       <div className="ui container recipes-route-wrapper">
-        <ShoppingList items={this.state.shoppingList}/>
-        <ApiRecipesList addRecipeToList={this.addRecipeToList}/>
-        <div className="footer">
-          <div className="add-recipe-button">
-            <Link to="/recipes/add">
-              <button className="ui fluid huge purple button">
-                Add Recipe
-              </button>
-            </Link>
-          </div>
-        </div>
+        <SearchRecipesByNameDropdown/>
+        <RecipesList/>
       </div>
     );
   }
@@ -68,7 +37,7 @@ class Recipes extends React.Component {
 window.onload = function() {
   ReactDOM.render(
     <Router history={history}>
-      <div className="ui container recipes-container">
+      <div className="ui container recipes-container" style={{ marginTop: '10px' }}>
         <RecipesNavigation/>
         <Route path="/recipes" exact={true} component={Recipes}/>
         <Route path="/recipes/add" exact={true} component={RecipeEditor}/>
