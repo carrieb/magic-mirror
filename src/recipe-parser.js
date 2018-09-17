@@ -143,6 +143,28 @@ const RecipeParser = {
     }
   },
 
+  parseAmount(string) {
+    let amt = 0;
+    const split = string.split(' ');
+    split.forEach((numStr) => {
+      if (numStr.indexOf('/') > -1) {
+        const fraction = numStr.split('/');
+        const top = fraction[2];
+        const bottom = fraction[1];
+        amt += top / bottom;
+      } else {
+        try {
+          const num = parseInt(numStr);
+          amt += num;
+        } catch(e) {
+          console.log(num);
+          // TODO: handle unicode characters
+        }
+      }
+    });
+    return amt;
+  },
+
   parseIngredients(text, splitOverCommas=false) {
     const result = [ { items: [] } ];
     const lines = text ? text.split('\n') : [];
@@ -175,12 +197,14 @@ const RecipeParser = {
       } else {
         const quantity = this.tryAndParseQuantity(line);
         // TODO: handle new lines for sections
+        //console.log(quantity);
 
         if (quantity) {
           const ingredient = parseIngredientDetails(quantity.rest);
+          const amount = parseAmount(quantity.amount);
           const item = {
             quantity: {
-              amount: quantity.amount,
+              amount: amount,
               unit: quantity.unit
             },
             description: ingredient.name,

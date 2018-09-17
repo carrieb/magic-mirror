@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 
 import Directions from 'components/recipes/directions/directions-display.react';
 import Ingredients from 'components/recipes/ingredients/ingredients-display.react';
@@ -14,66 +15,79 @@ import _isEmpty from 'lodash/isEmpty';
 import 'sass/recipes/recipe-card.scss';
 
 class RecipeCard extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     $('.ui.embed').embed();
+  }
+
+  onExpandClick = () => {
+    const recipe = this.props.recipe;
+    if (recipe._id) {
+      this.props.history.push(`/recipes/r/${recipe._id}`);
+    }
   }
 
   render() {
     const recipe = this.props.recipe;
     //console.log(recipe);
-    const ingredients = <Ingredients ingredients={recipe.ingredients} enableCollapse={this.props.enableCollapse}/>
+    const ingredients = <Ingredients ingredients={recipe.ingredients}
+                                     enableCollapse={this.props.enableCollapse}/>
     const directions = <Directions directions={recipe.directions}
                                    ingredients={recipe.ingredients}
                                    enableCollapse={this.props.enableCollapse}/>
-    let innerContent;
-    if (this.props.showImage && !_isEmpty(recipe.img)) {
-      innerContent = (
-        <div className="content">
-          <div className="ui grid">
-            <div className="four wide column">
-              <img src={recipe.img}/>
-            </div>
-            <div className="twelve wide column">
-              { ingredients }
-              { directions }
-            </div>
-          </div>
+    const innerContent = (
+      <div className="content">
+        { (this.props.showImage && recipe.img) && <div className="ui medium centered rounded image">
+          <img src={recipe.img}/>
+        </div> }
+        { recipe.servings > 0 && <div className="ui grey sub header servings">{ recipe.servings } Servings</div> }
+        { ingredients }
+        { directions }
+      </div>
+    );
+
+    const textContent = (
+      <div>
+        { recipe.servings > 0 && <div className="ui grey sub header servings">{ recipe.servings } Servings</div> }
+        { ingredients }
+        { directions }
+      </div>
+    );
+
+    const image = this.props.showImage && recipe.img ? <div className="ui medium centered rounded image">
+      <img src={recipe.img}/>
+    </div> : null;
+
+    let responsiveContent;
+    if (image) {
+      responsiveContent = (
+        <div className="ui grid">
+          <div className="sixteen wide mobile eight wide tablet four wide computer column">{ image }</div>
+          <div className="sixteen wide mobile eight wide tablet twelve wide computer column">{ textContent }</div>
+
         </div>
       );
     } else {
-      innerContent = (
-        <div className="content">
-          { ingredients }
-          { directions }
-        </div>
-      )
+      responsiveContent = textContent;
     }
+
+    // TODO: rework how image is done to work well with weird size images
+    // on both desktop and mobile
+    // move it into main content
+
     const content = (
       <div className="ui fluid card">
         <div className="content">
-
           <div className="header">
-            { this.props.showActions && <div className="actions">
-              <i className="ui edit icon" onClick={this.props.onEditClick}/>
-              <i className="ui maximize icon" onClick={this.props.onExpandClick}/>
-              <i className="ui plus icon" onClick={this.props.onAddClick}/>
-            </div> }
-            { recipe.servings > 0 && <span className="grey-text right floated">{recipe.servings}<i className="ui grey icon food"/></span> }
-
-            {recipe.name || ''}
-
-
+            <div className="actions">
+              <i className="ui external alternate icon" onClick={this.onExpandClick}/>
+            </div>
+            { recipe.name || 'Unknown'}
           </div>
         </div>
-        { /* todo: toggle when we add this */ }
-        { (recipe.source && false) && <div className="image">
+        { (recipe.source && recipe.source.indexOf('youtube.com') > -1) && <div className="image">
           <div className="ui embed" data-url={recipe.source}/>
         </div> }
-        { innerContent }
+        <div className="content">{ responsiveContent }</div>
         { recipe.source && <div className="content">
           { recipe.source.indexOf('youtube.com') > -1 && <i className="ui red youtube play icon"/>}<a href={recipe.source}>{recipe.source}</a>
         </div> }
@@ -81,7 +95,7 @@ class RecipeCard extends React.Component {
     );
 
     return (
-      <div className="recipe-card" onClick={this.props.onCardClick}>
+      <div className="recipe-card">
         { content }
       </div>
     );
@@ -92,22 +106,14 @@ RecipeCard.propTypes = {
   recipe: PropTypes.object.isRequired,
   enableCollapse: PropTypes.bool,
   showActions: PropTypes.bool,
-  showImage: PropTypes.bool,
-  onExpandClick: PropTypes.func,
-  onEditClick: PropTypes.func,
-  onCardClick: PropTypes.func,
-  onAddClick: PropTypes.func
+  showImage: PropTypes.bool
 }
 
 RecipeCard.defaultProps = {
   recipe: {},
   enableCollapse: true,
   showActions: true,
-  showImage: true,
-  onExpandClick: _noop,
-  onEditClick: _noop,
-  onCardClick: _noop,
-  onAddClick: _noop
+  showImage: true
 }
 
-export default RecipeCard;
+export default withRouter(RecipeCard);

@@ -5,58 +5,28 @@ import { withRouter } from 'react-router-dom';
 import RecipeCard from 'components/recipes/recipe-card.react';
 import { withRecipes } from 'state/RecipesState';
 
+import LocalStorageUtil from 'util/local-storage-util';
+
 import _isEqual from 'lodash/isEqual';
 import _isEmpty from 'lodash/isEmpty';
 import _concat from 'lodash/concat';
 import _noop from 'lodash/noop';
+import _findIndex from 'lodash/findIndex';
 
 import 'sass/recipes/list.scss';
 
 class RecipesList extends React.Component {
-  onEditClick = (i) => {
-    return () => {
-      const recipe = this.props.recipes[i];
-      this.props.history.push(`/recipes/r/${recipe._id}/edit`);
-    }
-  }
-
-  onCardClick = (i) => {
-    return () => {
-      //console.log(i);
-      const recipes = this.props.recipes;
-      const before = recipes.slice(0, i+1);
-      const after = recipes.slice(i+1);
-      //console.log(before, after);
-      this.setState({ recipes: _concat(after, before) });
-    }
-  }
-
-  onAddClick = (i) => {
-    return () => {
-      const recipes = this.props.recipes;
-      const recipe = recipes[i];
-      this.props.addRecipeToList(recipe);
-    }
-  }
-
-  onExpandClick = (i) => {
-    return () => {
-      const recipe = this.props.recipes[i];
-      this.props.history.push(`/recipes/r/${recipe._id}`);
-    }
-  }
-
   componentDidMount() {
     if (!_isEmpty(this.props.recipes)) {
-      this.loadFullCardSlick();
       this.loadPreviewsSlick();
+      this.loadFullCardSlick();
     }
   }
 
   componentDidUpdate(prevProps) {
     if (!_isEqual(prevProps.recipes, this.props.recipes)) {
-      this.loadFullCardSlick();
       this.loadPreviewsSlick();
+      this.loadFullCardSlick();
     }
   }
 
@@ -64,8 +34,28 @@ class RecipesList extends React.Component {
     $('.api-recipes-list').slick({
       arrows: false,
       adaptiveHeight: true,
-      asNavFor: '.previews-list'
+      asNavFor: '.previews-list',
+      draggable: false,
+      touchMove: false,
+      swipeToSlide: false
     });
+
+    $('.api-recipes-list').on('afterChange', (ev, slick, currentSlide) => {
+      const currentRecipe = this.props.recipes[currentSlide];
+      //console.log(currentRecipe, currentRecipe._id);
+      if (currentRecipe && currentRecipe._id) {
+        LocalStorageUtil.saveFieldForComponent('RecipeList', 'currentRecipeId', currentRecipe._id);
+      }
+    });
+
+    const idFromLastSession = LocalStorageUtil.getFieldForComponent('RecipeList', 'currentRecipeId');
+    console.log(idFromLastSession);
+    if (idFromLastSession && this.props.recipesIndex[idFromLastSession]) {
+      const recipe = this.props.recipesIndex[idFromLastSession];
+      const idx = _findIndex(this.props.recipes, (item) => item._id === recipe._id);
+      //console.log(recipe, idx);
+      $('.api-recipes-list').slick('slickGoTo', idx, true);
+    }
   }
 
   loadPreviewsSlick = () => {
@@ -88,7 +78,7 @@ class RecipesList extends React.Component {
         {
           breakpoint: 500,
           settings: {
-            arrows: true,
+            arrows: false,
             centerMode: true,
             centerPadding: '20px',
             slidesToShow: 1
@@ -102,11 +92,7 @@ class RecipesList extends React.Component {
     const recipeCards = this.props.recipes.map((recipe, i) =>
       <div key={i}>
         <RecipeCard recipe={recipe}
-                  enableCollapse={false}
-                  onExpandClick={this.onExpandClick(i)}
-                  onAddClick={this.onAddClick(i)}
-                  onEditClick={this.onEditClick(i)}
-                  onCardClick={this.onCardClick(i)}/>
+                  enableCollapse={false}/>
       </div>
     );
 

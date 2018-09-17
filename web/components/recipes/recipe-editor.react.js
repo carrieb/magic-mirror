@@ -48,12 +48,14 @@ class RecipeEditor extends React.Component {
         loading = false;
       }
     } else {
-      const savedRecipe = LocalStorageUtil.getNewRecipeBeingEdited();
+      const savedRecipe = null; //LocalStorageUtil.getNewRecipeBeingEdited();
+      console.log('recipe from local storage:', savedRecipe);
       if (!_isEmpty(savedRecipe)) {
         showSavedRecipeAlert = true;
         recipe = savedRecipe;
       }
     }
+    recipe = this.assignIds(recipe);
 
     this.state = {
       recipe,
@@ -63,27 +65,36 @@ class RecipeEditor extends React.Component {
     }
   }
 
+  assignIds = (recipe) => {
+    // have to give sections & items fake ids for correct react rendering
+    recipe.ingredients.forEach((section) => {
+      section.id = _uniqueId();
+      if (section.items) {
+        section.items.forEach((item) => {
+          item.id = _uniqueId();
+        });
+      }
+    });
+
+    recipe.directions.forEach((section) => {
+      section.id = _uniqueId();
+      if (section.steps) {
+        section.steps.forEach((step) => {
+          step.id = _uniqueId();
+        });
+      }
+    });
+    return recipe;
+  }
+
   componentDidUpdate(prevProps) {
     const id = this.props.match.params.id;
     if (id &&
       !_isEmpty(this.props.recipesIndex[id]) &&
       !_isEqual(this.props.recipesIndex[id], prevProps.recipesIndex[id])
     ) {
-        const recipe = this.props.recipesIndex[id];
-        // have to give sections & items fake ids for correct react rendering
-        recipe.ingredients.forEach((section) => {
-          section.id = _uniqueId();
-          section.items.forEach((item) => {
-            item.id = _uniqueId();
-          });
-        });
-
-        recipe.directions.forEach((section) => {
-          section.id = _uniqueId();
-          section.steps.forEach((step) => {
-            step.id = _uniqueId();
-          })
-        });
+        let recipe = this.props.recipesIndex[id];
+        recipe = this.assignIds(recipe);
         this.setState({ recipe, loading: false });
     }
 
@@ -114,23 +125,34 @@ class RecipeEditor extends React.Component {
       });
   };
 
-  updateRecipeField = (field, transform=null) => {
+  handleRecipeInputUpdate = (field, transform=null) => {
     return (ev) => {
-      let recipe = this.state.recipe;
-      const newValue = transform ? transform(ev.target.value) : ev.target.value;
-      recipe[field] = newValue;
-      // TODO: why do I need this again?
-      LocalStorageUtil.saveNewRecipeBeingEdited(recipe);
-      this.setState({ recipe });
+      this.setRecipeField(field, transform, ev.target.value);
     }
+  }
+
+  handleRecipeUpdate = (field, transform=null) => {
+    return (value) => {
+      this.setRecipeField(field, transform, value);
+    }
+  }
+
+  setRecipeField = (field, transform, value) => {
+    let recipe = this.state.recipe;
+    const newValue = transform ? transform(value) : value;
+    recipe[field] = newValue;
+    // TODO: why do I need this again?
+    LocalStorageUtil.saveNewRecipeBeingEdited(recipe);
+    this.setState({ recipe });
   }
 
   recipeInput = (key, transform=null) =>
     <TextInput labelText={ _startCase(key) }
                value={ this.state.recipe[key] }
-               onChange={ this.updateRecipeField(key, transform) }/>
+               onChange={ this.handleRecipeInputUpdate(key, transform) }/>
 
   render() {
+    // TODO: add a "split" option for ingredients?
     console.log('recipe-editor render', this.state.recipe, this.state.loading);
     const recipe = this.state.recipe;
 
@@ -153,11 +175,11 @@ class RecipeEditor extends React.Component {
         { this.recipeInput('category') }
 
         <IngredientsEditor
-          updateIngredients={ this.updateRecipeField('ingredients') }
+          updateIngredients={ this.handleRecipeUpdate('ingredients') }
           ingredients={recipe.ingredients}/>
 
         <DirectionsEditor
-          updateDirections={ this.updateRecipeField('directions') }
+          updateDirections={ this.handleRecipeUpdate('directions') }
           directions={recipe.directions}/>
 
         <button className="ui purple huge fluid button"

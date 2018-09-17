@@ -99,7 +99,7 @@ const LocalStorageUtil = {
   },
 
   getFieldForComponent(component, field) {
-    _get(`${component}.${value}:`);
+    return _get(`${component}.${field}:`);
   }
 };
 

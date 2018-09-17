@@ -18,9 +18,9 @@ class RepeatableComponent extends React.Component {
   }
 
   render() {
-    const components = this.props.values.map((value, index) => {
-      // TODO: pass in an onChange prop
-      // console.log(this.props.values);
+    //console.log(this.props.values);
+    const values = this.props.values;
+    const components = values.map((value, index) => {
       const comp = React.createElement(this.props.component, {
         value,
         index,
@@ -28,6 +28,8 @@ class RepeatableComponent extends React.Component {
           this.props.onChange(index, updated);
         }
       });
+
+      //console.log(value.id, comp.type.name);
 
       return (
         <div key={value.id} className="inner-component">
@@ -42,13 +44,15 @@ class RepeatableComponent extends React.Component {
 
     return (
       <div className="repeated-component">
-        { this.props.showRemoveSelf && <div className="ui top attached teal icon button" onClick={ this.props.onRemoveSelf }>
+        { this.props.showRemoveSelf && <div className="ui top attached teal icon button"
+          onClick={ this.props.onRemoveSelf }>
           <i className="minus icon"></i>
           { this.props.removeSelfText }
         </div> }
         <div className="ui attached segment">
           { this.props.children }
           { components }
+          { values.length === 0 && <div><i className="orange exclamation circle icon"/>{ this.props.emptyText }</div> }
         </div>
         <div className="ui bottom attached violet icon button" onClick={() => this.add()}>
           <i className="plus icon"></i>

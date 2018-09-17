@@ -7,14 +7,12 @@
     }
   }
 
+  .centered.image {
+    display: block;
+  }
+
   .api-recipes-list {
     .recipe-card {
-      img {
-        max-width: 100%;
-        width: 100%;
-        height: auto;
-      }
-
       .ingredients-wrapper {
         padding-bottom: 1em;
         margin-bottom: 1em;

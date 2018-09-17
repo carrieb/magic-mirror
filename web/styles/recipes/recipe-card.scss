@@ -7,10 +7,15 @@
     .actions {
       float: right;
       padding-bottom: 0;
+      margin-left: 1em;
 
       & + .content {
         border-top: none;
       }
+    }
+
+    .servings {
+      margin-bottom: 1em;
     }
 
     .keyword {
