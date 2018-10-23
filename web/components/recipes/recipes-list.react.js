@@ -37,7 +37,6 @@ class RecipesList extends React.Component {
       asNavFor: '.previews-list',
       draggable: false,
       touchMove: false,
-      swipeToSlide: false
     });
 
     $('.api-recipes-list').on('afterChange', (ev, slick, currentSlide) => {

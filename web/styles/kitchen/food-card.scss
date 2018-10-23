@@ -38,11 +38,11 @@ div.food-card.ui.card {
     span:not(.title){
       float: right;
     }
+  }
 
-    img {
-      max-height: 50px !important;
-      width: auto;
-      cursor: pointer;
-    }
+  img.category {
+    max-height: 50px !important;
+    width: auto;
+    cursor: pointer;
   }
 }

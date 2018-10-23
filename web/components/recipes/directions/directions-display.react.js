@@ -76,7 +76,7 @@ class Directions extends React.Component {
     const directions = this.props.directions || [];
 
     const directionEls = directions.map((directionsList, i) => {
-      const title = <div className="ui grey sub header">{ directionsList.name || 'directions' }</div>;
+      const title = <div className="ui sub header">{ directionsList.name || 'directions' }</div>;
       const steps = directionsList.steps || [];
 
       const stepEls = steps.map((step, idx) => {

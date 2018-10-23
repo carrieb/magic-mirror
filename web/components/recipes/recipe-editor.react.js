@@ -215,6 +215,8 @@ class RecipeEditor extends React.Component {
       );
     }
 
+    // TODO: add image upload
+
     return (
       <div className="recipe-editor">
         { this.state.showSavedRecipeAlert && <div className="ui positive message">

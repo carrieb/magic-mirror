@@ -48,7 +48,15 @@
 
 div.kitchen-inventory {
 
+  .header {
+    button, .buttons {
+      margin: 1rem 0;
+    }
 
+    .buttons i {
+      padding-right: 1.5rem;
+    }
+  }
 
   > div.content {
     margin-bottom: 75px;
@@ -56,6 +64,7 @@ div.kitchen-inventory {
   }
 
   div.footer {
+    z-index: 1000;
     position: fixed;
     background: #e8e8e8;
     bottom: 0;

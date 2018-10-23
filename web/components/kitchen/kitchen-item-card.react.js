@@ -8,7 +8,8 @@ import _startCase from 'lodash/startCase';
 import _kebabCase from 'lodash/kebabCase';
 
 import { withKitchen, DEFAULT_ITEM } from 'state/KitchenState';
-import ShoppingListState from 'state/ShoppingListState';
+
+import EatModal from 'components/shared/eat-modal.react';
 
 import { Link } from 'react-router-dom';
 
@@ -17,17 +18,11 @@ import 'sass/kitchen/food-card.scss';
 class KitchenItemCard extends React.Component {
   constructor(props) {
     super(props);
-    this.addToShoppingList = this.addToShoppingList.bind(this);
 
     this.state = {
       flipped: false,
       id: uniqueId()
     };
-  }
-
-  addToShoppingList() {
-    ShoppingListState.addItem(this.props.foodItem);
-    this.props.handlePlusClick(this.props.foodItem);
   }
 
   // $(this.card).transition({
@@ -40,9 +35,13 @@ class KitchenItemCard extends React.Component {
     }
   }
 
+  showEatModal = () => {
+    this.setState({ showEatModal: true });
+  }
+
   render() {
     const foodItem = this.props.kitchenIndex[this.props.id] || DEFAULT_ITEM;
-    console.log(foodItem);
+    //console.log(foodItem);
     const out = foodItem.quantity.amount === 0;
 
     let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/images/no-image.svg';
@@ -56,12 +55,14 @@ class KitchenItemCard extends React.Component {
     const content = (
       <div className="content">
         <div className="header">
-          <span data-tooltip={foodItem.category} data-position="right center"><img src={`/images/kitchen/${_kebabCase(foodItem.category.toLowerCase())}.png`}/></span>
           <span className="title">{_startCase(foodItem.description)}</span>
         </div>
         <div className="meta">
           <a>{foodItem.zone}</a><br/>
         </div>
+        <span data-tooltip={foodItem.category} data-position="right center">
+          <img className="category" src={`/images/kitchen/${_kebabCase(foodItem.category.toLowerCase())}.png`}/>
+        </span>
         { out && <div style={{ color: 'red' }}>Out of stock</div>}
       </div>
     );
@@ -90,6 +91,16 @@ class KitchenItemCard extends React.Component {
       <div className="ui card food-card" >
         { image }
         { content }
+        { this.state.showEatModal }
+        { this.state.showEatModal && <EatModal id={foodItem._id}/> }
+        <div className="ui attached buttons">
+          <button className="ui green basic icon button" onClick={this.showEatModal}>
+            <i className="utensils icon"/>
+          </button>
+          <button className="ui red basic icon button">
+            <i className="trash icon"/>
+          </button>
+        </div>
         { extraContent }
       </div>
     );

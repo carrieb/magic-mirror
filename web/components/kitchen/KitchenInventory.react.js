@@ -11,7 +11,6 @@ import ListLayout from 'components/kitchen/list-layout.react';
 import ImageOption from 'components/kitchen/image-option.react';
 
 import { ShoppingList } from 'components/shared/shopping-list.react';
-import ShoppingListState from 'state/ShoppingListState';
 
 import LocalStorageUtil from 'util/local-storage-util';
 
@@ -39,7 +38,9 @@ class KitchenInventory extends React.Component {
       zones: LocalStorageUtil.getInventoryFilterZones() || _clone(ALL_ZONES),
       shoppingList: [], // todo: remove? should be all encapsulated in withShoppingList HOC
       includeOutOfStock: false,
-      groupByCategory: false
+      groupByCategory: false,
+      expandFilters: false,
+      expandOptions: false
     }
   }
 
@@ -61,23 +62,38 @@ class KitchenInventory extends React.Component {
     });
   };
 
+  toggleFilterExpansion = () => {
+    this.setState({ expandFilters: !this.state.expandFilters });
+  }
+
+  toggleOptions = () => {
+    this.setState({ expandOptions: !this.state.expandOptions });
+  }
+
   onZonesChange = (raw) => {
     const zones = raw.split(',');
+    console.log(raw);
     LocalStorageUtil.saveInventoryFilterZones(zones);
     if (!_isEqual(zones, this.state.zones)) {
-      console.log(zones, this.state.zones);
       this.setState({ zones });
     }
   }
 
   onCategoriesChange = (raw) => {
     const categories = raw.split(',');
-    console.log(categories);
+    console.log(raw);
     LocalStorageUtil.saveInventoryFilterCategories(categories);
     if (!_isEqual(categories, this.state.categories)) {
-      console.log(categories, this.state.categories);
+      console.log(categories);
       this.setState({ categories });
     }
+  }
+
+  addAllFilters = () => {
+    this.setState({
+      categories: _clone(ALL_CATEGORIES),
+      zones: _clone(ALL_ZONES)
+    });
   }
 
   filteredItems = () => {
@@ -103,7 +119,9 @@ class KitchenInventory extends React.Component {
 
     if (this.state.layout === 'Cards') {
       // TODO: move this to be rendered in the card layout?
-      const cards = this.filteredItems()
+      const filtered = this.filteredItems();
+      console.log(filtered.length);
+      const cards = filtered
       .map((foodItem, idx) => {
         return (
           <KitchenItemCard id={foodItem._id || 'fake id'}
@@ -132,55 +150,80 @@ class KitchenInventory extends React.Component {
 
     const imageOption = (name) => <ImageOption key={name} name={name}/>;
 
+    const filters = [
+      <Dropdown className="ui fluid multiple search selection dropdown categories"
+                options={{ onChange: this.onCategoriesChange, className: { label: 'ui basic label' } }}
+                key="categories"
+                value={this.state.categories}>
+          { ALL_CATEGORIES.map(imageOption) }
+      </Dropdown>,
+      <Dropdown className="ui fluid multiple search selection dropdown zones"
+                options={{ onChange: this.onZonesChange, className: { label: 'ui basic label' }  }}
+                key="zones"
+                value={this.state.zones}>
+          { ALL_ZONES.map(imageOption) }
+      </Dropdown>,
+      <button className="ui fluid basic green button" onClick={this.addAllFilters}>
+        Show Me Everything
+      </button>
+    ];
+
     const layoutClassName = (layout) => `ui ${this.state.layout === layout ? 'disabled active' : ''} vertical animated icon button`;
+    const options = (
+      <div>
+        <div className="ui basic fluid buttons">
+          <div className={layoutClassName('Cards')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
+            <div className="hidden content">Cards</div>
+            <div className="visible content">
+              <i className="grid layout icon"/>
+            </div>
+          </div>
+          <div className={layoutClassName('List')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
+            <div className="hidden content">List</div>
+            <div className="visible content">
+              <i className="list layout icon"/>
+            </div>
+          </div>
+        </div>
+
+        <div className="ui toggle checkbox">
+          <input type="checkbox"
+                 name="public"
+                 checked={this.state.includeOutOfStock}
+                 onClick={ () => this.setState({ includeOutOfStock: !this.state.includeOutOfStock })}/>
+          <label>Include out of stock items</label>
+        </div>
+
+        <div className="ui fluid toggle checkbox">
+          <input type="checkbox"
+                 name="public"
+                 checked={this.state.groupByCategory}
+                 onClick={ () => this.setState({ groupByCategory: !this.state.groupByCategory })}/>
+          <label>Group by category</label>
+        </div>
+      </div>
+    );
+
     return (
       <div className="kitchen-inventory">
         <ShoppingList items={this.state.shoppingList} />
         <div className="inventory-wrapper">
         <div className="header">
           <SearchItemsByNameDropdown/>
-          <Dropdown className="ui fluid multiple search selection dropdown categories"
-                    options={{ onChange: this.onCategoriesChange }}
-                    value={this.state.categories}>
-              { ALL_CATEGORIES.map(imageOption) }
-          </Dropdown>
-          <Dropdown className="ui fluid multiple search selection dropdown zones"
-                    options={{ onChange: this.onZonesChange }}
-                    value={this.state.zones}>
-              { ALL_ZONES.map(imageOption) }
-          </Dropdown>
-
-          <div className="ui basic fluid buttons">
-            <div className={layoutClassName('Cards')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
-              <div className="hidden content">Cards</div>
-              <div className="visible content">
-                <i className="grid layout icon"/>
-              </div>
-            </div>
-            <div className={layoutClassName('List')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
-              <div className="hidden content">List</div>
-              <div className="visible content">
-                <i className="list layout icon"/>
-              </div>
-            </div>
+          <div className="ui fluid basic icon buttons">
+            <button className="ui button expand-filters-button"
+                                                   onClick={this.toggleFilterExpansion}>
+              <i className="filter icon"/>
+              { this.state.expandFilters ? 'Close Filters' : 'Expand Filters' }
+            </button>
+            <button className="ui button expand-options-button"
+                                                   onClick={this.toggleOptions}>
+              <i className="sliders horizontal icon"/>
+              { this.state.expandOptions ? 'Close Options' : 'Expand Options' }
+            </button>
           </div>
-
-          <div className="ui toggle checkbox">
-            <input type="checkbox"
-                   name="public"
-                   checked={this.state.includeOutOfStock}
-                   onClick={ () => this.setState({ includeOutOfStock: !this.state.includeOutOfStock })}/>
-            <label>Include out of stock items</label>
-          </div>
-
-          <div className="ui fluid toggle checkbox">
-            <input type="checkbox"
-                   name="public"
-                   checked={this.state.groupByCategory}
-                   onClick={ () => this.setState({ groupByCategory: !this.state.groupByCategory })}/>
-            <label>Group by category</label>
-          </div>
-
+          { this.state.expandFilters && filters }
+          { this.state.expandOptions && options }
         </div>
         <div className="content">
           { inventory }

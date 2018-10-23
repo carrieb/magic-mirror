@@ -23,6 +23,9 @@ import 'sass/recipes/recipes.scss';
 import _find from 'lodash/find';
 import _clone from 'lodash/clone';
 
+// TODO: fix bug where bottom slick
+// navigates incorrectly on screen size change
+
 class Recipes extends React.Component {
   render() {
     return (

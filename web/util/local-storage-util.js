@@ -17,8 +17,6 @@ const keys = [
   INVENTORY_FILTER_ZONES, INVENTORY_FILTER_CATEGORIES
 ];
 
-// TODO: using keys, generate getter methods
-
 function _set(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }

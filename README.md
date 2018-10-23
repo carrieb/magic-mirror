@@ -36,7 +36,7 @@ Searches `/config` for properties files.
 
 [wireframe design](https://wireframe.cc/Cdvuhh)
 
-TODO:
+Short List:
 ** rename -db to -dao?
 * additional item fields:
 ** brand?
@@ -47,4 +47,4 @@ TODO:
 * add historical feed info when edits are made
 * transfer DB contents to raspberry pi
 * update icons
-** pack i like that isn't free : https://www.flaticon.com/family/basic-rounded/lineal-color 
+** pack i like that isn't free : https://www.flaticon.com/family/basic-rounded/lineal-color

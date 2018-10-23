@@ -16,6 +16,32 @@
       .ingredients-wrapper {
         padding-bottom: 1em;
         margin-bottom: 1em;
+
+        .header {
+          font-family: 'Playfair Display', serif;
+          font-size: 16px !important;
+          font-weight: normal;
+          text-transform: capitalize !important;
+          color: #f75d5d;
+        }
+
+        .item:before {
+          color: #cccccc !important;
+        }
+      }
+
+      .directions-wrapper {
+        .header {
+          font-family: 'Playfair Display', serif;
+          font-size: 16px !important;
+          font-weight: normal;
+          text-transform: capitalize !important;
+          color: #f75d5d;
+        }
+
+        .item:before {
+          color: #cccccc !important;
+        }
       }
 
     }

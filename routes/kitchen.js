@@ -31,7 +31,7 @@ router.get('/', (req, res) => {
 // update
 router.put('/food', jsonParser, (req, res) => {
   console.log(req.body.item);
-  // TODO: add if-else based on id, update or create
+  // TODO: is id actually being passed back to response?
   FoodDAO.updateItem(res.app.locals.dbs, req.body.item, (id) => res.send(id));
 });
 
@@ -66,7 +66,6 @@ router.post('/image', foodImageUpload.single('image'), function (req, res, next)
 
 // add multiple items
 router.post('/bulk', jsonParser, (req, res) => {
-  // TODO: store new things into DB
   FoodDAO.storeNewItems(res.app.locals.dbs, req.body.items, () => {
     res.send('OK');
   });

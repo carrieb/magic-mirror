@@ -17,6 +17,7 @@ router.get('/', (req, res) => {
 router.post('/add', jsonParser, (req, res) => {
   RecipesDb.uploadRecipe(res.app.locals.dbs, req.body.recipe, (id) => {
     // TODO: obfuscate somehow
+    // https://www.npmjs.com/package/hashids ? 
     res.json(id);
   }, (err) => res.status(500).send('Failed to upload recipe.'))
 });

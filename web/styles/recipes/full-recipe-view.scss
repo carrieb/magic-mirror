@@ -1,4 +1,22 @@
 .full-recipe-view {
+
+  font-family: 'Lato', sans-serif;
+
+  h3 {
+    span {
+      font-size: 1.25rem;
+      color: black;
+      position: absolute;
+      top: 0;
+      right: .5em;
+    }
+
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: bold;
+    color: #f75d5d;
+  }
+
   .right.floated {
     float: right;
   }
@@ -20,6 +38,14 @@
   .ingredients-wrapper {
     margin-top: 20px;
 
+    .header {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px !important;
+      font-weight: normal;
+      text-transform: capitalize !important;
+      color: #f75d5d;
+    }
+
     .ingredients-section {
       margin-top: 20px;
     }
@@ -30,10 +56,26 @@
       max-width: 30%;
       margin-right: 20px;
     }
+
+    .item:before {
+      color: #cccccc !important;
+    }
   }
 
   .directions-wrapper {
     margin-top: 20px;
+
+    .header {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px !important;
+      font-weight: normal;
+      text-transform: capitalize !important;
+      color: #f75d5d;
+    }
+
+    .item:before {
+      color: #cccccc !important;
+    }
   }
 
   .timeline-wrapper {

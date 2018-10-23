@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import IngredientsList from 'components/recipes/ingredients/ingredients-list.react';
 
 import { KitchenState, withKitchen } from 'state/KitchenState';
-import ShoppingListState from 'state/ShoppingListState';
 
 import 'sass/shared/shopping-list.scss';
 

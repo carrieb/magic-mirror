@@ -1,43 +1,9 @@
 import _isEmpty from 'lodash/isEmpty';
 import _startsWith from 'lodash/startsWith';
 
-const quantityUnits = ['小さじ', 'tsp', 'teaspoon', 'tsps', 'teaspoons',
-  '大さじ', 'tbsp', 'tablespoon', 'tbsps', 'tablespoons',
-  'hunk', 'hunks', 'clove', 'cloves',
-  'cup', 'gram', 'cups', 'grams', '片分', '少々',
-  'oz', 'ounces', 'lb', 'lbs'];
+import { parseQuantity } from 'src/common/quantities';
 
 const extraWords = ['of'];
-
-function parseNumber(str) {
-  if (str.indexOf('/') > -1) {
-    const parts = str.trim().split('/');
-    return parseFloat(parts[0]) / parseFloat(parts[1]);
-  } else {
-    switch (str) {
-      case '½':
-        return 0.5;
-      case '⅓':
-        return 1.0 / 3.0;
-      case '¼':
-        return 0.25;
-      default:
-        return parseFloat(str);
-    }
-  }
-}
-
-function parseAmount(str) {
-  const pieces = str.split(' ');
-  let total = 0.0;
-
-  pieces.forEach((amtStr) => {
-    const amt = parseNumber(amtStr);
-    total += amt;
-  });
-
-  return total;
-}
 
 function parseIngredientDetails(str) {
   //console.log('parsing ingredients from:', str);
@@ -49,23 +15,6 @@ function parseIngredientDetails(str) {
     return { name, modifier };
   } else {
     return { name: str, modifier: null };
-  }
-}
-
-function parseQuantity(text) {
-  const amountRegex = new RegExp('([1-9,½,¼,⅓,\/, ]+)');
-  const match = text.match(amountRegex);
-  if (match) {
-    const amtStr = match[0].trim();
-    const other = text.substring(amtStr.length).trim();
-    const amount = parseAmount(amtStr);
-    const split = other.split(' ', 1);
-    const unitStr = split[0].trim();
-    const unit = parseUnit(unitStr);
-    const rest = other.substring(unitStr.length).trim();
-    return { amount, unit, rest }
-  } else {
-    return { amount: 0, unit: 'gram' };
   }
 }
 
@@ -125,46 +74,6 @@ const RecipeParser = {
     return result;
   },
 
-  tryAndParseQuantity(line) {
-    let quantityRegex = '^([\\d+|½|¼|⅓|\\d+\\/\\d+|\\s]+)';
-    quantityRegex += `(${quantityUnits.join('|')})?(.*)`;
-    quantityRegex = new RegExp(quantityRegex);
-    const match = quantityRegex.exec(line);
-    const firstChar = line[0];
-    if (match) {
-      const amount = match[1] ? match[1].trim() : 0;
-      // TODO: parse the amount
-      const unit = match[2] ? match[2].trim() : null;
-      const rest = match[3].trim();
-
-      return { amount, unit, rest };
-    } else {
-      return null;
-    }
-  },
-
-  parseAmount(string) {
-    let amt = 0;
-    const split = string.split(' ');
-    split.forEach((numStr) => {
-      if (numStr.indexOf('/') > -1) {
-        const fraction = numStr.split('/');
-        const top = fraction[2];
-        const bottom = fraction[1];
-        amt += top / bottom;
-      } else {
-        try {
-          const num = parseInt(numStr);
-          amt += num;
-        } catch(e) {
-          console.log(num);
-          // TODO: handle unicode characters
-        }
-      }
-    });
-    return amt;
-  },
-
   parseIngredients(text, splitOverCommas=false) {
     const result = [ { items: [] } ];
     const lines = text ? text.split('\n') : [];
@@ -195,16 +104,15 @@ const RecipeParser = {
             index++;
           });
       } else {
-        const quantity = this.tryAndParseQuantity(line);
+        const quantity = parseQuantity(line);
         // TODO: handle new lines for sections
         //console.log(quantity);
 
         if (quantity) {
           const ingredient = parseIngredientDetails(quantity.rest);
-          const amount = parseAmount(quantity.amount);
           const item = {
             quantity: {
-              amount: amount,
+              amount: quantity.amount,
               unit: quantity.unit
             },
             description: ingredient.name,

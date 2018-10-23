@@ -21,7 +21,7 @@ class FullRecipeView extends React.Component {
     }
   }
 
-  edit() {
+  edit = () => {
     this.props.history.push(`/recipes/r/${this.props.match.params.id}/edit`);
   }
 

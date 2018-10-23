@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 
 import IngredientsList from 'components/recipes/ingredients/ingredients-list.react';
 
-
-
 const MAX_ITEMS = 3;
 
 class Ingredients extends React.Component {
@@ -27,7 +25,7 @@ class Ingredients extends React.Component {
       if (shouldCollapse && counter > MAX_ITEMS) {
         return null;
       } else {
-        const title = <div className="ui grey sub header">{section.name || 'ingredients'}</div>;
+        const title = <div className="ui sub header">{section.name || 'ingredients'}</div>;
         counter+=ingredients.length;
         return (
           <div className="ingredients-section" key={i}>

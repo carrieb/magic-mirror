@@ -7,6 +7,7 @@ class Ingredient extends React.Component {
     let q = item.quantity || {};
     const remainder = q.amount - Math.floor(q.amount);
     const whole = q.amount - remainder;
+    // TODO: move this to quantities
     let amt = whole === 0 ? '' : whole + ' ';
     if (remainder === .75) { amt += '3/4 '; }
     if (remainder === .33) { amt += '⅓ '; }
@@ -31,7 +32,7 @@ class IngredientsList extends React.Component {
         <Ingredient item={item}/>
       </div>;
     });
-    return <div className="ui list">{ itemEls }</div>
+    return <div className="ui bulleted list">{ itemEls }</div>
   }
 }
 
