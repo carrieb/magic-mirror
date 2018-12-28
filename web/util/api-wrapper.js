@@ -183,6 +183,13 @@ const ApiWrapper = {
       url: `/api/kitchen/star/${id}?s=${starred ? '1' : '0'}`,
       type: 'GET'
     });
+  },
+
+  getMeal(id) {
+    return $.ajax({
+      url: `/api/meals/meal?id=${id}`,
+      type: 'GET'
+    });
   }
 }
 

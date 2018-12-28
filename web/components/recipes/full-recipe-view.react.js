@@ -25,6 +25,10 @@ class FullRecipeView extends React.Component {
     this.props.history.push(`/recipes/r/${this.props.match.params.id}/edit`);
   }
 
+  cook = () => {
+    this.props.history.push(`/recipes/r/${this.props.match.params.id}/cook`);
+  }
+
   render() {
     const id = this.props.match.params.id;
     const recipe = this.props.recipesIndex[id];
@@ -40,17 +44,20 @@ class FullRecipeView extends React.Component {
       );
     }
 
+    // TODO: move youtube form 'source' to 'video'
+
     return (
       <div className="full-recipe-view">
         <div className="ui segment">
 
           <h3>
-            <span className="right floated" onClick={this.edit}><i className="ui edit outline icon"/></span>
+            <span className="right floated" onClick={this.edit}><i className="ui big edit outline icon"/></span>
             {recipe.name}
           </h3>
 
           { recipe.img && <div className="ui image"><img src={recipe.img}/></div> }
           { recipe.source && recipe.source.indexOf('youtube.com') > -1 && <div className="ui embed" data-url={recipe.source}/> }
+          { !recipe.video && <button className="ui fluid basic green button" onClick={this.cook}>Cook!</button> }
 
           <Ingredients ingredients={recipe.ingredients}/>
           <Directions directions={recipe.directions} ingredients={recipe.ingredients}/>

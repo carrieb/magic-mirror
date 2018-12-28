@@ -5,16 +5,14 @@ import { Link } from 'react-router-dom';
 import { withKitchen } from 'state/KitchenState';
 import KitchenConstants from 'state/kitchen/kitchen-constants';
 
-import KitchenItemCard from 'components/kitchen/kitchen-item-card.react';
+import FixedFooter from 'components/common/fixed-footer.react';
+
 import CardLayout from 'components/kitchen/card-layout.react';
 import ListLayout from 'components/kitchen/list-layout.react';
 import ImageOption from 'components/kitchen/image-option.react';
 
-import { ShoppingList } from 'components/shared/shopping-list.react';
-
 import LocalStorageUtil from 'util/local-storage-util';
 
-import SearchItemsByNameDropdown from 'components/kitchen/search-items-by-name-dropdown.react';
 import Dropdown from 'components/common/dropdown.react';
 
 import _kebabCase from 'lodash/kebabCase';
@@ -36,11 +34,11 @@ class KitchenInventory extends React.Component {
       layout: 'Cards',
       categories: LocalStorageUtil.getInventoryFilterCategories() || _clone(ALL_CATEGORIES),
       zones: LocalStorageUtil.getInventoryFilterZones() || _clone(ALL_ZONES),
-      shoppingList: [], // todo: remove? should be all encapsulated in withShoppingList HOC
       includeOutOfStock: false,
-      groupByCategory: false,
+      groupByCategory: true,
       expandFilters: false,
-      expandOptions: false
+      expandOptions: false,
+      categorize: false
     }
   }
 
@@ -116,21 +114,10 @@ class KitchenInventory extends React.Component {
   render() {
     console.log('kitchen inventory render', this.state, Object.keys(this.props.kitchenIndex).length);
     let inventory = null;
+    const filteredItems = this.filteredItems();
 
     if (this.state.layout === 'Cards') {
-      // TODO: move this to be rendered in the card layout?
-      const filtered = this.filteredItems();
-      console.log(filtered.length);
-      const cards = filtered
-      .map((foodItem, idx) => {
-        return (
-          <KitchenItemCard id={foodItem._id || 'fake id'}
-                           delete={(id) => this.delete(id)}
-                           key={idx}/>
-        );
-      });
-
-      inventory = <CardLayout grouped={this.state.groupByCategory}>{ cards }</CardLayout>;
+      inventory = <CardLayout items={filteredItems} categorize={this.state.groupByCategory}/>;
     }
 
     if (this.state.layout === 'List') {
@@ -206,10 +193,8 @@ class KitchenInventory extends React.Component {
 
     return (
       <div className="kitchen-inventory">
-        <ShoppingList items={this.state.shoppingList} />
         <div className="inventory-wrapper">
         <div className="header">
-          <SearchItemsByNameDropdown/>
           <div className="ui fluid basic icon buttons">
             <button className="ui button expand-filters-button"
                                                    onClick={this.toggleFilterExpansion}>
@@ -229,11 +214,11 @@ class KitchenInventory extends React.Component {
           { inventory }
         </div>
         </div>
-        <div className="footer">
+        <FixedFooter>
           <Link to="/kitchen/item/new">
             <button className="ui large purple button">Add Item</button>
           </Link>
-        </div>
+        </FixedFooter>
       </div>
     );
   }

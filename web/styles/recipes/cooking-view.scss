@@ -1,0 +1,26 @@
+.cooking-view {
+  button + button {
+    margin-top: 1rem !important;
+  }
+
+  .cards {
+    margin-bottom: 1rem !important;
+  }
+
+  .card {
+    .title {
+      text-transform: capitalize;
+    }
+
+    img {
+      max-height: 80px;
+      width: auto;
+    }
+
+    &.action {
+      img {
+        margin-top: 8px;
+      }
+    }
+  }
+}

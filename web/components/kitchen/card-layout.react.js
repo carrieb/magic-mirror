@@ -1,31 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import KitchenItemCard from 'components/kitchen/kitchen-item-card.react';
+
+import { withCategories } from 'components/common/hoc/withCategories.react';
+
 class CardLayout extends React.Component {
   render() {
-    if (this.props.children.length === 0) {
+    if (!this.props.items || this.props.items.length === 0) {
       return (
         <div className="ui fluid card">
           <div className="content">Nothing in inventory.</div>
         </div>
       );
     } else {
-      if (this.props.grouped) {
-        // TODO: i think i need to pass in the actual data here?
-        return <div>'I DUNNO HOW TO GROUP YET'</div>;
-      } else {
-        return <div className="ui six doubling cards">{ this.props.children }</div>;
-      }
+      const cards = this.props.items.map((item, idx) => {
+          return (
+            <KitchenItemCard id={item._id || 'fake id'} key={item._id}/>
+          );
+      });
+
+      return <div className="ui six doubling cards">{ cards }</div>;
     }
   }
 }
 
-CardLayout.propTypes = {
-  grouped: PropTypes.bool
-}
-
-CardLayout.defaultProps = {
-  grouped: false
-}
-
-module.exports = CardLayout;
+export default withCategories(CardLayout);

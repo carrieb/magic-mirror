@@ -33,29 +33,32 @@ class RepeatableComponent extends React.Component {
 
       return (
         <div key={value.id} className="inner-component">
-          { comp }
-          { this.props.values.length > 1 &&
-              <div className="delete-button"><button className="ui circular icon button"
-                    type="button"
-                    onClick={() => this.remove(index)}><i className="trash icon"></i></button></div> }
+          <div style={{ position: 'relative' }}>
+            <div className="component-wrapper" style={{ width: 'calc(100% - 45px)', display: 'inline-block' }}>
+              { comp }
+            </div>
+            <span className="delete-button-wrapper" >
+              <button className="ui circular basic red icon button"
+                      style={{ position: 'absolute', right: 0, bottom: 0 }}
+                      onClick={() => this.remove(index)}>
+                  <i className="trash icon"></i>
+              </button>
+            </span>
+          </div>
         </div>
       );
     });
 
     return (
       <div className="repeated-component">
-        { this.props.showRemoveSelf && <div className="ui top attached teal icon button"
-          onClick={ this.props.onRemoveSelf }>
-          <i className="minus icon"></i>
-          { this.props.removeSelfText }
-        </div> }
-        <div className="ui attached segment">
+        <div>
           { this.props.children }
           { components }
           { values.length === 0 && <div><i className="orange exclamation circle icon"/>{ this.props.emptyText }</div> }
         </div>
-        <div className="ui bottom attached violet icon button" onClick={() => this.add()}>
+        <div className="ui fluid basic violet icon button" onClick={() => this.add()}>
           <i className="plus icon"></i>
+          { this.props.addText }
         </div>
       </div>
     );

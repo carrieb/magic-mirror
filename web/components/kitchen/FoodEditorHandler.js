@@ -25,7 +25,7 @@ import 'sass/kitchen/food-editor.scss';
 class FoodEditorHandler extends React.Component {
   constructor(props) {
     super(props);
-    console.log('food editor props', props);
+    //console.log('food editor props', props);
 
     const name = _lowerCase(this.props.match.params.foodName);
     let foodItem = _clone(DEFAULT_ITEM);
@@ -39,10 +39,6 @@ class FoodEditorHandler extends React.Component {
       foodItem.zone = LocalStorageUtil.getLastZone() || DEFAULT_ITEM.zone;
       foodItem.category = LocalStorageUtil.getLastCategory() || DEFAULT_ITEM.category;
     }
-
-    this.handleFormRef = this.handleFormRef.bind(this);
-    this.updateImage = this.updateImage.bind(this);
-    this.updateFoodItem = this.updateFoodItem.bind(this);
 
     console.log('constructor', foodItem);
 
@@ -64,7 +60,7 @@ class FoodEditorHandler extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('did update', prevProps, this.props);
+    //console.log('did update', prevProps, this.props);
     if (this.state.editingName) {
       // focus on that span
       console.log('focusing on name input');
@@ -72,14 +68,15 @@ class FoodEditorHandler extends React.Component {
     }
 
     if (this.props.match.params.foodName !== prevProps.match.params.foodName) {
-      console.log(`props foodName change, finding ${this.state.foodItem.description} in the kitchen index`)
-      console.log(_values(this.props.kitchenIndex).map((item) => {
-        return item.description
-      }).sort())
+      //console.log(`props foodName change, finding ${this.state.foodItem.description} in the kitchen index`)
+      /* console.log(_values(this.props.kitchenIndex).map((item) => {
+       *  return item.description
+       * }).sort())
+       */
       const me = _find(this.props.kitchenIndex,
         (item) => _lowerCase(item.description) === this.state.foodItem.description);
       if (!_isEmpty(me)) {
-        console.log('found', me);
+        //console.log('found', me);
         this.setState({ foodItem: me });
       }
     }
@@ -87,14 +84,14 @@ class FoodEditorHandler extends React.Component {
     if (!_isEqual(prevProps.kitchenIndex, this.props.kitchenIndex)) {
       // attempt to look myself up
 
-      console.log(`kitchen index update, finding ${this.state.foodItem.description} in the kitchen index`)
-      console.log(_values(this.props.kitchenIndex).map((item) => {
-        return item.description
-      }).sort())
+      //console.log(`kitchen index update, finding ${this.state.foodItem.description} in the kitchen index`)
+      //console.log(_values(this.props.kitchenIndex).map((item) => {
+      //  return item.description
+      // }).sort())
       const me = _find(this.props.kitchenIndex,
         (item) => _lowerCase(item.description) === _lowerCase(this.state.foodItem.description));
       if (!_isEmpty(me)) {
-        console.log('found', me);
+        //console.log('found', me);
         this.setState({ foodItem: me });
       }
     }
@@ -104,24 +101,25 @@ class FoodEditorHandler extends React.Component {
     const name = this.props.match.params.foodName;
   };
 
-  updateFoodItem(field, value) {
+  updateFoodItem = (field, value) => {
+    console.log(this.state);
     const foodItem = this.state.foodItem;
     foodItem[field] = value;
     this.setState({ foodItem });
   }
 
-  handleDimmerRef(ref) {
+  handleDimmerRef = (ref) => {
     this.dimmer = ref;
     if (this.dimmer) {
       $(this.dimmer).dimmer({ on: 'hover' });
     }
   }
 
-  handleFormRef(ref) {
+  handleFormRef = (ref) => {
     this.form = ref;
   }
 
-  updateImage(ev) {
+  updateImage = (ev) => {
     // Must do ajax submit so page doesn't refresh.
     // TODO: upload image asynchronoustly
     // http://stackoverflow.com/questions/166221/how-can-i-upload-files-asynchronously
@@ -140,7 +138,7 @@ class FoodEditorHandler extends React.Component {
     }
   }
 
-  updateFields() {
+  updateFields = () => {
     const food = this.state.foodItem;
     console.log(food);
     if (!food._id) {
@@ -206,7 +204,7 @@ class FoodEditorHandler extends React.Component {
     // TODO: add warning message if creating a new item (no _id)
     // but there's already something in the kithen index.
 
-    console.log('render editor handler', foodItem, this.props);
+    //console.log('render editor handler', foodItem, this.props);
 
     const headerContent = this.state.editingName
       ? <div>

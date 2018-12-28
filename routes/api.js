@@ -45,17 +45,21 @@ router.get('/wunderlist', (req, res) => {
 
 router.post('/export/shopping-list', jsonParser, (req, res) => {
   const items = req.body.items;
-  const subtasks = items.map((item) => {
-    const q = item.quantity || {};
-    const remainder = q.amount - Math.floor(q.amount);
-    const whole = q.amount - remainder;
-    let amt = whole === 0 ? '' : whole + ' ';
-    if (remainder === .75) { amt += '3/4 '; }
-    if (remainder === .33) { amt += '1/3 '; }
-    if (remainder === .25) { amt += '1/4 '; }
-    if (remainder === .5) { amt += '1/2 '; }
-    const quantity = `${amt}${q.unit ? q.unit : ''}${(q.amount > 1 && q.unit) ? 's' : ''}`;
-    return `${quantity}${q.unit ? ' of ' : ''}${item.modifier ? item.modifier + ' ' : ''}${item.name || item.description}`;
+  // const subtasks = items.map((item) => {
+  //   const q = item.quantity || {};
+  //   const remainder = q.amount - Math.floor(q.amount);
+  //   const whole = q.amount - remainder;
+  //   let amt = whole === 0 ? '' : whole + ' ';
+  //   if (remainder === .75) { amt += '3/4 '; }
+  //   if (remainder === .33) { amt += '1/3 '; }
+  //   if (remainder === .25) { amt += '1/4 '; }
+  //   if (remainder === .5) { amt += '1/2 '; }
+  //   const quantity = `${amt}${q.unit ? q.unit : ''}${(q.amount > 1 && q.unit) ? 's' : ''}`;
+  //   return `${quantity}${q.unit ? ' of ' : ''}${item.modifier ? item.modifier + ' ' : ''}${item.name || item.description}`;
+  // });
+  const subtasks = items.map(item => {
+    const unit = item.quantity.unit && item.quantity.unit.length > 0 ? item.quantity.unit : null;
+    return `${item.quantity.amount}${unit && ` ${unit}`} ${item.name || item.description}`;
   });
   WunderlistApi.createNewTask(subtasks,
     (json) => res.json(json),

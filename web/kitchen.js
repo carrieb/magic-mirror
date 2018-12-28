@@ -8,9 +8,9 @@ const history = createHistory();
 import FoodEditorHandler from 'components/kitchen/FoodEditorHandler';
 import AddItemsForm from 'components/kitchen/AddItemsForm.react';
 
-import KitchenNavigation from 'components/kitchen/KitchenNavigation.react';
-import KitchenInventory from 'components/kitchen/KitchenInventory.react';
-import KitchenDashboard from 'components/kitchen/kitchen-dashboard.react';
+import KitchenNavigation from 'components/kitchen/navigation.react';
+import KitchenInventory from 'components/kitchen/inventory.react';
+import KitchenDashboard from 'components/kitchen/dashboard.react';
 
 //import MessagingUtil from 'util/messaging-util';
 

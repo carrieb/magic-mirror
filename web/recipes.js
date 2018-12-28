@@ -13,6 +13,7 @@ import RecipesList from 'components/recipes/recipes-list.react';
 import RecipeEditor from 'components/recipes/recipe-editor.react';
 import ImportRecipeForm from 'components/recipes/import-recipe-form.react';
 import FullRecipeView from 'components/recipes/full-recipe-view.react';
+import CookingView from 'components/recipes/cooking-view.react';
 
 import { ShoppingList, withShoppingList } from 'components/shared/shopping-list.react';
 
@@ -47,6 +48,7 @@ window.onload = function() {
         <Route path="/recipes/import" exact={true} component={ImportRecipeForm}/>
         <Route path="/recipes/r/:id/edit" exact={true} component={RecipeEditor}/>
         <Route path="/recipes/r/:id" exact={true} component={FullRecipeView}/>
+        <Route path="/recipes/r/:id/cook" exact={true} component={CookingView}/>
       </div>
     </Router>,
     document.getElementById("render-wrapper")

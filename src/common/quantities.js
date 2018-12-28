@@ -1,3 +1,5 @@
+const qty = require('js-quantities');
+
 const quantityUnits = {
   en: ['tsp', 'teaspoon', 'tbsp', 'tablespoon',
        'hunk', 'clove', 'cup', 'gram', 'ounce',
@@ -11,6 +13,8 @@ const fractions = [
   { character: '⅓', value: 1.0/3.0 },
   { character: '¼', value: 0.25 }
 ];
+
+const _isNumber = require('lodash/isNumber')
 
 function parseQuantity(string, lang='en') {
   const fractionsString = fractions.map(f => f.character).join('|');
@@ -35,6 +39,10 @@ function parseQuantity(string, lang='en') {
 }
 
 function parseAmount(string) {
+  if (_isNumber(string)) {
+    return string;
+  }
+
   let amt = 0;
   const split = string.split(' ');
 
@@ -64,4 +72,39 @@ function parseAmount(string) {
   return amt;
 }
 
-module.exports = { parseQuantity, parseAmount };
+function combineQuantities(dest, addition) {
+  // TODO: choose preferred unit? e.g. gallon vs. cup
+  //console.log(dest.unit, addition.unit);
+  if (dest.unit === 'pkg' || addition.unit === 'pkg') {
+    console.log('dunno what to do with pkg');
+    return;
+  }
+
+  if (dest.unit === 'quarter cup' || addition.unit === 'quarter cup') {
+    console.log('dunno what to do with quarter cup');
+    return;
+  }
+
+  // TODO: use convertToQty here
+  const base = qty(parseAmount(dest.amount), dest.unit);
+  const add = qty(parseAmount(addition.amount), addition.unit);
+  //console.log(base, add);
+  try {
+    const sum = base.add(add);
+    return {
+      unit: dest.unit,
+      amount: sum.toPrec(0.01).scalar
+    }
+  } catch (e) {
+    //console.error(e);
+  }
+}
+
+function convertToQty(quantity) {
+  if (quantity.unit !== 'pkg' && quantity.unit !== 'quarter cup') {
+    return qty(parseAmount(quantity.amount), quantity.unit);
+  }
+  return null;
+}
+
+module.exports = { parseQuantity, parseAmount, combineQuantities, convertToQty };

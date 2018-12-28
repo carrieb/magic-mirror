@@ -54,13 +54,16 @@ class ShoppingList extends React.Component {
       const found = _find(inventory, (inventoryItem) => inventoryItem.description.toLowerCase() === name.toLowerCase());
       if (found) {
         console.log(found);
-        const inventoryQty = qty(found.quantity.amount, found.quantity.unit);
-        console.log(listItem.quantity.unit);
-        const listItemQty = qty(listItem.quantity.amount, listItem.quantity.unit.toLowerCase());
-        console.log(inventoryQty.toString(), listItemQty.toString());
-        const diff = inventoryQty.sub(listItemQty);
-        console.log(diff);
-        shared[name] = { found, diff };
+        if (food.quantity.unit !== 'pkg' && listItem.quantity.unit !== 'pkg') {
+          console.log(food.quantity.unit);
+          const inventoryQty = qty(found.quantity.amount, found.quantity.unit);
+          console.log(listItem.quantity.unit);
+          const listItemQty = qty(listItem.quantity.amount, listItem.quantity.unit.toLowerCase());
+          console.log(inventoryQty.toString(), listItemQty.toString());
+          const diff = inventoryQty.sub(listItemQty);
+          console.log(diff);
+          shared[name] = { found, diff };
+        }
       }
     });
 

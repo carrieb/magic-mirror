@@ -1,0 +1,67 @@
+.meal-overview {
+  > .header {
+    font-family: 'Playfair Display', serif !important;
+    &:lang(jp) {
+      font-family: 'Noto Sans JP' !important;
+    }
+    font-size: 2rem !important;
+    font-weight: normal !important;
+    text-transform: capitalize !important;
+
+    img {
+      max-height: 2rem !important;
+      width: auto !important;
+      margin-top: 0 !important;
+    }
+  }
+
+  .menu {
+    &:lang(jp) {
+      font-family: 'Noto Sans JP' !important;
+    }
+  }
+
+  .meal-recipes {
+    .header:lang(jp) {
+      font-family: 'Noto Sans JP' !important;
+    }
+  }
+
+  .meal-shopping-list {
+    .sticky-header-menu {
+      text-align: center;
+      margin-bottom: 1rem;
+      width: 100%;
+
+      .inner {
+        //background-color: white;
+        background-image: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,1) 80%, rgba(255,255,255,0) 100%);
+      }
+    }
+
+    .sticky-header-menu.fixed.top {
+      margin-bottom: 0;
+
+      .inner {
+        padding: 1rem 0;
+      }
+
+      & + div {
+        margin-top: 60px;
+      }
+    }
+
+    .category-header {
+      margin: 0 1px !important;
+
+    }
+
+    th {
+      text-transform: capitalize !important;
+    }
+
+    td:first-child {
+      text-transform: capitalize !important;
+    }
+  }
+}

@@ -1,15 +1,24 @@
 .ingredients-editor {
 
-  .ingredients-fields {
-    width: 85%;
-    display: inline-block;;
-    > .fields {
-      margin-bottom: 0 !important;
-    }
+  .select-section-menu a {
+    padding-left: 0 !important;
   }
 
-  .delete-button {
-    float: right;
+  .inner-component {
+    margin-bottom: 0.75rem;
+  }
+
+  .ingredients-fields {
+    display: inline-block;
+
+    .fields {
+      margin-bottom: 0 !important;
+    }
+
+  }
+
+  .delete-button-wrapper .button {
+    margin: 0 !important;
   }
 
   input {

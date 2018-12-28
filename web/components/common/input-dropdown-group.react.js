@@ -8,7 +8,8 @@ class InputDropdownGroup extends React.Component {
     // TOOD: assign dropdownOptions
     $(this.dropdown).dropdown({
       onChange: this.props.onDropdownChange,
-      allowAdditions: true
+      allowAdditions: true,
+      clearable: true
     });
   }
 

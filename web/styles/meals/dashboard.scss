@@ -1,0 +1,19 @@
+.meals-dashboard {
+  .day-header {
+    text-align: center;
+    text-transform: capitalize;
+
+    &.current {
+      font-weight: bold;
+    }
+  }
+
+  .meal-title {
+    text-align: center;
+    text-transform: capitalize !important;
+  }
+
+  .avatar.image {
+    border-radius: 0 !important;
+  }
+}

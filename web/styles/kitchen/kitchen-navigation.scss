@@ -1,9 +1,22 @@
 .kitchen-navigation {
+
+  .header {
+    text-transform: capitalize !important;
+  }
+
   .subheader {
     padding: 8px 10px !important;
 
     &.active {
       background-color: rgba(0,0,0,0.03) !important;
     }
+  }
+
+  .selection.dropdown {
+    padding: 0 !important;
+  }
+
+  .search-items-by-name-dropdown-wrapper {
+    width: 200px;
   }
 }

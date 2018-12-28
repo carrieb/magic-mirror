@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import nlp from 'compromise';
+
+import SmartStep from 'components/recipes/directions/smart-step.react';
+
 import _sortBy from 'lodash/sortBy';
 import _uniq from 'lodash/uniq';
 import _flatten from 'lodash/flatten';
@@ -15,16 +19,33 @@ class Directions extends React.Component {
 
     const ingredients = this.props.ingredients || [];
 
-    const keywords = _sortBy(_uniq(_flatten(ingredients.map((section) => section.items))
-      .map((item) => item.name)), (keyword) => keyword ? -keyword.length : 0);
+    const ingredientSections = ingredients.map(section => section.items);
+    let allIngredients = _flatten(ingredientSections)
+      .map(item => {
+        //return item.name;
+        if (!item) return null;
+        return nlp(item.name || item.description).nouns().toSingular().out('text').trim()
+      });
+    if (ingredients.length > 1) {
+      allIngredients = allIngredients.concat(ingredients.map(section => section.name.toLowerCase()))
+    }
+    const keywords = _sortBy(_uniq(allIngredients), keyword => keyword ? -keyword.length : 0);
 
     this.state = { collapsed: true, keywords };
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.ingredients) {
-      const keywords = _sortBy(_uniq(_flatten(nextProps.ingredients.map((section) => section.items))
-        .map((item) => item.name)), (keyword) => keyword ? -keyword.length : 0);
+      const ingredientSections = nextProps.ingredients.map(section => { const l = section.items; l.push(section.name); return l });
+      let allIngredients = _flatten(ingredientSections)
+        .map(item => {
+          if (!item) return null;
+          return nlp(item.name || item.description).nouns().toSingular().out('text').trim()
+        });
+      if (nextProps.ingredients.length > 1) {
+        allIngredients = allIngredients.push(nextProps.ingredients.map(section => section.name.toLowerCase()))
+      }
+      const keywords = _sortBy(_uniq(allIngredients), keyword => keyword ? -keyword.length : 0);
       this.setState({ keywords });
     }
   }
@@ -33,55 +54,18 @@ class Directions extends React.Component {
     this.setState({ collapsed: !this.state.collapsed });
   }
 
-  highlightKeywords(text) {
-    //console.log(text, this.state.keywords);
-    if (text && text.length > 0) {
-      return text;
-    }
-
-    const keywords = this.state.keywords || [];
-    let result = [];
-    let matched = [];
-    keywords.forEach((keyword) => {
-      const regex = new RegExp(keyword, 'i');
-      const match = text.match(regex);
-      if (match) {
-        //console.log(text, keyword);
-        matched.push(keyword);
-      }
-    });
-
-    if (matched.length > 0) {
-      const splitRegex = new RegExp(`(${matched.join('|')})`, 'i');
-      const split = text.split(splitRegex);
-      split.forEach((words) => {
-        if (matched.indexOf(words.toLowerCase()) > -1) {
-          // TODO: somehow link it with the correct amount from
-          // ingredients.
-          // using the section name?
-          // TODO: make the url use lower cased snake-case for name
-          result.push(<a href={`/kitchen/${words.toLowerCase()}`} key={_uniqueId()}>{words}</a>);
-        } else {
-          result.push(words);
-        }
-      });
-    } else {
-      return text;
-    }
-
-    return result;
-  }
-
   render() {
     const directions = this.props.directions || [];
-
+    //console.log(this.state.keywords);
     const directionEls = directions.map((directionsList, i) => {
       const title = <div className="ui sub header">{ directionsList.name || 'directions' }</div>;
       const steps = directionsList.steps || [];
 
       const stepEls = steps.map((step, idx) => {
         if ((this.props.enableCollapse) && (this.state.collapsed && idx >= MAX_ITEMS)) { return null };
-        return <div className="item" key={idx}>{this.highlightKeywords(step.content)}</div>
+        return <div className="item" key={idx}>
+          <SmartStep step={step.content} keywords={this.state.keywords}/>
+        </div>
       });
 
       return (

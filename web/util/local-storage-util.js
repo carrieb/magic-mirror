@@ -98,6 +98,15 @@ const LocalStorageUtil = {
 
   getFieldForComponent(component, field) {
     return _get(`${component}.${field}:`);
+  },
+
+  getLocale() {
+    return _get('hl');
+  },
+
+  setLocale(hl) {
+    console.log(hl);
+    _set('hl', hl);
   }
 };
 

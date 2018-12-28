@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 
 import RepeatableComponent from 'components/common/repeatable-component.react';
 import TextInput from 'components/common/text-input.react';
+import TagsInput from 'components/common/tags-input.react';
+import StickyHeaderMenu from 'components/common/sticky-header-menu.react';
 
 import RecipeCard from 'components/recipes/recipe-card.react';
 import IngredientsEditor from 'components/recipes/ingredients/ingredients-editor.react';
@@ -23,39 +25,34 @@ import _isEqual from 'lodash/isEqual';
 import _clone from 'lodash/clone';
 import _startCase from 'lodash/startCase';
 
-class DirectionsFields extends React.Component {
-  render() {
-    return <div className="directions-fields">
-      <div className="ui field">
-        <label>Direction Content</label>
-        <textarea rows="2"/>
-      </div>
-    </div>;
-  }
-}
+import 'sass/recipes/recipe-editor.scss';
 
 class RecipeEditor extends React.Component {
   constructor(props) {
     super(props);
 
-    let showSavedRecipeAlert = false;
-    const id = props.match.params.id;
-    let loading = id ? true : false;
+    // start with empty recipe
     let recipe = _clone(EMPTY_RECIPE);
-    if (id) {
-      recipe = props.recipesIndex[id];
-      if (!_isEmpty(recipe)) {
-        loading = false;
-      }
-    } else {
-      const savedRecipe = null; //LocalStorageUtil.getNewRecipeBeingEdited();
+    let showSavedRecipeAlert = false;
+
+    // attempt to load from index
+    const id = props.match.params.id;
+    const recipeFromIndex = props.recipesIndex[id];
+    let loading = (id && _isEmpty(recipeFromIndex)) ? true : false;
+
+    if (id && !loading) {
+      recipe = recipeFromIndex;
+    }
+
+    // if new recipe, get state from editor
+    if (!id) {
+      const savedRecipe = LocalStorageUtil.getNewRecipeBeingEdited();
       console.log('recipe from local storage:', savedRecipe);
       if (!_isEmpty(savedRecipe)) {
         showSavedRecipeAlert = true;
-        recipe = savedRecipe;
+        recipe = this.assignIds(savedRecipe);
       }
     }
-    recipe = this.assignIds(recipe);
 
     this.state = {
       recipe,
@@ -87,6 +84,21 @@ class RecipeEditor extends React.Component {
     return recipe;
   }
 
+  componentDidMount() {
+    $('.message .close')
+      .on('click', function() {
+        $(this)
+          .closest('.message')
+          .transition('fade')
+        ;
+      });
+
+    $('.field.img input').popup({
+      position: 'bottom center',
+      inline: true
+    });
+  }
+
   componentDidUpdate(prevProps) {
     const id = this.props.match.params.id;
     if (id &&
@@ -105,6 +117,11 @@ class RecipeEditor extends React.Component {
       this.style.height = 'auto';
       this.style.height = (this.scrollHeight) + 'px';
     });
+
+    $('.field.img input').popup({
+      position: 'bottom center',
+      inline: true
+    });
   }
 
   togglePreview = () => {
@@ -120,6 +137,7 @@ class RecipeEditor extends React.Component {
     console.log(this.state.recipe);
     ApiWrapper.uploadRecipe(this.state.recipe)
       .done(() => {
+        // TODO: actually clear out recipe being edited if id not set on url
         console.log('ok');
         LocalStorageUtil.saveNewRecipeBeingEdited({});
       });
@@ -142,14 +160,22 @@ class RecipeEditor extends React.Component {
     const newValue = transform ? transform(value) : value;
     recipe[field] = newValue;
     // TODO: why do I need this again?
-    LocalStorageUtil.saveNewRecipeBeingEdited(recipe);
+    if (!this.props.match.params.id) {
+      LocalStorageUtil.saveNewRecipeBeingEdited(recipe);
+    }
     this.setState({ recipe });
   }
 
-  recipeInput = (key, transform=null) =>
-    <TextInput labelText={ _startCase(key) }
+  recipeInput = (key, transform=null, extra=null) => {
+    //console.log(key, extra);
+    return <TextInput labelText={ _startCase(key) }
+               className={ key }
                value={ this.state.recipe[key] }
-               onChange={ this.handleRecipeInputUpdate(key, transform) }/>
+               onChange={ this.handleRecipeInputUpdate(key, transform) }>
+       { extra }
+    </TextInput>;
+  }
+
 
   render() {
     // TODO: add a "split" option for ingredients?
@@ -170,9 +196,17 @@ class RecipeEditor extends React.Component {
     const form = (
       <form className="ui form" ref={this.handleFormRef}>
         { this.recipeInput('name') }
-        { this.recipeInput('servings', parseInt) }
+        <div className="field">
+          <div className="two fields">
+            { this.recipeInput('servings', parseInt) }
+            { this.recipeInput('category') }
+          </div>
+        </div>
+        <TagsInput onChange={ this.handleRecipeUpdate('tags') } values={this.state.recipe.tags}/>
         { this.recipeInput('source') }
-        { this.recipeInput('category') }
+        { this.recipeInput('img', null, <div className="ui popup">
+          <img src={this.state.recipe.img} style={{ maxWidth: '500px', height: 'auto' }}/>
+        </div>) }
 
         <IngredientsEditor
           updateIngredients={ this.handleRecipeUpdate('ingredients') }
@@ -194,11 +228,10 @@ class RecipeEditor extends React.Component {
     let preview = (
       <div className="recipe-preview">
         <RecipeCard recipe={recipe} showImage={false} enableCollapse={false} showActions={false}/>
-        <button className="ui button" onClick={this.togglePreview}>Hide Preview</button>
       </div>
     );
 
-    let content;
+    let content = form;
     if (this.state.preview) {
       content = (
         <div className="ui two column grid">
@@ -206,24 +239,26 @@ class RecipeEditor extends React.Component {
           <div className="six wide column">{ preview }</div>
         </div>
       );
-    } else {
-      content = (
-        <div>
-          { form }
-          <button className="ui button" onClick={this.togglePreview}>Show Preview Card</button>
-        </div>
-      );
     }
 
     // TODO: add image upload
+    console.log(LocalStorageUtil.getNewRecipeBeingEdited());
 
     return (
-      <div className="recipe-editor">
-        { this.state.showSavedRecipeAlert && <div className="ui positive message">
+      <div className="ui basic segment recipe-editor" style={{ padding: 0 }}>
+        { this.state.showSavedRecipeAlert && <div className="ui icon positive close message">
+            <i className="exclamation circle icon"/>
             <i className="close icon"/>
-            <div className="header">Using saved recipe.</div>
-            <p>Recipe data loaded from your last incomplete editor session.</p>
+            <div className="content">
+              <div className="header">Using saved recipe.</div>
+              <p>Recipe data loaded from your last incomplete editor session.</p>
+            </div>
           </div> }
+        <StickyHeaderMenu>
+          <button className="ui basic teal button" onClick={this.togglePreview}>
+            { this.state.preview ? 'Hide Preview Card' : 'Show Preview Card' }
+          </button>
+        </StickyHeaderMenu>
         { content }
       </div>
     );

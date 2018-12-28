@@ -10,15 +10,18 @@ const noop = require('lodash/noop');
 // TODO: create a
 
 const FoodDb = {
-
   updateItem(dbs, item, callback, error=noop) {
     const db = dbs.food;
     const coll = db.collection('items');
 
-    // update
-
     const o_id = new mongo.ObjectID(item._id);
     if (item._id) {
+      // TODO: compare what was updated and write to history collection
+      // use findAndModify - returns doc *before* update
+      // http://mongodb.github.io/node-mongodb-native/3.1/api/Collection.html#findOneAndUpdate
+      // compare orig with modifications, use for modified fields in history doc
+      // only write if there are differences
+
       coll.updateOne({
         "_id": o_id
       }, {

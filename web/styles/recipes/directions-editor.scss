@@ -1,4 +1,9 @@
 .directions-editor {
+
+  .select-section-menu a {
+    padding-left: 0 !important;
+  }
+  
   margin-top: 20px;
   margin-bottom: 20px;
 
@@ -16,14 +21,6 @@
       .field {
         margin-bottom: 10px !important;
 
-      }
-    }
-
-    .step {
-      width: 85% !important;
-
-      input {
-        width: 90% !important;
       }
     }
   }

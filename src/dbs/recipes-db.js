@@ -1,4 +1,3 @@
-const RECIPE_DB_URL = 'mongodb://localhost:27017/recipes';
 const mongo = require('mongodb');
 const MongoClient = mongo.MongoClient;
 const assert = require('assert');
@@ -23,6 +22,13 @@ function getRecipeById(dbs, rawId, done, error=_noop) {
     if (err) error(err);
     done(res);
   });
+}
+
+function getAllTags(dbs, done, error=_noop) {
+  const db = db.recipes;
+  const coll = db.collection('documents');
+
+
 }
 
 function uploadRecipe(dbs, recipe, done, error=noop) {

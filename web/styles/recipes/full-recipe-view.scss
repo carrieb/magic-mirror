@@ -21,6 +21,10 @@
     float: right;
   }
 
+  .edit.icon {
+    margin-top: 1rem;
+  }
+
   .ui.embed {
     border-radius: 20px;
   }
@@ -64,6 +68,11 @@
 
   .directions-wrapper {
     margin-top: 20px;
+
+    .content {
+      margin-bottom: 20px;
+    }
+
 
     .header {
       font-family: 'Playfair Display', serif;

@@ -28,7 +28,7 @@ class Step extends React.Component {
   render() {
     //console.log('step', this.props);
     const step = this.props.value || {};
-    const stepInput = <div className="field">
+    const stepInput = <div className="ui fluid field">
       <label>{ this.props.index + 1 }.</label>
       <textarea rows="3"
              key={step._id}
@@ -37,14 +37,14 @@ class Step extends React.Component {
     </div>;
 
     //console.log(step);
-    const dependenciesInput = <div className="field">
+    const dependenciesInput = <div className="ui fluid field">
       <label>Depends on:</label>
       <input type="text" value={ step.dependencies ? step.dependencies.join(', ') : '' }
              onChange={ this.updateDependencies }/>
     </div>;
 
     return (
-      <div className="step">
+      <div className="step" style={{ width: '100%' }}>
         { stepInput }
         { dependenciesInput }
       </div>

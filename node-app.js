@@ -6,10 +6,12 @@ const api = require('./routes/api');
 const routes = require('./routes/routes');
 const kitchen = require('./routes/kitchen');
 const recipes = require('./routes/recipes');
+const meals = require('./routes/meals');
 
 const Config = require('./src/config.js');
 const initDbs = require('./src/dbs');
 
+app.use('/api/meals', meals);
 app.use('/api/kitchen', kitchen);
 app.use('/api/recipes', recipes);
 app.use('/api', api);

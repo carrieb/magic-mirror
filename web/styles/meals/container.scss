@@ -1,0 +1,22 @@
+.meals-container {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+
+  &:lang(jp) {
+    font-family: 'Noto Sans JP' !important;
+  }
+
+  .meals-navigation.ui.menu {
+    .item {
+      text-transform: capitalize;
+    }
+
+    &:lang(jp) {
+      font-family: 'Noto Sans JP' !important;
+    }
+
+    .ui.dropdown {
+      padding: 0;
+    }
+  }
+}

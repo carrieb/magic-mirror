@@ -48,3 +48,4 @@ Short List:
 * transfer DB contents to raspberry pi
 * update icons
 ** pack i like that isn't free : https://www.flaticon.com/family/basic-rounded/lineal-color
+** https://creativemarket.com/Voysla/1502335-Food-800-Line-Icons-Bundle

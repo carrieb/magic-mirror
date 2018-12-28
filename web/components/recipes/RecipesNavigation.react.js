@@ -11,6 +11,9 @@ class RecipesNavigation extends React.Component {
         <div className="header item">
           <a href="/kitchen">Kitchen</a>
         </div>
+        <div className="header item">
+          <a href="/meals">Meals</a>
+        </div>
         <div className="right menu">
           <div className="item">
             <NavLink to="/recipes/import">

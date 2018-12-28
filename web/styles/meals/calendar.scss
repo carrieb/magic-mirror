@@ -1,0 +1,87 @@
+.planning-calendar {
+  cursor: pointer;
+
+  .header {
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .vertical-timeline {
+    font-size: .9rem;
+    position: relative;
+    text-align: center;
+    margin: 1rem 0;
+
+    &:before {
+      content: '';
+      position: absolute;
+      width: 6px;
+      background-color: rgba(1, 1, 1, .3);
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -3px;
+    }
+
+    &.reversed:before {
+      content: '';
+      position: absolute;
+      width: 6px;
+      background-color: rgba(1, 1, 1, .3);
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -3px;
+    }
+
+    .event {
+      margin: 1rem 0;
+      position: relative;
+
+      .details {
+        padding-top: 2.5rem;
+
+        .block {
+          padding: 5px;
+          border: solid .6px teal;
+          background-color: white;
+        }
+      }
+
+      img + .details {
+        padding-top: .5rem;
+      }
+    }
+
+    &.reversed {
+      .details {
+        padding-bottom: 2.5rem;
+        padding-top: 0;
+      }
+    }
+
+    .event.bullet:before {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: calc(50% - 10px);
+      border: 4px solid #FF9F55;
+      background-color: white;
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    img {
+      border-radius: 50%;
+      border: solid 4px #FF9F55;
+      max-height: 45px;
+    }
+
+    &.reversed {
+      .event:before {
+        bottom: 0;
+      }
+    }
+  }
+}

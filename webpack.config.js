@@ -7,7 +7,8 @@ module.exports = [{
     mirror: 'mirror.js',
     receipts: 'receipts.js',
     kitchen: 'kitchen.js',
-    recipes: 'recipes.js'
+    recipes: 'recipes.js',
+    meals: 'meals.js'
   },
   output: {
     path: path.join(__dirname, '/public/scripts'),

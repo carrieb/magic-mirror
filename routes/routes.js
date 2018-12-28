@@ -52,6 +52,10 @@ router.get(['/recipes', '/recipes/*'], (req, res) => {
   res.sendFile(dir + '/views/recipes.html');
 });
 
+router.get(['/meals', '/meals/*', '/meal', '/meal/*'], (req, res) => {
+  res.sendFile(dir + '/views/meals.html');
+});
+
 router.post('/receipt', receiptUpload.single('receipt'), function (req, res, next) {
   // req.file is the `avatar` file
   // req.body will hold the text fields, if there were any

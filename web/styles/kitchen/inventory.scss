@@ -7,7 +7,6 @@
 
   > div.header {
     margin-bottom: 10px;
-    padding-top: 10px;
     padding-bottom: 10px;
     background-color: white;
 
@@ -49,7 +48,7 @@
 div.kitchen-inventory {
 
   .header {
-    button, .buttons {
+    button {
       margin: 1rem 0;
     }
 
@@ -62,31 +61,18 @@ div.kitchen-inventory {
     margin-bottom: 75px;
     text-align: center;
   }
-
-  div.footer {
-    z-index: 1000;
-    position: fixed;
-    background: #e8e8e8;
-    bottom: 0;
-    left: 0;
-    width: 100vw;
-    text-align: center;
-
-    button {
-      margin: 10px 10px;
-    }
-  }
 }
 
 .search-items-by-name-dropdown-wrapper {
   input {
     border-radius: 4px !important;
-    height: 53px;
   }
 
   .results {
     margin: 0 !important;
   }
+}
 
-  margin-bottom: 5px;
+.category-header {
+  margin: 1rem 0 !important;
 }
