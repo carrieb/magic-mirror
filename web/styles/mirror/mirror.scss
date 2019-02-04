@@ -1,0 +1,32 @@
+.mirror {
+  margin: 2rem;
+
+  .grid {
+    height: calc(100vh - 4rem);
+    margin-top: 2rem !important;
+
+    .column {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+  }
+
+  .combined-vertical-calendar {
+    height: 100%;
+
+    .segments {
+      height: 100% !important;
+
+      .inverted.segment {
+        border-left: solid 2px grey !important;
+        border-right: solid 2px grey !important;
+        border-top: solid 2px grey !important;
+        height: 14.2857%;
+
+        &:last-child {
+          border-bottom: solid 2px grey !important;
+        }
+      }
+    }
+  }
+}

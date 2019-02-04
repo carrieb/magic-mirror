@@ -68,14 +68,18 @@ router.post('/export/shopping-list', jsonParser, (req, res) => {
 });
 
 router.get('/calendars', (req, res) => {
-  CalendarApi.retrieveCalendarsAndEvents(
-    (calendarsWithEvents) => res.json(calendarsWithEvents),
-    (err) => res.status(500).send('Failed to get calendars.')
-  );
+  res.json([]);
+
+  // TODO: update google calendar API
+  // CalendarApi.retrieveCalendarsAndEvents(
+  //   (calendarsWithEvents) => res.json(calendarsWithEvents),
+  //   (err) => res.status(500).send('Failed to get calendars.')
+  // );
 });
 
 router.get('/guildwars', cache('1 day'), (req, res) => {
   GuildWars2Api.fetchCombined(
+    res.app.locals.dbs, 
     (result) => res.json(result),
     (err) => res.status(500).send('Failed to get gw2 result.')
   );

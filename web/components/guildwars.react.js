@@ -34,7 +34,7 @@ class GuildWars extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (!isEqual(prevState.walletHistory, this.state.walletHistory)) {
-      this.drawChart();
+      //this.drawChart();
     }
   }
 
@@ -122,6 +122,7 @@ class GuildWars extends React.Component {
     });
 
     // IDEA: Radar chart character for stats? :) :)
+    // TODO: put back in <canvas width="400" height="200" ref={(ref) => { this.canvas = ref }}></canvas>
     return (
       <div className="guild-wars-container">
         <div className="header"><b>GUILD WARS</b></div>
@@ -129,7 +130,6 @@ class GuildWars extends React.Component {
         <div className="ui tiny statistics">
           { wallet }
         </div>
-        <canvas width="400" height="200" ref={(ref) => { this.canvas = ref }}></canvas>
       </div>
     )
   }

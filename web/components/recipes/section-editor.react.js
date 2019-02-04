@@ -10,6 +10,7 @@ import 'sass/recipes/ingredients-editor.scss';
 import _uniqueId from 'lodash/uniqueId';
 import _cloneDeep from 'lodash/cloneDeep';
 import _find from 'lodash/find';
+import _isEmpty from 'lodash/isEmpty';
 
 class Section extends React.Component {
   updateValues = (i, value) => {
@@ -50,7 +51,7 @@ class Section extends React.Component {
     const values = section[this.props.valuesKey] || [];
 
     const nameInput = <div className="field">
-      <label>Section Name</label>
+      <label>{ _isEmpty(section.name) && <i className="red exclamation triangle icon"/> } Section Name</label>
       <input type="text" value={section.name} onChange={ this.updateName }/>
     </div>;
 
@@ -101,12 +102,13 @@ class SectionedEditor extends React.Component {
     this.setState({ collapsed: !this.state.collapsed });
   };
 
-  addSection = () => {
+  addSection = (ev) => {
     const sections = this.props.sections;
     const section = { id: _uniqueId() };
     section[this.props.valuesKey] = [];
     sections.push(section);
     this.props.updateSections(sections);
+    ev.preventDefault();
   }
 
   deleteSection = (i) => {
@@ -131,16 +133,16 @@ class SectionedEditor extends React.Component {
 
     let currentSection = null;
     if (this.state.selectedSection) {
-      currentSection = _find(sections, (s) => s.name === this.state.selectedSection);
+      currentSection = _find(sections, (s) => s.id === this.state.selectedSection);
     } else {
       currentSection = sections.length === 0 ? null : sections[0];
     }
 
     const sectionMenuEls = sections.map((section, idx) =>
       <a key={idx}
-         className={`ui ${currentSection.name === section.name ? 'active' : ''} item`}
-         onClick={this.setSelectedSection(section.name)}>
-        { section.name }
+         className={`ui ${section.id === currentSection.id ? 'active' : ''} item`}
+         onClick={this.setSelectedSection(section.id)}>
+        { section.name || 'default' }
       </a>
     );
     const idx = sections.indexOf(currentSection);
@@ -160,6 +162,7 @@ class SectionedEditor extends React.Component {
           <div className="ui violet secondary vertical fluid pointing menu select-section-menu">
             { sectionMenuEls }
           </div>
+          <button className="ui fluid basic button" onClick={this.addSection}>Add Secion</button>
         </div>
         <div className="twelve wide column">
           { currentSectionDetails }
@@ -176,6 +179,7 @@ class SectionedEditor extends React.Component {
     return (
       <div className="sections-editor">
         <h4>{ icon }{ this.props.title }</h4>
+        { this.props.children }
         { !this.state.collapsed && newContent }
       </div>
     );

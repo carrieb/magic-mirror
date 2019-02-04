@@ -255,7 +255,7 @@ class RecipeEditor extends React.Component {
             </div>
           </div> }
         <StickyHeaderMenu>
-          <button className="ui basic teal button" onClick={this.togglePreview}>
+          <button className="ui basic fluid teal button" onClick={this.togglePreview}>
             { this.state.preview ? 'Hide Preview Card' : 'Show Preview Card' }
           </button>
         </StickyHeaderMenu>

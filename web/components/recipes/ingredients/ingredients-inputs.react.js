@@ -48,7 +48,7 @@ class IngredientsInputs extends React.Component {
         <div className="five wide field">
           <label>Ingredient</label>
           <input type="text"
-                value={value.name || ''}
+                value={value.description || value.name || ''}
                 onChange={(ev) => this.handleChange(ev, 'name')}/>
         </div>
 

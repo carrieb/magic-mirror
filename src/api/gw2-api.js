@@ -68,10 +68,10 @@ const GuildWars2Api = {
     }, err);
   },
 
-  fetchWalletWithMetadata(done, err) {
+  fetchWalletWithMetadata(dbs, done, err) {
     let res = []
     this.fetchWallet((wallet) => {
-      this.saveWalletRecord(wallet);
+      this.saveWalletRecord(dbs, wallet);
       res = wallet;
       let updated = 0;
       const toUpdate = wallet.length;
@@ -85,25 +85,22 @@ const GuildWars2Api = {
     }, err);
   },
 
-  saveWalletRecord(wallet) {
+  saveWalletRecord(dbs, wallet) {
     const gold = _find(wallet, (currency) => currency.id === 1)
     console.log(moment().format('l') + ": saving entry with " + (gold.value / 10000) + "G")
 
-    MongoClient.connect(mongo_url, function(err, db) {
-      assert.equal(null, err);
-      const coll = db.collection('wallet-records');
-      const obj = {
-        wallet,
-        date: new Date()
-      }
-      coll.insert(obj, (err, res) => {
-        assert.equal(null, err);
-        db.close();
-      });
-    });
+    const db = dbs.gw2;
+    const coll = db.collection('wallet-records');
+
+    const obj = {
+      wallet,
+      date: new Date()
+    };
+
+    coll.insertOne(obj);
   },
 
-  fetchCombined(done, err) {
+  fetchCombined(dbs, done, err) {
     let res = {};
     let walletLoaded = false;
     let achievementsLoaded = false;
@@ -115,7 +112,7 @@ const GuildWars2Api = {
         done(res);
       }
     }, err);
-    this.fetchWalletWithMetadata((wallet) => {
+    this.fetchWalletWithMetadata(dbs, (wallet) => {
       walletLoaded = true;
       res.wallet = wallet;
       //console.log(achievementsLoaded, walletLoaded);

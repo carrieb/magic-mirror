@@ -34,6 +34,49 @@ function parseIngredient(text) {
   return result;
 }
 
+function ingredientsToText(ingredients) {
+  let text = "";
+  const sections = ingredients;
+  sections.forEach((section) => {
+    if (sections.length > 1) {
+      text += `${section.name}\n`;
+    }
+
+    section.items.forEach((item) => {
+      const quantity = item.quantity.unit ? `${item.quantity.amount} ${item.quantity.unit}` : `${item.quantity.amount}`;
+      text += `${quantity} ${item.description || item.name}`;
+      if (item.modifier) {
+        text += ` (${item.modifier})`;
+      }
+      text += '\n';
+    });
+
+    text += '\n';
+  });
+
+  console.log(text);
+  return text;
+}
+
+function directionsToText(directions) {
+  let text = "";
+  const sections = directions;
+  sections.forEach((section) => {
+    if (sections.length > 1) {
+      text += `${section.name}\n`;
+    }
+
+    section.steps.forEach((step, i) => {
+      text += `${i+1}. ${step.content}\n`;
+    });
+
+    text += '\n';
+  });
+
+  console.log(text);
+  return text;
+}
+
 const RecipeParser = {
   parseDirections(text) {
     const split = text ? text.split('\n') : [];
@@ -138,7 +181,11 @@ const RecipeParser = {
     //console.log('parsed ingredients', result);
 
     return result;
-  }
+  },
+
+  ingredientsToText,
+
+  directionsToText
 }
 
 export default RecipeParser;
