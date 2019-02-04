@@ -8,6 +8,7 @@ const history = createHistory();
 
 import RecipesNavigation from 'components/recipes/RecipesNavigation.react';
 import SearchRecipesByNameDropdown from 'components/recipes/search-recipes-by-name-dropdown.react';
+import FilterRecipesByCategoryTags from 'components/recipes/filter-recipes-by-category-tags.react';
 
 import RecipesList from 'components/recipes/recipes-list.react';
 import RecipeEditor from 'components/recipes/recipe-editor.react';
@@ -32,6 +33,7 @@ class Recipes extends React.Component {
     return (
       <div className="ui container recipes-route-wrapper">
         <SearchRecipesByNameDropdown/>
+        <FilterRecipesByCategoryTags/>
         <RecipesList/>
       </div>
     );

@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { Router, Route } from 'react-router';
 import createHistory from 'history/createBrowserHistory';
 
+import { getLocale } from 'util/translation-util';
+
 const history = createHistory();
 
 import FoodEditorHandler from 'components/kitchen/FoodEditorHandler';
@@ -19,7 +21,7 @@ import KitchenDashboard from 'components/kitchen/dashboard.react';
 window.onload = function() {
   ReactDOM.render(
     <Router history={history}>
-      <div className="ui container kitchen-container">
+      <div className={`ui container kitchen-container ${getLocale()}`}>
         <KitchenNavigation/>
         <Route exact path="/kitchen" component={KitchenDashboard}/>
         <Route path="/kitchen/inventory" component={KitchenInventory}/>

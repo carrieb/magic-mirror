@@ -6,6 +6,7 @@ console.log(hl);
 $("html").attr("lang", hl);
 
 const en = new Polyglot({
+  allowMissing: true,
   locale: 'en_US',
   phrases: {
     nav: {
@@ -205,6 +206,7 @@ const en = new Polyglot({
 });
 
 const jp = new Polyglot({
+  allowMissing: true,
   locale: 'jp',
   phrases: {
     nav: {
@@ -299,6 +301,22 @@ const jp = new Polyglot({
       }
     },
 
+    inventory: {
+      zones: {
+        'fridge': '冷蔵庫',
+        'freezer': '冷凍こ',
+        'pantry': 'パントリー'
+      },
+
+      cta: {
+        'show me everything': '全部見る',
+        'expand filters': '絞り込みルールを見る',
+        'close filters': '絞り込みルールを隠す',
+        'expand options': 'オプションを見る',
+        'close options': 'オプションを隠す'
+      }
+    },
+
     ingredients: {
       categories: {
         'dry goods': '穀類',
@@ -341,76 +359,76 @@ const jp = new Polyglot({
         'ground pepper': 'こしょう',
         'Roasted Tomatillo Pepper Sauce': '焼きトマティオペッパーソース',
         'Ikea Savoury Sauce Mix': 'イケアのミートボールソース',
-        'Molasses': '糖みつ',
+        'molasses': '糖みつ',
         'sugar': '砂糖',
-        'Brown Sugar': '黒砂糖',
+        'brown sugar': '黒砂糖',
         'powdered sugar': '粉砂糖',
-        'Potato Starch': '片栗粉',
-        'Mung Bean Seeds': '緑豆',
-        'Alfalfa Sprout Seeds': 'アルファルファ種',
+        'potato starch': '片栗粉',
+        'mung bean seeds': '緑豆',
+        'alfalfa sprout seeds': 'アルファルファ種',
         'sake': '酒',
-        'Rice Vinegar': '酢',
-        'Sesame Oil': 'ごま油',
+        'rice vinegar': '酢',
+        'sesame oil': 'ごま油',
         'mirin': 'みりん',
-        'Oyster Sauce': 'オイスターソース',
-        'Chili Oil': 'ラー油',
-        'Chili Paste': 'チリペースト',
-        'Soy Sauce': '醤油',
-        'A1 Thick & Hearty Sauce': 'A1のソース',
-        'Worcestershire Sauce': 'ウスターシャーシーソース',
-        'Ground Mustard': 'すりおろしマスタード',
-        'French Mustard': 'フレンチマスタード',
-        'Ranch': 'ランチドレッシング',
-        'Mayonaise': 'マヨ',
-        'Wasabi': 'わさび',
-        'Brown Mustard': '茶色マスタード',
-        'Dijon Mustard': 'ジジョンマスタード',
-        'Ikea Meatballs': 'イケアのミートボール',
-        'Ikea Veggie Balls': 'イケアの野菜ボール',
-        'Cabbage': 'キャベツ',
-        'Eggplant': 'なす',
-        'Ikea Mashed Potatoes': 'イケアのマッシュポテト',
-        'Potato Croquettes': 'ポテトコロッケ',
-        'Chocolate Mochi Ice Cream': 'チョロレットもちアイス',
-        'Shrimp': 'えび',
-        'Ground Pork': 'ひき豚肉',
-        'Vegetable Egg Rolls': '春巻き',
-        'Eggos': 'エッゴズ',
-        'Bacon': 'ベーコン',
-        'Ramen Noodles': 'ら麺',
-        'Butter': 'バター',
+        'oyster sauce': 'オイスターソース',
+        'chili oil': 'ラー油',
+        'chili paste': 'チリペースト',
+        'soy sauce': '醤油',
+        'a1 thick & hearty sauce': 'A1のソース',
+        'worcestershire sauce': 'ウスターシャーシーソース',
+        'ground mustard': 'すりおろしマスタード',
+        'french mustard': 'フレンチマスタード',
+        'ranch': 'ランチドレッシング',
+        'mayonaise': 'マヨ',
+        'wasabi': 'わさび',
+        'brown mustard': '茶色マスタード',
+        'dijon mustard': 'ジジョンマスタード',
+        'ikea meatballs': 'イケアのミートボール',
+        'ikea veggie balls': 'イケアの野菜ボール',
+        'cabbage': 'キャベツ',
+        'eggplant': 'なす',
+        'ikea mashed potatoes': 'イケアのマッシュポテト',
+        'potato croquettes': 'ポテトコロッケ',
+        'chocolate mochi ice cream': 'チョロレットもちアイス',
+        'shrimp': 'えび',
+        'ground pork': 'ひき豚肉',
+        'vegetable egg rolls': '春巻き',
+        'eggos': 'エッゴズ',
+        'bacon': 'ベーコン',
+        'ramen noodles': 'ら麺',
+        'butter': 'バター',
         'heavy cream': 'ヘビークリーム',
-        'Cream Cheese': 'クリームチーズ',
-        'Pickled Ginger': '紅ショウガ',
-        'Miso': '味噌',
-        'Minced Garlic': '短切りニンニク',
-        'Doubanjiang': '豆板醤',
-        'Grapes': 'ブドウ',
-        'Blackberry Jam': 'ブラックベリージャム',
-        'Apricot Preserves': '杏保存料',
-        'Lingonberry Jam': 'リンゴンベリー',
-        'Daikon Kimchi': '大根キムチ',
+        'cream cheese': 'クリームチーズ',
+        'pickled ginger': '紅ショウガ',
+        'miso': '味噌',
+        'minced garlic': '短切りニンニク',
+        'doubanjiang': '豆板醤',
+        'grapes': 'ブドウ',
+        'blackberry jam': 'ブラックベリージャム',
+        'apricot preserves': '杏保存料',
+        'lingonberry jam': 'リンゴンベリー',
+        'daikon kimchi': '大根キムチ',
         'eggs': '卵',
-        'Green Onion': 'ねぎ',
-        'Cilantro': 'コリアンダー',
-        'Homemade Saurkraut': '手作りザウアークラウト',
-        'Sunny D': 'サーニーディー',
-        'Lemon': 'レモン',
-        'Havarti Cheese': 'ハヴァルティチーズ',
-        'Coffee Jelly': 'コーヒーゼリー',
-        'Celery': 'セロリ',
-        'Mandarin Oranges': 'マンダリンオレンジ',
+        'green onion': 'ねぎ',
+        'cilantro': 'コリアンダー',
+        'homemade saurkraut': '手作りザウアークラウト',
+        'sunny d': 'サーニーディー',
+        'lemon': 'レモン',
+        'havarti cheese': 'ハヴァルティチーズ',
+        'coffee jelly': 'コーヒーゼリー',
+        'celery': 'セロリ',
+        'mandarin oranges': 'マンダリンオレンジ',
         'parmesean cheese': 'パルメザンチーズ',
         'guyere cheese': 'グリュイエールチーズ',
-        'Pecorino Cheese': 'ペコリーノチーズ',
+        'pecorino cheese': 'ペコリーノチーズ',
         'yellow onion': '玉ねぎ',
-        'Pomegranate Seed': 'ザクロ種',
-        'String Cheese': 'ストリングチーズ',
-        'Sesame-Soy Cucumbers': 'ごま醤油胡瓜',
+        'pomegranate seed': 'ザクロ種',
+        'string cheese': 'ストリングチーズ',
+        'sesame-soy cucumbers': 'ごま醤油胡瓜',
         'brisket': 'ブリズケット',
-        'Ice Pops': 'アイスポップ',
-        'Chicken Thigh': '鳥肉もも',
-        'Central Market Chicken Korma': 'チキンコルマ',
+        'ice pops': 'アイスポップ',
+        'chicken thigh': '鳥肉もも',
+        'central market chicken korma': 'チキンコルマ',
         'saffron road chicken biryani': 'チキンビリヤニ',
         'fish sauce': '魚醤',
         'plum vinegar': '梅酢',
@@ -467,16 +485,31 @@ const locales = {
   jp
 };
 
-const TranslationUtil = {
-  tr(str, data, forcePolyglot=false) {
-    //console.log(hl);
-    const polyglot = locales[hl];
+function tr(str, data, forcePolyglot=false) {
+  //console.log(hl);
+  const polyglot = locales[hl];
+  try {
     if (hl === 'en' && !forcePolyglot) {
       const split = str.split('.');
       const last = split[split.length - 1];
       return last;
     } else {
       return polyglot.t(str.toLowerCase(), data);
+    }
+  } catch (e) {
+    // ignore
+  }
+}
+
+const TranslationUtil = {
+  tr,
+
+  phonetic(str, data, forcePolyglot) {
+    if (hl === 'jp') {
+      const translated = tr(str, data, forcePolyglot);
+      return null;
+    } else {
+      return null;
     }
   },
 

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { Link } from 'react-router-dom';
+
 import moment from 'moment';
 import uniqueId from 'lodash/uniqueId';
 import _noop from 'lodash/noop';
@@ -9,9 +11,9 @@ import _kebabCase from 'lodash/kebabCase';
 
 import { withKitchen, DEFAULT_ITEM } from 'state/KitchenState';
 
-import EatModal from 'components/shared/eat-modal.react';
+import { EatModal, showEatModal } from 'components/shared/eat-modal.react';
 
-import { Link } from 'react-router-dom';
+import { tr } from 'util/translation-util';
 
 import 'sass/kitchen/food-card.scss';
 
@@ -35,34 +37,50 @@ class KitchenItemCard extends React.Component {
     }
   }
 
-  showEatModal = () => {
-    this.setState({ showEatModal: true });
+  showModal = () => {
+    showEatModal(this.handleEatModalSubmit);
+  }
+
+  handleEatModalSubmit = (eatenPercentage, eatenQuantity) => {
+    console.log(eatenPercentage, eatenQuantity);
+  }
+
+  toggleStarred = () => {
+    const foodItem = this.props.kitchenIndex[this.props.id] || DEFAULT_ITEM;
+    this.props.star(foodItem._id, !foodItem.starred);
   }
 
   render() {
+    //console.log('card render');
     const foodItem = this.props.kitchenIndex[this.props.id] || DEFAULT_ITEM;
     //console.log(foodItem);
+    if (this.state.showEatModal) { console.log(this.props, this.state, foodItem); }
+
     const out = foodItem.quantity.amount === 0;
 
     let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/images/no-image.svg';
     const image = (
       <div className="image">
-        { foodItem.starred && <div className="ui yellow left corner label"><i className="star icon"/></div> }
+        <div className={`ui ${foodItem.starred ? 'yellow' : ''} right corner label`}
+             onClick={this.toggleStarred}>
+          <i className="star icon"/>
+        </div>
         <img className={out ? 'out-overlay' : ''} src={imageUrl}/>
       </div>
     );
 
     const content = (
       <div className="content">
+        <span className="left floated" data-tooltip={ tr(`ingredients.categories.${foodItem.category}`) } data-position="right center">
+          <img className="ui mini image category" src={`/images/kitchen/${_kebabCase(foodItem.category.toLowerCase())}.png`}/>
+        </span>
         <div className="header">
-          <span className="title">{_startCase(foodItem.description)}</span>
+          <span className="title">{_startCase(tr(`ingredients.names.${foodItem.description.toLowerCase()}`))}</span>
         </div>
         <div className="meta">
-          <a>{foodItem.zone}</a><br/>
+          <a>{ tr(`inventory.zones.${foodItem.zone.toLowerCase()}`) }</a><br/>
         </div>
-        <span data-tooltip={foodItem.category} data-position="right center">
-          <img className="category" src={`/images/kitchen/${_kebabCase(foodItem.category.toLowerCase())}.png`}/>
-        </span>
+
         { out && <div style={{ color: 'red' }}>Out of stock</div>}
       </div>
     );
@@ -72,6 +90,7 @@ class KitchenItemCard extends React.Component {
       const lastImportDate = moment(foodItem.importDates[foodItem.importDates.length - 1], "MM/DD/YYYY")
       lastImport = `${lastImportDate.toNow(true)} old`
     }
+
     const extraContent = (
       <div className="extra content">
         <span className="left floated">
@@ -91,17 +110,22 @@ class KitchenItemCard extends React.Component {
       <div className="ui card food-card" >
         { image }
         { content }
-        { this.state.showEatModal }
-        { this.state.showEatModal && <EatModal id={foodItem._id}/> }
         <div className="ui attached buttons">
-          <button className="ui green basic icon button" onClick={this.showEatModal}>
+          <button className="ui green basic icon button" onClick={this.showModal} title="Eat">
             <i className="utensils icon"/>
           </button>
-          <button className="ui red basic icon button">
+          <button className="ui red basic icon button" title="Trash">
             <i className="trash icon"/>
           </button>
+          <button className="ui blue basic icon button" title="Add to shopping list">
+              <i className="plus icon"/>
+          </button>
         </div>
-        { extraContent }
+        <div className="ui basic attached icon button" title="Settings">
+          <Link to={`/kitchen/item/${_kebabCase(foodItem.description)}`}>
+            <i className="setting icon"/>
+          </Link>
+        </div>
       </div>
     );
   }

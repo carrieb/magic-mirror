@@ -3,9 +3,16 @@ import ReactDOM from 'react-dom';
 
 import QuantityFormField from 'components/kitchen/item/form/QuantityFormField.react';
 
+import { convertToQty } from 'src/common/quantities';
+
 import ApiWrapper from 'util/api-wrapper';
 
+import { withKitchen } from 'state/KitchenState';
+
 import 'sass/kitchen/eat-modal.scss';
+
+let modal = null;
+let callbacks = [];
 
 class EatModal extends React.Component  {
   constructor(props) {
@@ -18,19 +25,17 @@ class EatModal extends React.Component  {
     }
   }
 
-  componentDidMount() {
-    $('.modal').modal('show');
-  }
-
   onSubmit = () => {
-    ApiWrapper.eatFood({
-      id: this.props._id,
-      percent: this.state.eatenPercentage
-    })
+    const { eatenPercentage, eatenQuantity } = this.state;
+    this.props.onSubmit(eatenPercentage, eatenQuantity);
   }
 
   updateEatenPercentage = (ev) => {
     this.setState({ eatenPercentage: ev.target.value });
+  }
+
+  setEatenPercentage(eatenPercentage) {
+    return () => { this.setState({ eatenPercentage }) };
   }
 
   updateEatenQuantity = (eatenQuantity) => {
@@ -44,6 +49,10 @@ class EatModal extends React.Component  {
   render() {
     const slider = (
       <div className="content">
+        <div className="ui basic fluid buttons">
+          <button className="ui button" onClick={this.setEatenPercentage(50)}>Half</button>
+          <button className="ui button" onClick={this.setEatenPercentage(100)}>All</button>
+        </div>
         <span style={{ float: 'right' }}>{this.state.eatenPercentage}%</span>
         <input type="range" value={this.state.eatenPercentage}
                             onChange={this.updateEatenPercentage} max="100" step="1" min="0"/>
@@ -76,7 +85,7 @@ class EatModal extends React.Component  {
           <div className="ui red deny button">
             Cancel
           </div>
-          <div className="ui positive right labeled icon button">
+          <div className="ui positive right labeled icon button" onClick={this.onSubmit}>
             Save
             <i className="utensils icon"/>
           </div>
@@ -86,4 +95,31 @@ class EatModal extends React.Component  {
   }
 }
 
-export default EatModal;
+function onModalSubmit(eatenPercentage, eatenQuantity) {
+  const next = callbacks.pop();
+  if (next) {
+    //console.log(next, eatenPercentage, eatenQuantity);
+    next(eatenPercentage, eatenQuantity);
+  }
+}
+
+// TODO: some piece of code that creates a new <modals div> and mounts an eat modal as a child??
+function showEatModal(callback) {
+  //console.log(callback);
+  if (modal === null) {
+    const modalsContainer = document.getElementById('modals');
+    const eatModalDiv = document.createElement('div');
+    modalsContainer.appendChild(eatModalDiv);
+    modal = <EatModal onSubmit={onModalSubmit}/>;
+    ReactDOM.render(modal, eatModalDiv);
+  }
+
+  callbacks.push(callback);
+
+  $('.eat-modal').modal({ detachable: false, transition: 'horizontal flip' })
+    .modal('show');
+}
+
+const EatModalExport = { EatModal: withKitchen(EatModal), showEatModal }
+
+module.exports = EatModalExport;

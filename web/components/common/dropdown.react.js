@@ -6,6 +6,7 @@ import _isEqual from 'lodash/isEqual';
 class Dropdown extends React.Component {
   componentDidMount() {
       // NOTE: This is not the options for the select, but the dropdown module options e.g. onChange
+      console.log(this.props.options, this.props.value);
       $(this.dropdown).dropdown(this.props.options);
       if (this.props.value) {
         $(this.dropdown).dropdown('set selected', this.props.value);

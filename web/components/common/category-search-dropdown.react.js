@@ -20,9 +20,10 @@ class CategorySearchDropdown extends React.Component {
   }
 
   refresh = () => {
+    //console.log(this.props.items);
     $(this.search).search({
       type: 'category',
-      searchField: 'title',
+      searchFields: ['title'],
       source: this.props.items,
       onSelect: this.props.onSelect
     });

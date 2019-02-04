@@ -20,6 +20,8 @@ import _isEqual from 'lodash/isEqual';
 import _clone from 'lodash/clone';
 import _values from 'lodash/values';
 
+import { tr } from 'util/translation-util';
+
 import 'sass/kitchen/inventory.scss';
 
 const ALL_CATEGORIES = KitchenConstants.ALL_CATEGORIES;
@@ -72,19 +74,14 @@ class KitchenInventory extends React.Component {
     const zones = raw.split(',');
     console.log(raw);
     LocalStorageUtil.saveInventoryFilterZones(zones);
-    if (!_isEqual(zones, this.state.zones)) {
-      this.setState({ zones });
-    }
+    this.setState({ zones });
   }
 
   onCategoriesChange = (raw) => {
     const categories = raw.split(',');
     console.log(raw);
     LocalStorageUtil.saveInventoryFilterCategories(categories);
-    if (!_isEqual(categories, this.state.categories)) {
-      console.log(categories);
-      this.setState({ categories });
-    }
+    this.setState({ categories });
   }
 
   addAllFilters = () => {
@@ -113,6 +110,7 @@ class KitchenInventory extends React.Component {
 
   render() {
     console.log('kitchen inventory render', this.state, Object.keys(this.props.kitchenIndex).length);
+    console.log(this.state.categories, this.state.zones);
     let inventory = null;
     const filteredItems = this.filteredItems();
 
@@ -135,23 +133,29 @@ class KitchenInventory extends React.Component {
       inventory = <ListLayout>{ rows }</ListLayout>;
     }
 
-    const imageOption = (name) => <ImageOption key={name} name={name}/>;
+    const imageOption = (type, isSelected) => {
+      return (name) => <ImageOption key={name} name={name} type={type} selected={isSelected(name)}/>;
+    }
 
     const filters = [
-      <Dropdown className="ui fluid multiple search selection dropdown categories"
+      <Dropdown className="fluid multiple search selection categories"
                 options={{ onChange: this.onCategoriesChange, className: { label: 'ui basic label' } }}
                 key="categories"
                 value={this.state.categories}>
-          { ALL_CATEGORIES.map(imageOption) }
+          { ALL_CATEGORIES.map(
+              imageOption('ingredients.categories',
+                (name) => this.state.categories.indexOf(name) >= -1)) }
       </Dropdown>,
-      <Dropdown className="ui fluid multiple search selection dropdown zones"
+      <Dropdown className="fluid multiple search selection zones"
                 options={{ onChange: this.onZonesChange, className: { label: 'ui basic label' }  }}
                 key="zones"
                 value={this.state.zones}>
-          { ALL_ZONES.map(imageOption) }
+          { ALL_ZONES.map(
+              imageOption('inventory.zones',
+                (name) => this.state.zones.indexOf(name) >= -1)) }
       </Dropdown>,
       <button className="ui fluid basic green button" onClick={this.addAllFilters}>
-        Show Me Everything
+        { tr('inventory.cta.Show Me Everything') }
       </button>
     ];
 
@@ -199,12 +203,12 @@ class KitchenInventory extends React.Component {
             <button className="ui button expand-filters-button"
                                                    onClick={this.toggleFilterExpansion}>
               <i className="filter icon"/>
-              { this.state.expandFilters ? 'Close Filters' : 'Expand Filters' }
+              { this.state.expandFilters ? tr('inventory.cta.Close Filters') : tr('inventory.cta.Expand Filters') }
             </button>
             <button className="ui button expand-options-button"
                                                    onClick={this.toggleOptions}>
               <i className="sliders horizontal icon"/>
-              { this.state.expandOptions ? 'Close Options' : 'Expand Options' }
+              { this.state.expandOptions ? tr('inventory.cta.Close Options') : tr('inventory.cta.Expand Options') }
             </button>
           </div>
           { this.state.expandFilters && filters }

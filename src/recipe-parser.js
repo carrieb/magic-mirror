@@ -87,6 +87,7 @@ const RecipeParser = {
     lines.forEach((line) => {
       //console.log(line);
 
+      // by default doesn't happen
       if (line.indexOf(',') > -1 && splitOverCommas) {
           //console.log('splitting over commas');
           const split = line.split(',');
@@ -118,7 +119,7 @@ const RecipeParser = {
             description: ingredient.name,
             modifier: ingredient.modifier
           };
-          //console.log(item);
+          console.log(item);
           result[section].items.push(item);
 
           expectingHeader = false;

@@ -6,18 +6,14 @@ import 'styles/component/background-video.css';
 class BackgroundVideo extends React.Component {
   handleVideoRef(ref) {
     const node = ReactDOM.findDOMNode(ref);
-    // navigator.getUserMedia = navigator.getUserMedia ||
-    //   navigator.webkitGetUserMedia ||
-    //   navigator.mozGetUserMedia ||
-    //   navigator.msGetUserMedia ||
-    //   navigator.oGetUserMedia;
-    // if (navigator.getUserMedia) {
-    //   navigator.getUserMedia({video: true}, (stream) => {
-    //     //node.src = window.URL.createObjectURL(stream);
-    //   }, (error) => {
-    //     console.log(error);
-    //   });
-    // }
+
+    navigator.mediaDevices.getUserMedia({
+      video: true
+    }).then((stream) => {
+      node.srcObject = stream;
+    }).catch((error) => {
+      console.log(error);
+    });
   }
 
   render() {

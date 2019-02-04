@@ -34,19 +34,10 @@ class RecipeCard extends React.Component {
     const directions = <Directions directions={recipe.directions}
                                    ingredients={recipe.ingredients}
                                    enableCollapse={this.props.enableCollapse}/>
-    const innerContent = (
-      <div className="content">
-        { (this.props.showImage && recipe.img) && <div className="ui medium centered rounded image">
-          <img src={recipe.img}/>
-        </div> }
-        { recipe.servings > 0 && <div className="ui grey sub header servings">{ recipe.servings } Servings</div> }
-        { ingredients }
-        { directions }
-      </div>
-    );
 
     const textContent = (
       <div>
+        { recipe.category && <div className="ui grey sub header category">{ recipe.category }</div> }
         { recipe.servings > 0 && <div className="ui grey sub header servings">{ recipe.servings } Servings</div> }
         { ingredients }
         { directions }

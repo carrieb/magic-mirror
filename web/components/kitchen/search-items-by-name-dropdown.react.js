@@ -12,6 +12,8 @@ import _isEmpty from 'lodash/isEmpty';
 import _isEqual from 'lodash/isEqual';
 import _isString from 'lodash/isString';
 
+import { tr, phonetic } from 'util/translation-util';
+
 class SearchItemsByNameDropdown extends React.Component {
   constructor(props) {
     super(props);
@@ -32,8 +34,9 @@ class SearchItemsByNameDropdown extends React.Component {
                                 loading={ _isEmpty(this.props.kitchenIndex) }
                                 items={ _values(this.props.kitchenIndex).map((item) => {
                                   return {
-                                    category: item.category || 'Unknown',
-                                    title: item.description
+                                    category: tr(`ingredients.categories.${item.category}`) || 'Unknown',
+                                    title: tr(`ingredients.names.${item.description}`),
+                                    phonetic: phonetic(`ingredients.names.${item.description}`)
                                   };
                                 }) }
                                 onSelect={ this.navigateToItem }/>

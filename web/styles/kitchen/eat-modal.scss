@@ -1,6 +1,12 @@
 .eat-modal {
+  position: fixed !important;
+
+  .buttons {
+    margin-bottom: 10px !important;
+  }
+
   input[type="range"] {
-    width: 90%;
+    width: 87%;
     vertical-align: middle;
   }
 

@@ -1,5 +1,22 @@
 div.food-card.ui.card {
 
+  .corner.label {
+    transition: border-color 0.1s ease;
+    -webkit-transition: border-color 0.1s ease;
+
+    &:hover {
+      border-color: #fbbd08;
+    }
+
+    &:active {
+      border-color: #cd9903;
+    }
+
+    i {
+      color: white;
+    }
+  }
+
   .icon {
     transition: color .1s ease;
 
@@ -10,6 +27,16 @@ div.food-card.ui.card {
     &.plus:hover {
       color: #0E6EB8;
     }
+  }
+
+  .content {
+    img {
+      padding: 0;
+    }
+  }
+
+  .meta {
+    text-transform: capitalize;
   }
 
   .header {
@@ -41,8 +68,9 @@ div.food-card.ui.card {
   }
 
   img.category {
-    max-height: 50px !important;
-    width: auto;
+    //max-height: 50px !important;
+    //width: auto;
     cursor: pointer;
+    margin-right: .5rem;
   }
 }

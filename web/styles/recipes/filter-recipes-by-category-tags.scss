@@ -1,0 +1,18 @@
+.filter-recipes-by-category-tags {
+  margin-top: 1rem;
+
+  .selected {
+    display: inline-block;
+
+    + div {
+      padding-left: 1rem;
+      margin-left: 1rem;
+      border-left: solid 1px lightgrey;
+      display: inline-block;
+    }
+
+    .buttons {
+      margin-right: 3.5px;
+    }
+  }
+}
