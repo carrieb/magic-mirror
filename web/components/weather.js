@@ -69,11 +69,12 @@ class Weather extends React.Component {
   render() {
     let conditionsContent;
     let forecastContent;
+
     if (this.state.forecastLoaded) {
       const nextThreeDays = this.state.forecast.slice(1, 4);
       const forecastEls = nextThreeDays.map((forecast, idx) => {
         return (
-          <div className="col-xs-4 text-center forecast-container" key={idx}>
+          <div className="ui inverted segment forecast-container" key={idx}>
             { iconForWeather(forecast.conditions) }
             <div>
               <span>{forecast.low.fahrenheit}</span><span>{forecast.high.fahrenheit}</span>
@@ -82,15 +83,17 @@ class Weather extends React.Component {
           </div>
         );
       });
+
       forecastContent = (
         <div className="forcasts-container">
-          <div className="row mx-auto">
+          <div className="ui horizontal segments">
              { forecastEls }
           </div>
         </div>
       );
     }
-    if (this.state.conditionsLoaded) {
+
+    if (false) { //this.state.conditionsLoaded) {
       let todaysForecast;
       let warningMsg = "";
       if (this.state.forecastLoaded) {
@@ -122,6 +125,7 @@ class Weather extends React.Component {
         </div>
       );
     }
+
     return (
       <div className="weather-container">
         { conditionsContent }

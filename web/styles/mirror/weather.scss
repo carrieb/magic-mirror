@@ -1,4 +1,30 @@
 .forcasts-container {
   position: fixed;
   bottom: 15px;
+  width: calc(50% - 5rem);
+
+  .segments {
+    background-color: rgb(27, 28, 29) !important;
+
+    .forecast-container.segment {
+      border-left: solid 2px grey !important;
+      border-top: solid 2px grey !important;
+      border-bottom: solid 2px grey !important;
+      text-align: center;
+
+      &:first-child {
+        border-radius: .28571429rem 0 0 .28571429rem;
+      }
+
+      &:last-child {
+        border-right: solid 2px grey !important;
+        border-radius: 0 .28571429rem .28571429rem 0;
+      }
+
+      i {
+        margin-bottom: 10px;
+        line-height: 42px;
+      }
+    }
+  }
 }

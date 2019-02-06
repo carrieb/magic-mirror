@@ -1,5 +1,5 @@
 .mirror {
-  margin: 2rem;
+  margin: 2rem 4rem;
 
   .grid {
     height: calc(100vh - 4rem);
@@ -16,12 +16,16 @@
 
     .segments {
       height: 100% !important;
+      max-height: 100% !important;
+      overflow: hidden;
 
       .inverted.segment {
         border-left: solid 2px grey !important;
         border-right: solid 2px grey !important;
         border-top: solid 2px grey !important;
-        height: 14.2857%;
+
+        font-size: 1.25rem;
+        line-height: 2rem;
 
         &:last-child {
           border-bottom: solid 2px grey !important;
