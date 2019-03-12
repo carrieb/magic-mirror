@@ -6,7 +6,7 @@ import _isEqual from 'lodash/isEqual';
 class Dropdown extends React.Component {
   componentDidMount() {
       // NOTE: This is not the options for the select, but the dropdown module options e.g. onChange
-      console.log(this.props.options, this.props.value);
+      // console.log(this.props.options, this.props.value);
       $(this.dropdown).dropdown(this.props.options);
       if (this.props.value) {
         $(this.dropdown).dropdown('set selected', this.props.value);
@@ -15,7 +15,7 @@ class Dropdown extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (!_isEqual(prevProps.children, this.props.children)) {
-      console.log('updated children detected');
+      // console.log('updated children detected');
       $(this.dropdown).dropdown('refresh');
     }
 

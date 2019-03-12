@@ -169,6 +169,15 @@ const ApiWrapper = {
     });
   },
 
+  searchRecipesByIngredient(ingredient) {
+    return $.ajax({
+      url: '/api/recipes/search',
+      type: 'POST',
+      data: JSON.stringify({ ingredient }),
+      contentType: 'application/json; charset=utf-8'
+    });
+  },
+
   exportShoppingList(items) {
     return $.ajax({
       url: '/api/export/shopping-list',

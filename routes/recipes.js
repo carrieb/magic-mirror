@@ -17,9 +17,15 @@ router.get('/', (req, res) => {
 router.post('/add', jsonParser, (req, res) => {
   RecipesDb.uploadRecipe(res.app.locals.dbs, req.body.recipe, (id) => {
     // TODO: obfuscate somehow
-    // https://www.npmjs.com/package/hashids ? 
+    // https://www.npmjs.com/package/hashids ?
     res.json(id);
   }, (err) => res.status(500).send('Failed to upload recipe.'))
+});
+
+router.post('/search', jsonParser, (req, res) => {
+  RecipesDb.searchRecipesByIngredient(res.app.locals.dbs, req.body.ingredient, (recipes) => {
+    res.json(recipes);
+  }, (err) => res.status(500).send(`Failed to retrieve recipes for ingredient '${req.body.ingredient}': ${err}`));
 });
 
 router.get('/:id', (req, res) => {
@@ -27,5 +33,7 @@ router.get('/:id', (req, res) => {
     res.json(recipe);
   }, (err) => res.status(500).send(`Failed to retrieve recipe with id [${req.params.id}]`));
 });
+
+
 
 module.exports = router;

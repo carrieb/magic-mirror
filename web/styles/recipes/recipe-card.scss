@@ -21,5 +21,28 @@
     .keyword {
       color: blue;
     }
+
+    &:lang(jp) {
+      font-family: 'Kosugi Maru', sans-serif !important;
+
+      .content .header {
+        font-family: 'Kosugi Maru', sans-serif !important;
+      }
+
+      .ingredients-section .ui.sub.header {
+        font-family: 'Kosugi Maru', sans-serif !important;
+        font-size: 1rem;
+      }
+
+      .directions-wrapper {
+        .ui.sub.header {
+          font-size: 1rem;
+        }
+
+        .smart-step {
+          line-height: 1.5rem;
+        }
+      }
+    }
   }
 }

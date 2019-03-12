@@ -48,7 +48,7 @@ class RecipesList extends React.Component {
     });
 
     const idFromLastSession = LocalStorageUtil.getFieldForComponent('RecipeList', 'currentRecipeId');
-    console.log(idFromLastSession);
+    console.log('id from last session:', idFromLastSession);
     if (idFromLastSession && this.props.recipesIndex[idFromLastSession]) {
       const recipe = this.props.recipesIndex[idFromLastSession];
       const idx = _findIndex(this.props.recipes, (item) => item._id === recipe._id);

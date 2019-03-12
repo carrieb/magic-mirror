@@ -1,4 +1,3 @@
-const LAST_IMPORT_TEXT_KEY = 'lastImportText:';
 const SHOPPING_LIST_KEY = 'shoppingList:';
 const KITCHEN_TAGS_KEY = 'kitchenTags:';
 const LAST_ZONE_KEY = 'zone:';
@@ -11,7 +10,7 @@ const INVENTORY_FILTER_ZONES = 'inventoryFitlerZones:';
 const INVENTORY_FILTER_CATEGORIES = 'inventoryFilterCategories:';
 
 const keys = [
-  LAST_IMPORT_TEXT_KEY, SHOPPING_LIST_KEY, KITCHEN_TAGS_KEY,
+  SHOPPING_LIST_KEY, KITCHEN_TAGS_KEY,
   LAST_ZONE_KEY, LAST_CATEGORY_KEY,
   NEW_RECIPE_BEING_EDITED,
   INVENTORY_FILTER_ZONES, INVENTORY_FILTER_CATEGORIES
@@ -23,18 +22,15 @@ function _set(key, value) {
 
 function _get(key) {
   const val = localStorage.getItem(key);
-  return JSON.parse(val);
+  try {
+    return JSON.parse(val);
+  } catch (e) {
+    console.error(val, e);
+    return null;
+  }
 }
 
 const LocalStorageUtil = {
-  saveLastImportText(text) {
-    _set(LAST_IMPORT_TEXT_KEY, text);
-  },
-
-  getLastImportText() {
-    return _get(LAST_IMPORT_TEXT_KEY);
-  },
-
   getShoppingList() {
     return _get(SHOPPING_LIST_KEY) || [];
   },

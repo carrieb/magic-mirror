@@ -3,6 +3,10 @@ import nlp from 'compromise';
 
 import _uniqueId from 'lodash/uniqueId';
 
+import { tr } from 'util/translation-util'
+
+const TOOLS = ['pot', 'bag', 'heat'].map((str) => tr(`recipes.tools.${str}`));
+
 class SmartStep extends React.Component {
   highlightKeywords(text) {
     //console.log(text, this.state.keywords);
@@ -18,20 +22,46 @@ class SmartStep extends React.Component {
       const match = text.match(regex);
       if (match) {
         //console.log(text, keyword);
-        matched.push(keyword);
+        matched.push({
+          keyword,
+          type: 'ingredient'
+        });
       }
     });
 
+    TOOLS.forEach((toolKeyword) => {
+      const regex = new RegExp(toolKeyword, 'i');
+      const match = text.match(regex);
+      if (match) {
+        matched.push({
+          keyword: toolKeyword,
+          type: 'tool'
+        });
+      }
+    });
+
+    //console.log(matched);
+
     if (matched.length > 0) {
-      const splitRegex = new RegExp(`(${matched.join('|')})`, 'i');
+      const allFoundKeywords = matched.map(m => m.keyword);
+      const splitRegex = new RegExp(`(${allFoundKeywords.join('|')})`, 'i');
       const split = text.split(splitRegex);
+      //console.log(split);
       split.forEach((words) => {
-        if (matched.indexOf(words.toLowerCase()) > -1) {
+        const idx = allFoundKeywords.indexOf(words.toLowerCase());
+        //console.log(words, idx);
+        if (idx > -1) {
           // TODO: somehow link it with the correct amount from
           // ingredients.
           // using the section name?
           // TODO: make the url use lower cased snake-case for name
-          result.push(<a href={`/kitchen/${words.toLowerCase()}`} key={_uniqueId()}>{words}</a>);
+          const match = matched[idx];
+          //console.log(idx, matched);
+          if (match.type === 'ingredient') {
+            result.push(<a href={`/kitchen/${words.toLowerCase()}`} key={_uniqueId()}>{words}</a>);
+          } else if (match.type === 'tool') {
+            result.push(<span style={{ paddingBottom: '1px', borderBottom: 'solid 1px #000'}} key={_uniqueId()}>{words}</span>);
+          }
         } else {
           result.push(words);
         }

@@ -7,7 +7,7 @@ import { getLocale } from 'util/translation-util';
 
 const history = createHistory();
 
-import FoodEditorHandler from 'components/kitchen/FoodEditorHandler';
+import KitchenItemEditor from 'components/kitchen/kitchen-item-editor.react';
 import AddItemsForm from 'components/kitchen/AddItemsForm.react';
 
 import KitchenNavigation from 'components/kitchen/navigation.react';
@@ -26,7 +26,7 @@ window.onload = function() {
         <Route exact path="/kitchen" component={KitchenDashboard}/>
         <Route path="/kitchen/inventory" component={KitchenInventory}/>
         <Route path="/kitchen/unpack" component={AddItemsForm}/>
-        <Route path="/kitchen/item/:foodName" component={FoodEditorHandler}/>
+        <Route path="/kitchen/item/:foodName" component={KitchenItemEditor}/>
       </div>
     </Router>,
     document.getElementById("render-wrapper")

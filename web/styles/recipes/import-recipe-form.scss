@@ -1,4 +1,16 @@
 .import-recipe {
+  &:lang(jp) {
+    font-family: 'Kosugi Maru', sans-serif !important;
+
+    .button {
+      font-family: 'Kosugi Maru', sans-serif !important;
+    }
+
+    .message .header {
+      font-family: 'Kosugi Maru', sans-serif !important;
+    }
+  }
+
   .parse.button {
     margin-bottom: 1rem;
   }

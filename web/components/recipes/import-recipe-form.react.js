@@ -11,35 +11,44 @@ import LocalStorageUtil from 'util/local-storage-util';
 import _isEmpty from 'lodash/isEmpty';
 import _isEqual from 'lodash/isEqual';
 
+import { tr } from 'util/translation-util';
+
 import 'sass/recipes/import-recipe-form.scss';
 
 class ImportRecipeForm extends React.Component {
   constructor(props) {
     super(props);
 
-    let text = LocalStorageUtil.getLastImportText();
-    console.log('preloading from text:', text);
+    const savedState = LocalStorageUtil.getFieldForComponent('importRecipe', 'parsedState');
+    console.log('preloading from:', savedState);
 
-    if (_isEmpty(text)) {
-      text = {
-        ingredients: null,
-        directions: null,
-        name: null,
-        source: null
+    if (_isEmpty(savedState)) {
+      this.state = {
+        recipe: null,
+        text: {
+          ingredients: null,
+          directions: null,
+          name: null,
+          source: null
+        },
+        errors: {},
+        showIngredientHelp: true,
+        showPreview: false,
+        ingredientsMultisection: false,
+        directionsMultisection: false
       };
+    } else {
+      this.state = savedState;
     }
+  }
 
-    this.state = {
-      recipe: null,
-      text,
-      errors: {},
-      showIngredientHelp: true,
-      showPreview: false
-    };
+  componentDidMount() {
+    $('.ui.checkbox').checkbox();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (!_isEqual(this.state.receipe, prevState.receipe)) {
+    console.log(prevState, this.state);
+    if (!_isEqual(this.state.recipe, prevState.recipe)) {
       this.validate();
     }
   }
@@ -50,10 +59,27 @@ class ImportRecipeForm extends React.Component {
     })
   };
 
+  toggleIngredientsMultisection = () => {
+    console.log('toggle');
+    this.setState({
+      ingredientsMultisection: !this.state.ingredientsMultisection
+    });
+  };
+
+  toggleDirectionsMultisection = () => {
+    this.setState({
+      directionsMultisection: !this.state.directionsMultisection
+    });
+  };
+
   parse = () => {
-    LocalStorageUtil.saveLastImportText(this.state.text);
-    const directions = RecipeParser.parseDirections(this.state.text.directions);
-    const ingredients = RecipeParser.parseIngredients(this.state.text.ingredients, false);
+    const stateSnapshot = this.state;
+    // save in case parsing fails
+    LocalStorageUtil.saveFieldForComponent('importRecipe', 'parsedState', stateSnapshot);
+
+    const directions = RecipeParser.parseDirections(this.state.text.directions, this.state.directionsMultisection);
+    const ingredients = RecipeParser.parseIngredients(this.state.text.ingredients, this.state.ingredientsMultisection);
+
     const recipe = {
       name: this.state.text.name,
       source: this.state.text.source,
@@ -62,6 +88,12 @@ class ImportRecipeForm extends React.Component {
     };
 
     console.log('prased recipe:', recipe);
+
+    stateSnapshot.recipe = recipe;
+    stateSnapshot.showPreview = true;
+
+    // save again with updated recipe
+    LocalStorageUtil.saveFieldForComponent('importRecipe', 'parsedState', stateSnapshot);
 
     this.setState({ recipe, showPreview: true });
   };
@@ -90,6 +122,7 @@ class ImportRecipeForm extends React.Component {
   };
 
   validate = () => {
+    console.log('validating:', this.state.recipe);
     const errors = this.state.errors;
     if (_isEmpty(this.state.text.name)) {
       errors.name = 'Name is required.';
@@ -115,7 +148,9 @@ class ImportRecipeForm extends React.Component {
   };
 
   render() {
+    console.log(this.state, this.state.recipe.ingredients[0].items.length);
     let preview;
+
     if (this.state.showPreview) {
       if (!_isEmpty(this.state.errors)) {
         preview = (<div>
@@ -127,8 +162,8 @@ class ImportRecipeForm extends React.Component {
             <div className="ui right-aligned basic segment"
                  style={{ padding: 0, textAlign: 'right' }}>
                  <button onClick={this.submitRecipe}
-                         className={`ui green icon button`}>
-                     Looks Good!
+                         className="ui fluid green icon button">
+                     { tr('nav.actions.okay', null, true) }
                      <i className="ui check icon"/>
                  </button>
            </div>
@@ -143,17 +178,16 @@ class ImportRecipeForm extends React.Component {
 
     const form = (
       <form className="ui form">
-
         <div className="two fields">
           <div className={ this.fieldClassName('name') }>
-            <label>Name</label>
+            <label>{ tr('recipes.fields.name') }</label>
             <textarea rows={3}
                    value={this.state.text.name || ''}
                    onChange={this.onTextChange('name')}/>
             { this.state.errors.name && <p className="error-text">{ this.state.errors.name }</p> }
           </div>
           <div className="field">
-            <label>Source</label>
+            <label>{ tr('recipes.fields.source') }</label>
             <textarea rows={3}
                    value={this.state.text.source || ''}
                    onChange={this.onTextChange('source')}/>
@@ -163,27 +197,47 @@ class ImportRecipeForm extends React.Component {
         { this.state.showIngredientHelp && <div className="ui info message">
           <i className="close icon" onClick={this.hideIngredientHelp}/>
           <div className="header">
-            Ingredient Parsing Rules
+            { tr('recipes.text.parsing_rules.header', null, true) }
           </div>
           <ul className="list">
-            <li>Quantities must be listed <b>first</b>.</li>
-            <li>Modifiers should go in <b>parens</b>.</li>
+            <li>{ tr('recipes.text.parsing_rules.quantities', null, true) }</li>
+            <li>{ tr('recipes.text.parsing_rules.modifiers', null, true) }</li>
           </ul>
         </div> }
         <div className={ this.fieldClassName('ingredients') }>
-          <label>Ingredients</label>
+          <label>{ tr('recipes.fields.ingredients') }</label>
           <textarea rows={10}
                     onChange={this.onTextChange('ingredients')}
                     value={this.state.text.ingredients || ''}/>
           { this.state.errors.ingredients && <p className="error-text">{ this.state.errors.ingredients }</p> }
-        </div>
 
+        </div>
+        <div className="inline field">
+          <div className="ui checkbox"
+               onClick={this.toggleIngredientsMultisection}>
+            <input type="checkbox"
+                  tabIndex="0"
+                  className="hidden"
+                  defaultChecked={this.state.ingredientsMultisection}/>
+            <label>Multisection</label>
+          </div>
+        </div>
         <div className={ this.fieldClassName('directions') }>
-          <label>Directions</label>
+          <label>{ tr('recipes.fields.directions') }</label>
           <textarea rows={10}
                     onChange={this.onTextChange('directions')}
                     value={this.state.text.directions || ''}/>
           { this.state.errors.directions && <p className="error-text">{ this.state.errors.directions }</p> }
+        </div>
+        <div className="inline field">
+          <div className="ui checkbox"
+               onClick={this.toggleDirectionsMultisection}>
+            <input type="checkbox"
+                  tabIndex="0"
+                  className="hidden"
+                  defaultChecked={this.state.directionsMultisection}/>
+            <label>Multisection</label>
+          </div>
         </div>
 
       </form>
@@ -191,7 +245,7 @@ class ImportRecipeForm extends React.Component {
 
     const parseButton = <button type="button"
             className={`ui violet fluid icon button ${_isEmpty(this.state.errors) ? '' : 'disabled' } parse`}
-            onClick={this.parse}><i className="ui random icon"/>Parse</button>;
+            onClick={this.parse}><i className="ui random icon"/>{ tr('nav.actions.parse') }</button>;
 
     const content = this.state.showPreview ?
       <div className="ui two column grid">

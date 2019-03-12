@@ -12,7 +12,11 @@ const en = new Polyglot({
     nav: {
       meals: 'Meals',
       kitchen: 'Kitchen',
-      recipes: 'Recipes'
+      recipes: 'Recipes',
+
+      actions: {
+        okay: 'Looks Good!'
+      }
     },
 
     tabs: {
@@ -54,6 +58,12 @@ const en = new Polyglot({
     recipes: {
       text: {
         'servings': '%{smart_count} serving |||| %{smart_count} servings',
+        'search_placeholder': 'Search Recipes...',
+        'parsing_rules': {
+          'header': 'Ingredient Parsing Rules',
+          'quantities': 'Quantities must be listed first.',
+          'modifiers': 'Modififers should go in parens.'
+        }
       },
 
       categories: {
@@ -73,6 +83,8 @@ const en = new Polyglot({
     },
 
     ingredients: {
+      text: '%{quantity} of %{modifier} %{name} |||| %{quantity}s of %{modifier} %{name}',
+
       categories: {
         'dry-goods': 'Dry Goods',
         'produce': 'Produce',
@@ -216,7 +228,10 @@ const jp = new Polyglot({
       inventory: '在荷',
 
       actions: {
-        import: '輸入'
+        import: '輸入',
+        add: '作る',
+        parse: '解析',
+        okay: 'いいです!'
       }
     },
 
@@ -282,14 +297,33 @@ const jp = new Polyglot({
 
     recipes: {
       text: {
-        servings: '%{smart_count}人分'
+        servings: '%{smart_count}人分',
+        'search_placeholder': 'レシピ検索...',
+        'parsing_rules': {
+          'header': '材料構文規則',
+          'quantities': '文の初めには分量',
+          'modifiers': '修飾語はかっこに入れなさい'
+        }
+      },
+
+      tools: {
+        'bag': '袋',
+        'pot': '鍋',
+        'heat': '火'
+      },
+
+      fields: {
+        'name': '名前',
+        'source': '出典',
+        'ingredients': '材料',
+        'directions': '作り方'
       },
 
       categories: {
-        'Main Dish': '主菜',
-        'Side Dish': '惣菜',
-        'Sauce': 'ソース',
-        'Dessert': 'デザート'
+        'main dish': '主菜',
+        'side dish': 'おかず',
+        'sauce': 'ソース',
+        'dessert': 'デザート'
       },
 
       names: {
@@ -318,6 +352,8 @@ const jp = new Polyglot({
     },
 
     ingredients: {
+      text: '%{quantity} %{name} %{modifier}',
+
       categories: {
         'dry goods': '穀類',
         'produce': '農産物',
@@ -477,7 +513,7 @@ const jp = new Polyglot({
         'orange blossom water': 'オレンジ花水'
       }
     }
-  }
+  },
 });
 
 const locales = {
@@ -494,9 +530,13 @@ function tr(str, data, forcePolyglot=false) {
       const last = split[split.length - 1];
       return last;
     } else {
-      return polyglot.t(str.toLowerCase(), data);
+      //console.log(str);
+      const translated = polyglot.t(str.toLowerCase(), data);
+      //console.log(translated);
+      return translated;
     }
   } catch (e) {
+    console.error(e);
     // ignore
   }
 }

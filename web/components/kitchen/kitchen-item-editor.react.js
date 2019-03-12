@@ -10,6 +10,7 @@ import LocalStorageUtil from 'util/local-storage-util';
 import ControlledItemEditor from 'components/kitchen/controlled-item-editor.react';
 
 import KitchenItemFeed from 'components/kitchen/item/kitchen-item-feed.react';
+import RecipesForItem from 'components/kitchen/recipes-for-item.react';
 
 import uniqueId from 'lodash/uniqueId';
 import _isEmpty from 'lodash/isEmpty';
@@ -22,7 +23,7 @@ import _values from 'lodash/values';
 
 import 'sass/kitchen/food-editor.scss';
 
-class FoodEditorHandler extends React.Component {
+class KitchenItemEditor extends React.Component {
   constructor(props) {
     super(props);
     //console.log('food editor props', props);
@@ -40,7 +41,7 @@ class FoodEditorHandler extends React.Component {
       foodItem.category = LocalStorageUtil.getLastCategory() || DEFAULT_ITEM.category;
     }
 
-    console.log('constructor', foodItem);
+    //console.log('constructor', foodItem);
 
     this.state = {
       foodItem,
@@ -63,7 +64,7 @@ class FoodEditorHandler extends React.Component {
     //console.log('did update', prevProps, this.props);
     if (this.state.editingName) {
       // focus on that span
-      console.log('focusing on name input');
+      //console.log('focusing on name input');
       $(this.nameInput).focus();
     }
 
@@ -102,7 +103,7 @@ class FoodEditorHandler extends React.Component {
   };
 
   updateFoodItem = (field, value) => {
-    console.log(this.state);
+    // console.log(this.state);
     const foodItem = this.state.foodItem;
     foodItem[field] = value;
     this.setState({ foodItem });
@@ -126,9 +127,9 @@ class FoodEditorHandler extends React.Component {
     // display loading spinner til done, then set the image url
     if (ev.target.files && ev.target.files[0]) {
       ApiWrapper.uploadFoodImage(this.form, (loaded, total) => {
-        console.log(loaded, total);
+        //console.log(loaded, total);
       }).done((filename) => {
-        console.log('done', filename, this.props.match.params.foodName);
+        //console.log('done', filename, this.props.match.params.foodName);
         const foodItem = this.state.foodItem;
         foodItem.img = filename;
         this.setState({ foodItem });
@@ -140,12 +141,12 @@ class FoodEditorHandler extends React.Component {
 
   updateFields = () => {
     const food = this.state.foodItem;
-    console.log(food);
+    // console.log(food);
     if (!food._id) {
-      console.log('new new new');
+      // console.log('new new new');
       // ensure that name is not new
       if (this.state.foodItem.description === 'new') {
-        console.log(this.state.foodItem.description);
+        // console.log(this.state.foodItem.description);
         this.setState({ error: 'Name must be provided to save!'});
         return;
       }
@@ -158,7 +159,7 @@ class FoodEditorHandler extends React.Component {
         LocalStorageUtil.saveZone(foodItem.zone);
         LocalStorageUtil.saveCategory(foodItem.category);
         if (_isEmpty(food._id)) {
-          console.log('upserted food', insertedId);
+          // console.log('upserted food', insertedId);
           foodItem._id = insertedId;
           this.props.addItem(food);
         } else {
@@ -216,10 +217,9 @@ class FoodEditorHandler extends React.Component {
         </div>
     :  foodItem.description;
     const header = (
-      <h4 className="ui horizontal divider header" onDoubleClick={() => this.toggleNameEdit()}>
-        <i className="food icon"></i>
+      <h2 className="ui horizontal divider header" onDoubleClick={() => this.toggleNameEdit()}>
         { headerContent }
-       </h4>
+      </h2>
     );
 
     let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/images/no-image.svg';
@@ -253,15 +253,19 @@ class FoodEditorHandler extends React.Component {
 
     return (
       <div className="food-editor-container">
+        { header }
         <div className="ui stackable grid">
           <div className="six wide column">
             { image }
             <KitchenItemFeed item={this.state.foodItem}/>
           </div>
           <div className="ten wide column">
-            { header }
+
             { this.state.error && <div className="error-text">{this.state.error}</div>}
             <div className="content">{ content }</div>
+          </div>
+          <div className="sixteen wide column">
+            <RecipesForItem ingredient={this.state.foodItem.name || this.state.foodItem.description}/>
           </div>
         </div>
       </div>
@@ -271,4 +275,4 @@ class FoodEditorHandler extends React.Component {
 
 
 
-export default withRouter(withKitchen(FoodEditorHandler));
+export default withRouter(withKitchen(KitchenItemEditor));

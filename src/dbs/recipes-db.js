@@ -24,11 +24,22 @@ function getRecipeById(dbs, rawId, done, error=_noop) {
   });
 }
 
+function searchRecipesByIngredient(dbs, ingredient, done, error=_noop, limit=10) {
+  const db = dbs.recipes;
+  const coll = db.collection('documents');
+
+  coll.find({ 'ingredients.items.name': ingredient }, { 'limit': limit }).toArray((err, docs) => {
+    if (err) {
+      error(err);
+    }
+    console.log(docs);
+    done(docs);
+  });
+}
+
 function getAllTags(dbs, done, error=_noop) {
   const db = db.recipes;
   const coll = db.collection('documents');
-
-
 }
 
 function uploadRecipe(dbs, recipe, done, error=noop) {
@@ -58,7 +69,8 @@ function uploadRecipe(dbs, recipe, done, error=noop) {
 const RecipesDb = {
   getAllRecipes,
   uploadRecipe,
-  getRecipeById
+  getRecipeById,
+  searchRecipesByIngredient
 };
 
 module.exports = RecipesDb;

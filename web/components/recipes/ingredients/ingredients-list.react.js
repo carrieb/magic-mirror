@@ -1,24 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { amountToText } from 'src/common/quantities';
+
+import { tr } from 'util/translation-util';
+
 class Ingredient extends React.Component {
   render() {
     const item = this.props.item;
-    let q = item.quantity || {};
-    const remainder = q.amount - Math.floor(q.amount);
-    const whole = q.amount - remainder;
-    // TODO: move this to quantities
-    let amt = whole === 0 ? '' : whole + ' ';
-    if (remainder === .75) { amt += '3/4 '; }
-    if (remainder === .33) { amt += '⅓ '; }
-    if (remainder === .25) { amt += '¼ '; }
-    if (remainder === .5) { amt += '½ '; }
-    const quantity = <span>{amt}{q.unit}{(q.amount > 1 && q.unit)&& 's'}</span>;
+    const quantity = item.quantity || {};
+
+    const amountText = amountToText(quantity.amount);
     const name = item.name || item.description;
+
+    const displayText = tr('ingredients.text', {
+      name: `<a href="/kitchen/${name}">${ name ? name.toLowerCase() : '????' }</a>`,
+      quantity: `${amountText}${quantity.unit}`,
+      modifier: item.modifier ? `(${item.modifier})` : '',
+      smart_count: quantity.amount
+    }, true);
+
     return (
-      <span>
-        <b>{quantity}</b>{q.unit && ' of '}{item.modifier} <a href={`/kitchen/${name}`}>{ name ? name.toLowerCase() : '???' }</a>
-      </span>
+      <span dangerouslySetInnerHTML={{ __html: displayText }}/>
     );
   }
 }

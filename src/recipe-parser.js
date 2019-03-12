@@ -3,12 +3,17 @@ import _startsWith from 'lodash/startsWith';
 
 import { parseQuantity } from 'src/common/quantities';
 
+import { getLocale } from 'util/translation-util';
+
 const extraWords = ['of'];
 
 function parseIngredientDetails(str) {
   //console.log('parsing ingredients from:', str);
-  if (str.indexOf('(') > -1) {
-    const split = str.split('(');
+  console.log(str, str.indexOf('(') );
+  if (str.indexOf('(') > -1 || str.indexOf('（') > -1) {
+    console.log('paren in ingr');
+    const split = str.split(/\(|（/);
+    console.log(split);
     const name = split[0].trim();
     const rest = split[1].trim();
     const modifier = rest.substring(0, rest.length - 1);
@@ -16,22 +21,6 @@ function parseIngredientDetails(str) {
   } else {
     return { name: str, modifier: null };
   }
-}
-
-function parseIngredient(text) {
-  const parsedQ = parseQuantity(text);
-  const details = parseIngredientDetails(parsedQ.rest);
-  //console.log(details);
-
-  const result = {
-    name: details.name,
-    modifier: details.modifier,
-    quantity: {
-      amount: parsedQ.amount,
-      unit: parsedQ.unit
-    }
-  };
-  return result;
 }
 
 function ingredientsToText(ingredients) {
@@ -78,7 +67,7 @@ function directionsToText(directions) {
 }
 
 const RecipeParser = {
-  parseDirections(text) {
+  parseDirections(text, multisection=false) {
     const split = text ? text.split('\n') : [];
     //console.log(split);
     const result = [ { steps: [] } ];
@@ -117,20 +106,33 @@ const RecipeParser = {
     return result;
   },
 
-  parseIngredients(text, splitOverCommas=false) {
+  parseIngredients(text, multisection=false, splitOverCommas=false) {
     const result = [ { items: [] } ];
-    const lines = text ? text.split('\n') : [];
+    const lines = text ? text.trim().split('\n') : [];
+    const lang = getLocale() || 'en';
 
     //console.log(lines);
+    console.log('parsing ingredients:', multisection, lang);
 
     let section = 0;
-    let index = 0;
-    let expectingHeader = true;
+    let itemIndex = 0;
+    let expectingHeader = multisection;
 
-    lines.forEach((line) => {
-      //console.log(line);
+    for (let i = 0; i< lines.length; i++) {
+      const line = lines[i];
+      //console.log(line, line.trim() === '');
 
-      // by default doesn't happen
+      if (line.trim() === '' && multisection) {
+        // progress to next section
+        result.push( { items: [] } );
+        section++;
+        expectingHeader = true;
+        itemIndex = 0;
+        continue;
+      }
+
+
+      // splitting by commans: by default doesn't happen
       if (line.indexOf(',') > -1 && splitOverCommas) {
           //console.log('splitting over commas');
           const split = line.split(',');
@@ -145,15 +147,16 @@ const RecipeParser = {
               description: ingredient.name,
               modifier: ingredient.modifier
             });
-            index++;
+            itemIndex++;
           });
       } else {
-        const quantity = parseQuantity(line);
+        const quantity = parseQuantity(line, lang);
         // TODO: handle new lines for sections
-        //console.log(quantity);
+        console.log(quantity);
 
         if (quantity) {
           const ingredient = parseIngredientDetails(quantity.rest);
+
           const item = {
             quantity: {
               amount: quantity.amount,
@@ -162,21 +165,22 @@ const RecipeParser = {
             description: ingredient.name,
             modifier: ingredient.modifier
           };
+
           console.log(item);
           result[section].items.push(item);
 
           expectingHeader = false;
-          index++;
+          itemIndex++;
           //console.log(result);
         } else {
           // TODO: check if sections is working right
-          if (expectingHeader && index === 0) {
+          if (expectingHeader && itemIndex === 0) {
             result[section].name = line;
             expectingHeader = false;
           }
         }
       }
-    });
+    }
 
     //console.log('parsed ingredients', result);
 

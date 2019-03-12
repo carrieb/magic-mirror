@@ -12,6 +12,8 @@ import _uniq from 'lodash/uniq';
 import _uniqueId from 'lodash/uniqueId';
 import _isEmpty from 'lodash/isEmpty';
 
+import { tr } from 'util/translation-util';
+
 import 'sass/recipes/recipe-card.scss';
 
 class RecipeCard extends React.Component {
@@ -28,7 +30,7 @@ class RecipeCard extends React.Component {
 
   render() {
     const recipe = this.props.recipe;
-    //console.log(recipe);
+    console.log('recipe card:', recipe, recipe.ingredients[0].items.length);
     const ingredients = <Ingredients ingredients={recipe.ingredients}
                                      enableCollapse={this.props.enableCollapse}/>
     const directions = <Directions directions={recipe.directions}

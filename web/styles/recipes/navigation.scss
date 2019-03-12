@@ -1,0 +1,14 @@
+.recipes-navigation {
+  .item {
+    text-transform: capitalize !important;
+
+    &:lang(jp) {
+      font-family: 'Kosugi Maru', sans-serif;
+      font-weight: normal !important;
+    }
+  }
+
+  .selection.dropdown {
+    padding: 0 !important;
+  }
+}

@@ -39,7 +39,9 @@ const KitchenState = {
     });
     loadedKitchen = kitchen;
 
-    console.log('kitchen state loaded', loadedItems, loadedKitchen, listeners);
+    console.log(`kitchen state loaded. ${loadedItems.length} items. alerting ${listeners.length} listeners.`);
+
+    //console.log('kitchen state loaded', loadedItems, loadedKitchen, listeners);
     KitchenState.alertListeners();
   },
 

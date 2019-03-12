@@ -12,14 +12,18 @@ import { tr } from 'util/translation-util';
 import 'sass/kitchen/kitchen-navigation.scss';
 
 class KitchenNavigation extends React.Component {
+
   headerClassName = (route, subroute=false) => {
-    const classList = ['header', 'item'];
+    const classList = ['item'];
+
     if (this.props.location.pathname.startsWith(route)) {
       classList.push('active');
     }
+
     if (subroute) {
       classList.push('subheader');
     }
+
     return classList.join(' ');
   };
 
@@ -33,12 +37,18 @@ class KitchenNavigation extends React.Component {
   render() {
     return (
       <div className="ui stackable secondary menu kitchen-navigation">
-        { this.routeHeaderItem('/kitchen', 'Kitchen') }
-        { this.routeHeaderItem('/kitchen/inventory', 'Inventory', true) }
-        <div className="header item">
+        <div className="ui simple dropdown item">
+          Kitchen
+          <i className="dropdown icon"/>
+          <div className="menu">
+            <a className="item">Inventory</a>
+            <a className="item">Import</a>
+          </div>
+        </div>
+        <div className="item">
           <a href="/recipes">{ tr(`nav.recipes`) }</a>
         </div>
-        <div className="header item">
+        <div className="item">
           <a href="/meals">{ tr(`nav.meals`) }</a>
         </div>
         <div className="right menu">

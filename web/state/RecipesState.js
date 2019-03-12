@@ -57,7 +57,9 @@ const RecipesState = {
     });
     loadedRecipesIndex = recipesIndex
 
-    console.log('recipe state loaded', loadedRecipes, loadedRecipesIndex, listeners);
+    console.log(`recipes state loaded. ${loadedRecipes.length} recipes. alerting ${listeners.length} listeners.`);
+
+    //console.log('recipe state loaded', loadedRecipes, loadedRecipesIndex, listeners);
     RecipesState.alertListeners();
   },
 

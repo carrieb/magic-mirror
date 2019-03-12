@@ -8,6 +8,8 @@ import _groupBy from 'lodash/groupBy';
 import _without from 'lodash/without';
 import _filter from 'lodash/filter';
 
+import { tr } from 'util/translation-util';
+
 import 'sass/recipes/filter-recipes-by-category-tags.scss';
 
 const RECIPE_CATEGORIES = [
@@ -22,7 +24,7 @@ const CategoryTag = ({ category, numRecipes, selectedCategories, addCategory }) 
   return (
     <div className="ui labeled button" onClick={addCategory}>
       <div className={`ui basic ${color} button`}>
-        <i className="heart icon"/> { category }
+        <i className="heart icon"/> { tr(`recipes.categories.${category}`) }
       </div>
       <a className={`ui ${color} left pointing label`}>
         { numRecipes }
@@ -33,10 +35,11 @@ const CategoryTag = ({ category, numRecipes, selectedCategories, addCategory }) 
 
 const CategoryLabel = ({ category, removeCategory }) => {
   const color = randomColor(category);
+
   return (
     <div className={`ui ${color} icon buttons`}>
       <div className="ui button">
-        <i className="heart icon"/> { category }
+        <i className="heart icon"/> { tr(`recipes.categories.${category}`) }
       </div>
       <div className={`ui basic ${color} icon button`} onClick={removeCategory}>
         <i className="right close icon"></i>
@@ -80,7 +83,7 @@ class FilterRecipesByCategoryTags extends React.Component {
       return recipe.category && this.state.selectedCategories.indexOf(recipe.category) > -1;
     });
 
-    console.log(filteredRecipes);
+    //console.log(filteredRecipes);
 
     const categoryTags = tags.map((category) =>
       <CategoryTag category={category}

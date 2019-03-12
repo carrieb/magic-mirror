@@ -2,10 +2,10 @@ const qty = require('js-quantities');
 
 const quantityUnits = {
   en: ['tsp', 'teaspoon', 'tbsp', 'tablespoon',
-       'hunk', 'clove', 'cup', 'gram', 'ounce',
+       'hunk', 'clove', 'cup', 'gram', 'g', 'ounce',
        'oz', 'lb', 'pound', 'kg', 'kilogram',
        'ml', 'milliliter'],
-  jp: ['小さじ', '大さじ', '片分', '少々']
+  jp: ['小さじ', '大さじ', '片分', '少々', '滴', 'g', 'ml']
 }
 
 const fractions = [
@@ -107,4 +107,17 @@ function convertToQty(quantity) {
   return null;
 }
 
-module.exports = { parseQuantity, parseAmount, combineQuantities, convertToQty };
+function amountToText(amount) {
+  const remainder = amount - Math.floor(amount);
+  const whole = amount - remainder;
+
+  let amt = whole === 0 ? '' : whole + ' ';
+  if (remainder === .75) { amt += '¾ '; }
+  if (remainder === .33) { amt += '⅓ '; }
+  if (remainder === .25) { amt += '¼ '; }
+  if (remainder === .5) { amt += '½ '; }
+
+  return amt;
+}
+
+module.exports = { parseQuantity, parseAmount, combineQuantities, convertToQty, amountToText };
