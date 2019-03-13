@@ -315,6 +315,10 @@ const jp = new Polyglot({
       fields: {
         'name': '名前',
         'source': '出典',
+        'video': 'ビデオ',
+        'image': 'イメージ',
+        'servings': '人分',
+        'category': '種類',
         'ingredients': '材料',
         'directions': '作り方'
       },

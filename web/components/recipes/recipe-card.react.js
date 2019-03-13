@@ -30,7 +30,7 @@ class RecipeCard extends React.Component {
 
   render() {
     const recipe = this.props.recipe;
-    console.log('recipe card:', recipe, recipe.ingredients[0].items.length);
+    console.log('recipe card render:', recipe);
     const ingredients = <Ingredients ingredients={recipe.ingredients}
                                      enableCollapse={this.props.enableCollapse}/>
     const directions = <Directions directions={recipe.directions}
@@ -77,8 +77,8 @@ class RecipeCard extends React.Component {
             { recipe.name || 'Unknown'}
           </div>
         </div>
-        { (recipe.source && recipe.source.indexOf('youtube.com') > -1) && <div className="image">
-          <div className="ui embed" data-url={recipe.source}/>
+        { (recipe.video && (recipe.video.indexOf('youtube.com') > -1 || recipe.video.indexOf('youtu.be') > -1)) && <div className="image">
+          <div className="ui embed" data-url={recipe.video}/>
         </div> }
         <div className="content">{ responsiveContent }</div>
         { recipe.source && <div className="content">

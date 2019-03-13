@@ -5,11 +5,16 @@ import PropTypes from 'prop-types';
 import RecipeParser from 'src/recipe-parser';
 
 import RecipeCard from 'components/recipes/recipe-card.react';
+import IngredientsEditor from 'components/recipes/ingredients/ingredients-editor.react';
+
+import CheckboxInput from 'components/common/checkbox-input.react';
 
 import ApiWrapper from 'util/api-wrapper';
 import LocalStorageUtil from 'util/local-storage-util';
+
 import _isEmpty from 'lodash/isEmpty';
 import _isEqual from 'lodash/isEqual';
+import _clone from 'lodash/clone';
 
 import { tr } from 'util/translation-util';
 
@@ -22,23 +27,30 @@ class ImportRecipeForm extends React.Component {
     const savedState = LocalStorageUtil.getFieldForComponent('importRecipe', 'parsedState');
     console.log('preloading from:', savedState);
 
+    const defaultState = {
+      recipe: null,
+      text: {
+        ingredients: null,
+        directions: null,
+        name: null,
+        source: null
+      },
+
+      errors: {},
+      warnings: {},
+      showIngredientHelp: true,
+      showPreview: false,
+      ingredientsMultisection: false,
+      directionsMultisection: false,
+
+      structuredIngredientsEditor: false,
+      structuredDirectionsEditor: false
+    };
+
     if (_isEmpty(savedState)) {
-      this.state = {
-        recipe: null,
-        text: {
-          ingredients: null,
-          directions: null,
-          name: null,
-          source: null
-        },
-        errors: {},
-        showIngredientHelp: true,
-        showPreview: false,
-        ingredientsMultisection: false,
-        directionsMultisection: false
-      };
+      this.state = defaultState
     } else {
-      this.state = savedState;
+      this.state = Object.assign(defaultState, savedState);
     }
   }
 
@@ -47,7 +59,7 @@ class ImportRecipeForm extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log(prevState, this.state);
+    //console.log(prevState, this.state);
     if (!_isEqual(this.state.recipe, prevState.recipe)) {
       this.validate();
     }
@@ -59,8 +71,22 @@ class ImportRecipeForm extends React.Component {
     })
   };
 
+  toggleStructuredIngredients = () => {
+    //console.log('toggle');
+    this.setState({
+      structuredIngredientsEditor: !this.state.structuredIngredientsEditor
+    });
+  };
+
+  toggleStructuredDirections = () => {
+    //console.log('toggle');
+    this.setState({
+      structuredDirectionsEditor: !this.state.structuredDirectionsEditor
+    });
+  };
+
   toggleIngredientsMultisection = () => {
-    console.log('toggle');
+    //console.log('toggle');
     this.setState({
       ingredientsMultisection: !this.state.ingredientsMultisection
     });
@@ -82,10 +108,21 @@ class ImportRecipeForm extends React.Component {
 
     const recipe = {
       name: this.state.text.name,
-      source: this.state.text.source,
+      category: this.state.text.category,
+
+      video: this.state.text.video,
+      image: this.state.text.image,
+
       directions,
       ingredients
     };
+
+    try {
+      const servings = parseInt(this.state.text.servings);
+      recipe.servings = servings;
+    } catch (e) {
+      console.error(e);
+    }
 
     console.log('prased recipe:', recipe);
 
@@ -123,7 +160,8 @@ class ImportRecipeForm extends React.Component {
 
   validate = () => {
     console.log('validating:', this.state.recipe);
-    const errors = this.state.errors;
+    const errors = {};
+    const warnings = {};
     if (_isEmpty(this.state.text.name)) {
       errors.name = 'Name is required.';
     }
@@ -139,16 +177,43 @@ class ImportRecipeForm extends React.Component {
     if (_isEmpty(this.state.recipe.ingredients)) {
       errors.ingredients = 'Ingredients are required.';
     }
-    console.log('validating:', errors);
-    this.setState({ errors });
+
+    if (!this.state.recipe.servings) {
+      warnings.servings = 'Servings recommended.'
+    }
+
+    console.log('validation result:', errors, warnings);
+    this.setState({ errors, warnings });
   };
 
-  fieldClassName = (field) => {
-    return `field ${this.state.errors[field] ? 'error' : ''}`;
+  fieldClassName = (field, prefix='') => {
+    return `${prefix} field ${this.state.errors[field] ? 'error' : ''}`.trim();
+  };
+
+  recipeFieldTextArea = (field, rows=3, size='') => {
+    return (
+      <div className={ this.fieldClassName(field, size) }>
+        <label>{ tr(`recipes.fields.${field}`) }</label>
+        <textarea rows={rows}
+              value={this.state.text[field] || ''}
+              onChange={this.onTextChange(field)}/>
+        { this.state.errors[field] && <p className="error-text">{ this.state.errors[field] }</p> }
+        { this.state.warnings[field] && <p className="warning-text">{ this.state.warnings[field] }</p> }
+      </div>
+    );
+  }
+
+  updateRecipe = (field) => {
+    return (value) => {
+      const recipe = _clone(this.state.recipe);
+      recipe[field] = _clone(value);
+      this.setState({ recipe });
+    }
   };
 
   render() {
-    console.log(this.state, this.state.recipe.ingredients[0].items.length);
+    //console.log(this.state, this.state.recipe.ingredients[0].items.length);
+    console.log('import recipe form render:', this.state.recipe);
     let preview;
 
     if (this.state.showPreview) {
@@ -176,25 +241,41 @@ class ImportRecipeForm extends React.Component {
       }
     }
 
+    let ingredientsEditor;
+    if (this.state.structuredIngredientsEditor) {
+      ingredientsEditor = (
+        <div className={ this.fieldClassName('ingredients') }>
+          <label>{ tr('recipes.fields.ingredients') }</label>
+          <IngredientsEditor ingredients={this.state.recipe.ingredients}
+                             updateIngredients={this.updateRecipe('ingredients')}/>
+        </div>
+      );
+    } else {
+      ingredientsEditor = (
+        <div className={ this.fieldClassName('ingredients') }>
+          <label>{ tr('recipes.fields.ingredients') }</label>
+          <textarea rows={10}
+                    onChange={this.onTextChange('ingredients')}
+                    value={this.state.text.ingredients || ''}/>
+          { this.state.errors.ingredients && <p className="error-text">{ this.state.errors.ingredients }</p> }
+        </div>
+      );
+    }
+
     const form = (
       <form className="ui form">
-        <div className="two fields">
-          <div className={ this.fieldClassName('name') }>
-            <label>{ tr('recipes.fields.name') }</label>
-            <textarea rows={3}
-                   value={this.state.text.name || ''}
-                   onChange={this.onTextChange('name')}/>
-            { this.state.errors.name && <p className="error-text">{ this.state.errors.name }</p> }
-          </div>
-          <div className="field">
-            <label>{ tr('recipes.fields.source') }</label>
-            <textarea rows={3}
-                   value={this.state.text.source || ''}
-                   onChange={this.onTextChange('source')}/>
-          </div>
+        <div className="fields">
+          { this.recipeFieldTextArea('name', 2, 'eight wide') }
+          { this.recipeFieldTextArea('servings', 1, 'three wide') }
+          { this.recipeFieldTextArea('category', 1, 'five wide') }
         </div>
 
-        { this.state.showIngredientHelp && <div className="ui info message">
+        <div className="two fields">
+          { this.recipeFieldTextArea('image') }
+          { this.recipeFieldTextArea('video') }
+        </div>
+
+        { (this.state.showIngredientHelp && !this.state.structuredIngredientsEditor) && <div className="ui info message">
           <i className="close icon" onClick={this.hideIngredientHelp}/>
           <div className="header">
             { tr('recipes.text.parsing_rules.header', null, true) }
@@ -204,24 +285,14 @@ class ImportRecipeForm extends React.Component {
             <li>{ tr('recipes.text.parsing_rules.modifiers', null, true) }</li>
           </ul>
         </div> }
-        <div className={ this.fieldClassName('ingredients') }>
-          <label>{ tr('recipes.fields.ingredients') }</label>
-          <textarea rows={10}
-                    onChange={this.onTextChange('ingredients')}
-                    value={this.state.text.ingredients || ''}/>
-          { this.state.errors.ingredients && <p className="error-text">{ this.state.errors.ingredients }</p> }
-
-        </div>
-        <div className="inline field">
-          <div className="ui checkbox"
-               onClick={this.toggleIngredientsMultisection}>
-            <input type="checkbox"
-                  tabIndex="0"
-                  className="hidden"
-                  defaultChecked={this.state.ingredientsMultisection}/>
-            <label>Multisection</label>
-          </div>
-        </div>
+        { ingredientsEditor }
+        { !this.state.structuredIngredientsEditor && <div className="inline field">
+          <button className="ui right floated mini basic button"
+                  onClick={this.toggleStructuredIngredients}>Switch</button>
+          <CheckboxInput toggle={this.toggleIngredientsMultisection}
+                         checked={this.state.ingredientsMultisection}
+                         label="Multisection"/>
+        </div> }
         <div className={ this.fieldClassName('directions') }>
           <label>{ tr('recipes.fields.directions') }</label>
           <textarea rows={10}
@@ -230,14 +301,11 @@ class ImportRecipeForm extends React.Component {
           { this.state.errors.directions && <p className="error-text">{ this.state.errors.directions }</p> }
         </div>
         <div className="inline field">
-          <div className="ui checkbox"
-               onClick={this.toggleDirectionsMultisection}>
-            <input type="checkbox"
-                  tabIndex="0"
-                  className="hidden"
-                  defaultChecked={this.state.directionsMultisection}/>
-            <label>Multisection</label>
-          </div>
+        <button className="ui right floated mini button"
+                onClick={this.toggleStructuredDirections}>Switch</button>
+          <CheckboxInput toggle={this.toggleDirectionsMultisection}
+                         checked={this.state.directionsMultisection}
+                         label="Multisection"/>
         </div>
 
       </form>

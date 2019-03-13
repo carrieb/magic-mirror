@@ -15,4 +15,14 @@
       margin-right: 3.5px;
     }
   }
+
+  &:lang(jp) {
+    .labeled.button {
+      font-family: 'Kosugi Maru', sans-serif !important;
+
+      .button {
+        font-family: 'Kosugi Maru', sans-serif !important;
+      }
+    }
+  }
 }

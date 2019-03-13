@@ -1,6 +1,10 @@
 .recipes-route-wrapper {
   margin-bottom: 100px;
 
+  &:lang(jp) {
+
+  }
+
   .shopping-list {
     &.expanded + .api-recipes-list {
       margin-left: 20%;
@@ -9,6 +13,14 @@
 
   .centered.image {
     display: block;
+  }
+
+  .previews-list {
+    .slick-slide h3 {
+      &:lang(jp) {
+        font-family: 'Kosugi Maru', sans-serif !important;
+      }
+    }
   }
 
   .api-recipes-list {

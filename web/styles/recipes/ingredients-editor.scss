@@ -1,5 +1,9 @@
 .ingredients-editor {
 
+  .toggle-format.button {
+    margin-bottom: 1rem;
+  }
+
   .select-section-menu a {
     padding-left: 0 !important;
   }
@@ -23,5 +27,11 @@
 
   input {
     padding: 7px !important;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none !important;
+      margin: 0 !important; /* <-- Apparently some margin are still there even though it's hidden */
+    }
   }
 }

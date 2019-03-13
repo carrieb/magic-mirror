@@ -11,6 +11,8 @@ import SectionedEditor from 'components/recipes/section-editor.react';
 
 import { EMPTY_INGREDIENT } from 'state/RecipesState';
 
+import { tr } from 'util/translation-util';
+
 import 'sass/recipes/ingredients-editor.scss';
 
 import _uniqueId from 'lodash/uniqueId';
@@ -41,9 +43,9 @@ class IngredientsEditor extends React.Component {
   };
 
   render() {
-    console.log(this.state.text);
+    // console.log(this.state.text);
     const toggleButton = (
-      <button className="ui fluid basic button"
+      <button className="ui fluid basic button toggle-format"
               onClick={this.toggleShowTextEditor}>
               { this.state.showTextEditor ? 'Switch to Inputs' : 'Switch to Text' }
       </button>
@@ -53,8 +55,8 @@ class IngredientsEditor extends React.Component {
     if (this.state.showTextEditor) {
       content = (
         <div>
-          <h4 className="ui header">Ingredients</h4>
-          { toggleButton }
+          <h4 className="ui header">{ tr('recipes.fields.ingredients') }</h4>
+          { false && toggleButton }
           <textarea value={this.state.text}
                     onChange={this.handleTextChange}/>
         </div>
@@ -71,7 +73,6 @@ class IngredientsEditor extends React.Component {
     }
     return (
       <div className="ingredients-editor">
-
         { content }
       </div>
     );
@@ -79,11 +80,13 @@ class IngredientsEditor extends React.Component {
 }
 
 IngredientsEditor.propTypes = {
-  ingredients: PropTypes.array.isRequired
+  ingredients: PropTypes.array.isRequired,
+  enableCollapse: PropTypes.bool
 }
 
 IngredientsEditor.defaultProps = {
-  ingredients: []
+  ingredients: [],
+  enableCollapse: false
 }
 
 export default IngredientsEditor;

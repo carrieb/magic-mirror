@@ -33,7 +33,7 @@ class Directions extends React.Component {
     if (ingredients.length > 1) {
       allIngredients = allIngredients.concat(ingredients.map(section => section.name.toLowerCase()))
     }
-    console.log(allIngredients);
+    // console.log(allIngredients);
     const keywords = _sortBy(_uniq(allIngredients), keyword => keyword ? -keyword.length : 0);
 
     this.state = { collapsed: true, keywords };
@@ -41,24 +41,21 @@ class Directions extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.ingredients) {
-      const sections = nextProps.ingredients.map(section => {
-        const l = [];
-        l.concat(section.items);
-        if (nextProps.ingredients.length > 1) {
-          l.push({ name: section.name.trim().toLowerCase() });
-        }
-        return l;
-      });
+      const ingredients = nextProps.ingredients;
 
-      const allIngredients = _flatten(sections).map(item => {
-        if (!item) return null;
-        const raw = item.name || item.description
-        return raw.trim().toLowerCase();
-
-        // FIX: below line only works for 'en'
-        // return nlp(item.name || item.description).nouns().toSingular().out('text').trim()
-      });
-
+      const ingredientSections = ingredients.map(section => section.items);
+      let allIngredients = _flatten(ingredientSections)
+        .map(item => {
+          //return item.name;
+          if (!item) return null;
+          return item.name || item.description;
+          // line below only works for 'en'
+          //return nlp(item.name || item.description).nouns().toSingular().out('text').trim()
+        });
+      if (ingredients.length > 1) {
+        allIngredients = allIngredients.concat(ingredients.map(section => section.name.toLowerCase()))
+      }
+      // console.log(allIngredients);
       const keywords = _sortBy(_uniq(allIngredients), keyword => keyword ? -keyword.length : 0);
       this.setState({ keywords });
     }
@@ -69,6 +66,7 @@ class Directions extends React.Component {
   }
 
   render() {
+    console.log('directions display keywords:', this.state.keywords);
     const directions = this.props.directions || [];
     //console.log(this.state.keywords);
     const directionEls = directions.map((directionsList, i) => {

@@ -6,4 +6,10 @@
   .results {
     margin: 0 !important;
   }
+
+  &:lang(jp) {
+    input {
+      font-family: 'Kosugi Maru', sans-serif !important;
+    }
+  }
 }

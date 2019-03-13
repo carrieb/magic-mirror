@@ -8,12 +8,12 @@ import { getLocale } from 'util/translation-util';
 const extraWords = ['of'];
 
 function parseIngredientDetails(str) {
-  //console.log('parsing ingredients from:', str);
-  console.log(str, str.indexOf('(') );
+  // console.log('parsing ingredients from:', str);
+  // console.log(str, str.indexOf('(') );
   if (str.indexOf('(') > -1 || str.indexOf('（') > -1) {
-    console.log('paren in ingr');
+    // console.log('paren in ingr');
     const split = str.split(/\(|（/);
-    console.log(split);
+    // console.log(split);
     const name = split[0].trim();
     const rest = split[1].trim();
     const modifier = rest.substring(0, rest.length - 1);
@@ -43,7 +43,7 @@ function ingredientsToText(ingredients) {
     text += '\n';
   });
 
-  console.log(text);
+  // console.log('ingredients to text result:', text);
   return text;
 }
 
@@ -62,7 +62,7 @@ function directionsToText(directions) {
     text += '\n';
   });
 
-  console.log(text);
+  // console.log('directions to text result:', text);
   return text;
 }
 

@@ -32,7 +32,7 @@ class RepeatableComponent extends React.Component {
       //console.log(value.id, comp.type.name);
 
       return (
-        <div key={value.id} className="inner-component">
+        <div key={value.id || _uniqueId() } className="inner-component">
           <div style={{ position: 'relative' }}>
             <div className="component-wrapper" style={{ width: 'calc(100% - 45px)', display: 'inline-block' }}>
               { comp }
