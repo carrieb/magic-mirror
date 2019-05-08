@@ -77,7 +77,7 @@ const KitchenState = {
 
   alertListeners() {
     listeners.forEach((callback) => {
-      callback(loadedKitchen);
+      callback(loadedKitchen, loadedItems);
     });
   }
 };
@@ -91,6 +91,7 @@ function withKitchen(WrappedComponent) {
       KitchenState.getKitchen();
 
       this.state = {
+        items: loadedItems,
         kitchen: loadedKitchen
       }
     }
@@ -99,9 +100,10 @@ function withKitchen(WrappedComponent) {
       KitchenState.removeChangeListener(this.handleChange);
     }
 
-    handleChange = (kitchen) => {
+    handleChange = (kitchen, items) => {
       this.setState({
-        kitchen
+        kitchen,
+        items
       });
     };
 
@@ -112,6 +114,7 @@ function withKitchen(WrappedComponent) {
     }
 
     updateItem = (id, item) => {
+      console.log(id, item);
       const kitchen = _clone(this.state.kitchen);
       kitchen[id] = item;
       this.setState(kitchen);
@@ -131,6 +134,7 @@ function withKitchen(WrappedComponent) {
         <WrappedComponent addItem={this.addItem}
                           updateItem={this.updateItem}
                           star={this.star}
+                          kitchen={this.state.items}
                           kitchenIndex={this.state.kitchen}
                           {...this.props}/>
       );

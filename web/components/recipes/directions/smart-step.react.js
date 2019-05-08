@@ -3,10 +3,6 @@ import nlp from 'compromise';
 
 import _uniqueId from 'lodash/uniqueId';
 
-import { tr } from 'util/translation-util'
-
-const TOOLS = ['pot', 'bag', 'heat'].map((str) => tr(`recipes.tools.${str}`));
-
 class SmartStep extends React.Component {
   highlightKeywords(text) {
     //console.log(text, this.state.keywords);
@@ -29,7 +25,9 @@ class SmartStep extends React.Component {
       }
     });
 
-    TOOLS.forEach((toolKeyword) => {
+    const tools = this.props.toolKeywords || [];
+
+    tools.forEach((toolKeyword) => {
       const regex = new RegExp(toolKeyword, 'i');
       const match = text.match(regex);
       if (match) {
@@ -37,8 +35,12 @@ class SmartStep extends React.Component {
           keyword: toolKeyword,
           type: 'tool'
         });
+
+        // TODO: collect all matching tools to a section at the bottom? 
       }
     });
+
+    // TODO: add temperature / time regex ? use that to prefill structured data ?
 
     //console.log(matched);
 

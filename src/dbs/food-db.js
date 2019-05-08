@@ -31,7 +31,8 @@ const FoodDb = {
           servingSize: item.servingSize,
           quantity: item.quantity,
           category: item.category.trim(),
-          zone: item.zone.trim()
+          zone: item.zone.trim(),
+          ndbno: item.ndbno
         }
       })
       .then(callback)

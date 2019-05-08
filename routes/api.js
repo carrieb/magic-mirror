@@ -8,6 +8,7 @@ const WanikaniApi = require('../src/api/wanikani-api')
 const WunderlistApi = require('../src/api/wunderlist-api')
 const CalendarApi = require('../src/api/calendar-api')
 const GuildWars2Api = require('../src/api/gw2-api')
+const USDAFoodApi = require('../src/api/usda-food-api')
 
 const GuildWars2DB = require('../src/dbs/gw2-db');
 const RecipesDb = require('../src/dbs/recipes-db');
@@ -88,6 +89,23 @@ router.get('/guildwars/wallet', cache('1 day'), (req, res) => {
     (result) => res.json(result),
     (err) => res.status(500).send('Failed to get gw2 wallet history.')
   );
+});
+
+router.post('/usda/search', jsonParser, (req, res) => {
+  USDAFoodApi.searchForFood(req.body.query, (result) => {
+    console.log(result);
+    res.json(result.list.item);
+  }, (error) => {
+    res.status(500).send(`Failed to search USDA for '${req.body.query}'`);
+  })
+});
+
+router.get('/usda/retrieve', (req, res) => {
+  USDAFoodApi.retrieveFood(req.query.ndbno, (result) => {
+    res.json(result);
+  }, (error) => {
+    res.status(500).send(`Failed to retrieve from USDA ndbno: ${req.query.ndbno}`);
+  });
 });
 
 module.exports = router;

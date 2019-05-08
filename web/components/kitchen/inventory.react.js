@@ -3,29 +3,30 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { withKitchen } from 'state/KitchenState';
-import KitchenConstants from 'state/kitchen/kitchen-constants';
+import { ALL_ZONES, ALL_CATEGORIES, ALL_ITEM_FIELDS } from 'state/kitchen/kitchen-constants';
 
 import FixedFooter from 'components/common/fixed-footer.react';
 
 import CardLayout from 'components/kitchen/card-layout.react';
-import ListLayout from 'components/kitchen/list-layout.react';
+import TableLayout from 'components/kitchen/table-layout.react';
 import ImageOption from 'components/kitchen/image-option.react';
 
 import LocalStorageUtil from 'util/local-storage-util';
 
 import Dropdown from 'components/common/dropdown.react';
 
+import { filterItems } from 'util/kitchen-util';
+
+import { tr } from 'util/translation-util';
+
 import _kebabCase from 'lodash/kebabCase';
 import _isEqual from 'lodash/isEqual';
 import _clone from 'lodash/clone';
 import _values from 'lodash/values';
-
-import { tr } from 'util/translation-util';
+import _concat from 'lodash/concat';
+import _pull from 'lodash/pull';
 
 import 'sass/kitchen/inventory.scss';
-
-const ALL_CATEGORIES = KitchenConstants.ALL_CATEGORIES;
-const ALL_ZONES = KitchenConstants.ALL_ZONES;
 
 class KitchenInventory extends React.Component {
   constructor(props) {
@@ -33,23 +34,17 @@ class KitchenInventory extends React.Component {
 
     this.state = {
       selectedItem: null,
-      layout: 'Cards',
+      layout: 'List',
+      fields: ['name', 'category', 'quantity', 'expiration', 'usda ndbno'],
       categories: LocalStorageUtil.getInventoryFilterCategories() || _clone(ALL_CATEGORIES),
       zones: LocalStorageUtil.getInventoryFilterZones() || _clone(ALL_ZONES),
       includeOutOfStock: false,
-      groupByCategory: true,
+      groupByCategory: LocalStorageUtil.getFieldForComponent('KitchenInventory', 'groupByCategory') || false,
+      groupByZone: LocalStorageUtil.getFieldForComponent('KitchenInventory', 'groupByZone') || false,
       expandFilters: false,
       expandOptions: false,
       categorize: false
     }
-  }
-
-  componentDidUpdate() {
-    if (this.state.layout === 'table') {
-      $('table').tablesort();
-    }
-
-    //console.log(localStorage.getItem('scroll'))
   }
 
   componentWillUnmount() {
@@ -91,77 +86,69 @@ class KitchenInventory extends React.Component {
     });
   }
 
-  filteredItems = () => {
-    return _values(this.props.kitchenIndex)
-    .filter((item) => {
-      let filtered = false;
-      if (item.zone && this.state.zones.indexOf(item.zone) === -1) {
-        filtered = true;
-      }
-      if (item.category && this.state.categories.indexOf(item.category) === -1) {
-        filtered = true;
-      }
-      if (!this.state.includeOutOfStock && item.quantity.amount === 0) {
-        filtered = true;
-      }
-      return !filtered;
-    })
-  }
-
   render() {
     console.log('kitchen inventory render', this.state, Object.keys(this.props.kitchenIndex).length);
     console.log(this.state.categories, this.state.zones);
     let inventory = null;
-    const filteredItems = this.filteredItems();
+    const filteredItems = filterItems(this.props.kitchen, this.state);
 
     if (this.state.layout === 'Cards') {
       inventory = <CardLayout items={filteredItems} categorize={this.state.groupByCategory}/>;
     }
 
     if (this.state.layout === 'List') {
-      const rows = this.state.kitchen.map((foodItem, idx) => {
-        let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/food-images/no-image.png';
-        return (
-          <tr key={idx} className="food-item-row">
-            <td><img src={imageUrl}/></td>
-            <td>{foodItem.description}</td>
-            <td>...</td>
-          </tr>
-        )
-      });
-
-      inventory = <ListLayout>{ rows }</ListLayout>;
+      inventory = <TableLayout items={filteredItems}
+                               categorize={this.state.groupByCategory}
+                               zone={this.state.groupByZone}
+                               fields={this.state.fields}/>;
     }
 
     const imageOption = (type, isSelected) => {
       return (name) => <ImageOption key={name} name={name} type={type} selected={isSelected(name)}/>;
     }
 
+    const categorySearchFilter = <Dropdown className="fluid multiple search selection categories"
+              options={{ onChange: this.onCategoriesChange, className: { label: 'ui basic label' } }}
+              key="categories"
+              value={this.state.categories}>
+        { ALL_CATEGORIES.map(
+            imageOption('ingredients.categories',
+              (name) => this.state.categories.indexOf(name) >= -1)) }
+    </Dropdown>;
+
+    const zoneSearchFilter = <Dropdown className="fluid multiple search selection zones"
+              options={{ onChange: this.onZonesChange, className: { label: 'ui basic label' }  }}
+              key="zones"
+              value={this.state.zones}>
+        { ALL_ZONES.map(
+            imageOption('inventory.zones',
+              (name) => this.state.zones.indexOf(name) >= -1)) }
+    </Dropdown>;
+
     const filters = [
-      <Dropdown className="fluid multiple search selection categories"
-                options={{ onChange: this.onCategoriesChange, className: { label: 'ui basic label' } }}
-                key="categories"
-                value={this.state.categories}>
-          { ALL_CATEGORIES.map(
-              imageOption('ingredients.categories',
-                (name) => this.state.categories.indexOf(name) >= -1)) }
-      </Dropdown>,
-      <Dropdown className="fluid multiple search selection zones"
-                options={{ onChange: this.onZonesChange, className: { label: 'ui basic label' }  }}
-                key="zones"
-                value={this.state.zones}>
-          { ALL_ZONES.map(
-              imageOption('inventory.zones',
-                (name) => this.state.zones.indexOf(name) >= -1)) }
-      </Dropdown>,
+      categorySearchFilter,
+      zoneSearchFilter,
       <button className="ui fluid basic green button" onClick={this.addAllFilters}>
         { tr('inventory.cta.Show Me Everything') }
       </button>
     ];
 
-    const layoutClassName = (layout) => `ui ${this.state.layout === layout ? 'disabled active' : ''} vertical animated icon button`;
+    const fieldCheckboxes = ALL_ITEM_FIELDS.map((field) => {
+      return <div className="field" key={field}>
+        <div className="ui checkbox">
+          <input type="checkbox"
+                 name="columns"
+                 checked={ this.state.fields.indexOf(field) > -1 }
+                 onClick={ (ev) => { if (ev.target.checked) { this.setState({ fields: _concat(this.state.fields, field) }); } else { this.setState({ fields: _pull(this.state.fields, field) }); } }}/>
+          <label>{ tr(`table.column.${field}`) }</label>
+        </div>
+      </div>
+    });
+
+    const layoutClassName = (layout) =>
+      `ui ${this.state.layout === layout ? 'active' : ''} vertical animated icon button`;
     const options = (
-      <div>
+      <div className="inventory-options-wrapper">
         <div className="ui basic fluid buttons">
           <div className={layoutClassName('Cards')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
             <div className="hidden content">Cards</div>
@@ -189,9 +176,30 @@ class KitchenInventory extends React.Component {
           <input type="checkbox"
                  name="public"
                  checked={this.state.groupByCategory}
-                 onClick={ () => this.setState({ groupByCategory: !this.state.groupByCategory })}/>
+                 onClick={() => {
+                   this.setState({ groupByCategory: !this.state.groupByCategory });
+                   LocalStorageUtil.saveFieldForComponent('KitchenInventory', 'groupByCategory', !this.state.groupByCategory);
+                 }}/>
           <label>Group by category</label>
         </div>
+
+        <div className="ui fluid toggle checkbox">
+          <input type="checkbox"
+                 name="public"
+                 checked={this.state.groupByZone}
+                 onClick={ () => {
+                   this.setState({ groupByZone: !this.state.groupByZone });
+                   LocalStorageUtil.saveFieldForComponent('KitchenInventory', 'groupByZone', !this.state.groupByZone);
+                 }}/>
+          <label>Group by zone</label>
+        </div>
+
+        { this.state.layout === 'List' && <div className="ui form">
+          <div className="inline fields">
+            <label>Fields</label>
+            { fieldCheckboxes }
+          </div>
+        </div> }
       </div>
     );
 

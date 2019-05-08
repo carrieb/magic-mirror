@@ -11,6 +11,7 @@ import ControlledItemEditor from 'components/kitchen/controlled-item-editor.reac
 
 import KitchenItemFeed from 'components/kitchen/item/kitchen-item-feed.react';
 import RecipesForItem from 'components/kitchen/recipes-for-item.react';
+import USDALinker from 'components/kitchen/item/usda-linker.react';
 
 import uniqueId from 'lodash/uniqueId';
 import _isEmpty from 'lodash/isEmpty';
@@ -47,7 +48,9 @@ class KitchenItemEditor extends React.Component {
       foodItem,
       id: uniqueId(),
       editingName: false,
-      error: null
+      error: null,
+      showUSDA: false,
+      USDAQuery: null
     };
   }
 
@@ -171,6 +174,12 @@ class KitchenItemEditor extends React.Component {
       });
   }
 
+  showLinkUSDA = () => {
+    this.setState({
+      showUSDA: true
+    });
+  }
+
   toggleNameEdit() {
     this.setState({ editingName: true });
   }
@@ -245,11 +254,21 @@ class KitchenItemEditor extends React.Component {
 
     const content = (
       <div>
-        <ControlledItemEditor foodItem={this.state.foodItem}
+        <ControlledItemEditor foodItem={foodItem}
                               onChange={this.updateFoodItem}/>
-        <button className="ui green fluid button" style={{ marginTop: '20px' }} onClick={() => this.updateFields()}>Done</button>
+        <button className="ui green fluid button" style={{ marginTop: '20px' }}
+                onClick={this.updateFields}>Done</button>
+        <button className="ui fluid violet icon button"
+                style={{ marginTop: '20px' }}
+                onClick={this.showLinkUSDA}>
+          <i className="linkify icon"/>
+          { foodItem.ndbno ? `Linked to USDA food ndbno: ${foodItem.ndbno }` : 'Link to USDA food database' }
+        </button>
+        { this.state.showUSDA && <USDALinker itemId={foodItem._id} defaultQuery={foodItem.name || foodItem.description}/> }
       </div>
     );
+
+    // TODO: split this into a full page view and rework this component to be purely the editor
 
     return (
       <div className="food-editor-container">
@@ -260,7 +279,6 @@ class KitchenItemEditor extends React.Component {
             <KitchenItemFeed item={this.state.foodItem}/>
           </div>
           <div className="ten wide column">
-
             { this.state.error && <div className="error-text">{this.state.error}</div>}
             <div className="content">{ content }</div>
           </div>

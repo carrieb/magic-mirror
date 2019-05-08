@@ -71,6 +71,21 @@ const ApiWrapper = {
       .fail((err) => alert(err));
   },
 
+  searchUSDA(query) {
+    return $.ajax('/api/usda/search', {
+      type: 'POST',
+      data: JSON.stringify({ query }),
+      contentType: 'application/json; charset=utf-8'
+    }).done((res) => {
+        //console.log('/kitchen response', res);
+      })
+      .fail((err) => alert(JSON.stringify(err)));
+  },
+
+  retrieveUSDAData(ndbno) {
+    return $.ajax(`/api/usda/retrieve?ndbno=${ndbno}`);
+  },
+
   submitCrop(filename, crop, callback) {
     let data = { filename };
     data = assign(data, crop);

@@ -9,6 +9,8 @@ import QuantityFormField from './item/form/QuantityFormField.react';
 
 import KitchenConstants from 'state/kitchen/kitchen-constants';
 
+import { tr } from 'util/translation-util';
+
 import _kebabCase from 'lodash/kebabCase';
 
 class ItemEditor extends React.Component {
@@ -70,6 +72,17 @@ class ItemEditor extends React.Component {
                     options={{ onChange: (value, text, choice) => this.props.onChange('zone', value) }}>
             { zoneOptions }
           </Dropdown>
+        </div>
+
+        <div className="five wide column">
+          <h5>{ tr('table.column.brand') }</h5>
+        </div>
+        <div className="eleven wide column">
+          <div className="ui fluid input">
+            <input type="text"
+                   value={this.props.foodItem.brand}
+                   onChange={(ev) => this.props.onChange('brand', ev.target.value)}/>
+          </div>
         </div>
       </div>
     );

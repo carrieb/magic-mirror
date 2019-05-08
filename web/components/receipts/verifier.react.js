@@ -12,6 +12,8 @@ import 'sass/receipts/verifier.scss';
 import _assign from 'lodash/assign';
 import _clone from 'lodash/clone';
 
+// TODO: Update this to use more recent editor from ingedients inputs?
+
 class Verifier extends React.Component {
   constructor(props) {
     super(props);

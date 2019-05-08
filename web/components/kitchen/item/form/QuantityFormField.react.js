@@ -32,9 +32,10 @@ class QuantityFormField extends React.Component {
   }
 
   render() {
+    // TODO: lookup quantities from 'src/quantities' for locale
     return (
       <InputDropdownGroup className={this.props.className}
-        options={['tsp', 'tbsp', 'quarter cup', 'cup', 'gram', 'ml', 'oz', 'pkg', 'lb']}
+        options={['tsp', 'tbsp', 'quarter cup', 'cup', 'gram', 'ml', 'oz', 'pkg', 'lb', 'can']}
         defaultDropdownValue={this.props.quantity ? this.props.quantity.unit : 'cup'}
         onDropdownChange={(value, text, choice) => this.onUnitChange(value, text, choice)}>
         <input value={this.props.quantity ? this.props.quantity.amount : ''}

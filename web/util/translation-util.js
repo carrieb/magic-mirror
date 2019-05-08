@@ -84,6 +84,7 @@ const en = new Polyglot({
 
     ingredients: {
       text: '%{quantity} of %{modifier} %{name} |||| %{quantity}s of %{modifier} %{name}',
+      no_unit_text: '%{quantity} %{modifier} %{name} |||| %{quantity} %{modifier} %{name}s',
 
       categories: {
         'dry-goods': 'Dry Goods',
@@ -248,7 +249,11 @@ const jp = new Polyglot({
         name: '名前',
         recipes: 'レシピ',
         category: '種類',
-        amount: '量'
+        amount: '量',
+        'usda ndbno': 'USDA番',
+        quantity: '数量',
+        expiration: '賞味期間',
+        brand: 'ブランド'
       }
     },
 
@@ -309,7 +314,18 @@ const jp = new Polyglot({
       tools: {
         'bag': '袋',
         'pot': '鍋',
-        'heat': '火'
+        'heat': '火',
+        'refridgerator': '冷蔵庫',
+        'tea towel': '茶巾',
+        'plastic wrap': 'ラップ',
+        'whisk': '泡立て器',
+        'microwave': '電子レンジ',
+        'rolling pin': 'めん棒',
+        'bowl': 'ボウル',
+        'baking sheet': 'クッキングシート',
+        'brush': 'ハケ',
+        'bubble wrap': '気泡緩衝材',
+        'pan': '平鍋'
       },
 
       fields: {
@@ -356,7 +372,8 @@ const jp = new Polyglot({
     },
 
     ingredients: {
-      text: '%{quantity} %{name} %{modifier}',
+      text: '%{quantity} %{name} (%{modifier})',
+      no_unit_text: '%{quantity} %{name} (%{modifier})',
 
       categories: {
         'dry goods': '穀類',

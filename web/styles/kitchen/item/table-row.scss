@@ -1,0 +1,14 @@
+tr.kitchen-item-list-item {
+  td:first-child {
+      text-align: center;
+  }
+
+  img[src^="/food-images/"] {
+    max-height: 80px;
+    max-width: 80px;
+    height: auto;
+    width: auto;
+  }
+
+
+}

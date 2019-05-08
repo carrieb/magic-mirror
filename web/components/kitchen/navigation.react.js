@@ -41,7 +41,7 @@ class KitchenNavigation extends React.Component {
           Kitchen
           <i className="dropdown icon"/>
           <div className="menu">
-            <a className="item">Inventory</a>
+            <a className="item" href="/kitchen/inventory">Inventory</a>
             <a className="item">Import</a>
           </div>
         </div>
@@ -57,7 +57,7 @@ class KitchenNavigation extends React.Component {
               <i className="shopping  basket icon"/>
               <i className="inverted corner upload icon"/>
             </i>
-            { tr(`nav.actions.import`) }
+            Import Receipt
           </a>
           <div className="item" style={{ padding: 0 }}>
             <SearchItemsByNameDropdown/>

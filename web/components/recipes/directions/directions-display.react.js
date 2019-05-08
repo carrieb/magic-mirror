@@ -73,10 +73,17 @@ class Directions extends React.Component {
       const title = <div className="ui sub header">{ directionsList.name || tr('recipes.fields.directions') }</div>;
       const steps = directionsList.steps || [];
 
+      const allTools = ['pot', 'bag', 'heat',
+        'refridgerator', 'tea towel', 'plastic wrap',
+        'whisk', 'microwave', 'rolling pin', 'bowl', 'baking sheet',
+        'brush', 'bubble wrap', 'pan'];
+      let tools = allTools.map((str) => tr(`recipes.tools.${str}`));
+      console.log(tools);
+
       const stepEls = steps.map((step, idx) => {
         if ((this.props.enableCollapse) && (this.state.collapsed && idx >= MAX_ITEMS)) { return null };
         return <div className="item" key={idx}>
-          <SmartStep step={step.content} keywords={this.state.keywords}/>
+          <SmartStep step={step.content} keywords={this.state.keywords} toolKeywords={tools}/>
         </div>
       });
 

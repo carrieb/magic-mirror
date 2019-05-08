@@ -1,5 +1,17 @@
 .recipe-card {
   .ui.card {
+    .ingredients-wrapper {
+      .header {
+        color: #f75d5d;
+      }
+    }
+
+    .directions-wrapper {
+      .header {
+        color: #f75d5d;
+      }
+    }
+
     .ingredients-section:not(:last-child) {
       margin-bottom: 1em;
     }

@@ -1,6 +1,9 @@
 .kitchen-navigation {
+  > .dropdown.item {
+    background: rgba(0,0,0,.05) !important;
+  }
 
-  .header {
+  .item {
     text-transform: capitalize !important;
   }
 

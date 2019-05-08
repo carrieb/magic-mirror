@@ -47,6 +47,14 @@
       margin-top: 10px;
     }
   }
+
+  &:lang(jp) {
+    font-family: 'Kosugi Maru', sans-serif !important;
+
+    .header {
+      font-family: 'Kosugi Maru', sans-serif !important;
+    }
+  }
 }
 
 div.kitchen-inventory {
@@ -85,5 +93,13 @@ div.kitchen-inventory {
   .category-header {
     font-size: 1.65rem !important;
     font-weight: normal !important;
+  }
+}
+
+.inventory-options-wrapper .inline.fields {
+  margin: 1rem 0 !important;
+
+  label {
+    text-transform: capitalize !important;
   }
 }
