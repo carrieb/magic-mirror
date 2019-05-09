@@ -1,11 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom'
 
+import { ALL_ITEM_FIELDS } from 'state/kitchen/kitchen-constants';
+
 import 'sass/kitchen/item/table-row.scss';
 
 import { tr } from 'util/translation-util';
 
 import _kebabCase from 'lodash/kebabCase';
+import _intersection from 'lodash/intersection';
 
 const fieldToContent = (field, item) => {
   const lookup = {
@@ -39,7 +42,8 @@ class KitchenItemTableRow extends React.Component {
 
     const imageUrl = item.img ? `/food-images/${item.img}` : '/food-images/no-image.png';
     const name = item.description || item.name;
-    const columns = this.props.fields.map((field) => {
+    const ordered = _intersection(ALL_ITEM_FIELDS, this.props.fields);
+    const columns = ordered.map((field) => {
       return <td key={field}>{ fieldToContent(field, item) }</td>
     });
 

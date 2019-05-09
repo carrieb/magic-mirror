@@ -10,6 +10,7 @@ import { ALL_ITEM_FIELDS } from 'state/kitchen/kitchen-constants';
 import { tr } from 'util/translation-util';
 
 import _intersection from 'lodash/intersection';
+import _range from 'lodash/range';
 
 import 'sass/kitchen/table-layout.scss';
 
@@ -33,7 +34,7 @@ class ItemsTable extends React.Component {
       if (field === 'name') {
         return <th key={field} ref={(defaultSort) => { this.defaultSort = defaultSort }}>{ tr(`table.column.${field}`) }</th>
       } else {
-        return <th key={field}>{ name === 'usda ndbno' && <i className="ui linkify icon"/> }{ tr(`table.column.${field}`) }</th>;
+        return <th key={field}>{ field === 'usda ndbno' && <i className="ui linkify icon"/> }{ tr(`table.column.${field}`) }</th>;
       }
     });
 
@@ -52,10 +53,7 @@ class ItemsTable extends React.Component {
           <tr>
             <th/>
             <th>{items.length} Items</th>
-            <th/>
-            <th/>
-            <th/>
-            <th/>
+            { _range(orderedColumns.length - 1).map((i) => <th key={i}/>) }
           </tr>
         </tfoot>
       </table>

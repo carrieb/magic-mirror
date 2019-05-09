@@ -2,6 +2,7 @@ import ApiWrapper from 'util/api-wrapper';
 
 import _clone from 'lodash/clone';
 import _debounce from 'lodash/debounce';
+import _isEmpty from 'lodash/isEmpty';
 
 import React from 'react';
 
@@ -56,6 +57,24 @@ const KitchenState = {
 
   getKitchen() {
     this.debouncedRequest();
+  },
+
+  updateItem(item) {
+    console.log('KitchenState update', item);
+    return ApiWrapper.updateFood(item)
+      .done((insertedId) => {
+        if (_isEmpty(item._id)) {
+          console.log('new', insertedId);
+          // console.log('upserted food', insertedId);
+          item._id = insertedId;
+          loadedItems.push(item);
+          KitchenState.done(loadedItems);
+        } else {
+          console.log('updated');
+          loadedKitchen[item._id] = item;
+          // FIX: this won't work
+        }
+      });
   },
 
   star(id, starred) {
@@ -120,6 +139,11 @@ function withKitchen(WrappedComponent) {
       this.setState(kitchen);
     }
 
+    newUpdateItem = (item) => {
+      console.log('withKitchen new update');
+      return KitchenState.updateItem(item);
+    }
+
     star = (id, starred) => {
       return ApiWrapper.star(id, starred)
         .done(() => {
@@ -133,6 +157,7 @@ function withKitchen(WrappedComponent) {
       return (
         <WrappedComponent addItem={this.addItem}
                           updateItem={this.updateItem}
+                          newUpdateItem={this.newUpdateItem}
                           star={this.star}
                           kitchen={this.state.items}
                           kitchenIndex={this.state.kitchen}

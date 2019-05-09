@@ -26,12 +26,13 @@ const FoodDb = {
         "_id": o_id
       }, {
         "$set": {
-          description: item.description.trim(),
+          name: item.name ? item.name.trim() : null,
+          description: item.description ? item.description.trim() : null,
           expiration: item.expiration,
           servingSize: item.servingSize,
           quantity: item.quantity,
-          category: item.category.trim(),
-          zone: item.zone.trim(),
+          category: item.category ? item.category.trim() : null,
+          zone: item.zone ? item.zone.trim() : null,
           ndbno: item.ndbno
         }
       })

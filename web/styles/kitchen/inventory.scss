@@ -33,11 +33,7 @@
     }
 
     .buttons {
-      .button.active, .button.active:hover {
-        background-color: white !important;
-      }
-
-      .button, .button:hover {
+      .button {
         background-color: rgba(255, 255, 255, .25) !important;
       }
     }
@@ -96,10 +92,18 @@ div.kitchen-inventory {
   }
 }
 
-.inventory-options-wrapper .inline.fields {
-  margin: 1rem 0 !important;
+.inventory-options-wrapper {
+  .inline.fields {
+    margin: 1rem 0 !important;
 
-  label {
-    text-transform: capitalize !important;
+    label {
+      text-transform: capitalize !important;
+    }
+  }
+}
+
+.inventory-filters-wrapper {
+  .ui.label {
+    box-shadow: none !important;
   }
 }

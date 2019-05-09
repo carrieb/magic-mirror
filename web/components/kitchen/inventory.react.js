@@ -11,6 +11,8 @@ import CardLayout from 'components/kitchen/card-layout.react';
 import TableLayout from 'components/kitchen/table-layout.react';
 import ImageOption from 'components/kitchen/image-option.react';
 
+import AddModal from 'components/shared/add-modal.react';
+
 import LocalStorageUtil from 'util/local-storage-util';
 
 import Dropdown from 'components/common/dropdown.react';
@@ -33,6 +35,7 @@ class KitchenInventory extends React.Component {
     super(props);
 
     this.state = {
+      showAddModal: false,
       selectedItem: null,
       layout: 'List',
       fields: ['name', 'category', 'quantity', 'expiration', 'usda ndbno'],
@@ -51,10 +54,12 @@ class KitchenInventory extends React.Component {
     localStorage.setItem('scroll:', window.scrollY);
   }
 
-  toggleLayout = () => {
-    this.setState({
-      layout: this.state.layout === 'Cards' ? 'List' : 'Cards'
-    });
+  toggleLayout = (layout) => {
+    if (this.state.layout !== layout) {
+      this.setState({
+        layout
+      });
+    }
   };
 
   toggleFilterExpansion = () => {
@@ -67,14 +72,14 @@ class KitchenInventory extends React.Component {
 
   onZonesChange = (raw) => {
     const zones = raw.split(',');
-    console.log(raw);
+    //console.log(raw);
     LocalStorageUtil.saveInventoryFilterZones(zones);
     this.setState({ zones });
   }
 
   onCategoriesChange = (raw) => {
     const categories = raw.split(',');
-    console.log(raw);
+    //console.log(raw);
     LocalStorageUtil.saveInventoryFilterCategories(categories);
     this.setState({ categories });
   }
@@ -88,7 +93,7 @@ class KitchenInventory extends React.Component {
 
   render() {
     console.log('kitchen inventory render', this.state, Object.keys(this.props.kitchenIndex).length);
-    console.log(this.state.categories, this.state.zones);
+    //console.log(this.state.categories, this.state.zones);
     let inventory = null;
     const filteredItems = filterItems(this.props.kitchen, this.state);
 
@@ -125,13 +130,13 @@ class KitchenInventory extends React.Component {
               (name) => this.state.zones.indexOf(name) >= -1)) }
     </Dropdown>;
 
-    const filters = [
-      categorySearchFilter,
-      zoneSearchFilter,
+    const filters = <div className="inventory-filters-wrapper">
+       { categorySearchFilter }
+       { zoneSearchFilter }
       <button className="ui fluid basic green button" onClick={this.addAllFilters}>
         { tr('inventory.cta.Show Me Everything') }
       </button>
-    ];
+    </div>;
 
     const fieldCheckboxes = ALL_ITEM_FIELDS.map((field) => {
       return <div className="field" key={field}>
@@ -150,21 +155,21 @@ class KitchenInventory extends React.Component {
     const options = (
       <div className="inventory-options-wrapper">
         <div className="ui basic fluid buttons">
-          <div className={layoutClassName('Cards')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
-            <div className="hidden content">Cards</div>
+          <div className={layoutClassName('Cards')} tabIndex="0" onClick={(ev) => this.toggleLayout('Cards')}>
+            <div className="hidden content">Card Layout</div>
             <div className="visible content">
               <i className="grid layout icon"/>
             </div>
           </div>
-          <div className={layoutClassName('List')} tabIndex="0" onClick={(ev) => this.toggleLayout(ev)}>
-            <div className="hidden content">List</div>
+          <div className={layoutClassName('List')} tabIndex="0" onClick={(ev) => this.toggleLayout('List')}>
+            <div className="hidden content">List Layout</div>
             <div className="visible content">
               <i className="list layout icon"/>
             </div>
           </div>
         </div>
 
-        <div className="ui toggle checkbox">
+        <div className="ui fluid toggle checkbox">
           <input type="checkbox"
                  name="public"
                  checked={this.state.includeOutOfStock}
@@ -205,6 +210,7 @@ class KitchenInventory extends React.Component {
 
     return (
       <div className="kitchen-inventory">
+        { this.state.showAddModal && <AddModal onCancel={ () => this.setState({ showAddModal: false }) }/> }
         <div className="inventory-wrapper">
         <div className="header">
           <div className="ui fluid basic icon buttons">
@@ -227,9 +233,7 @@ class KitchenInventory extends React.Component {
         </div>
         </div>
         <FixedFooter>
-          <Link to="/kitchen/item/new">
-            <button className="ui large purple button">Add Item</button>
-          </Link>
+          <button className="ui large purple button" onClick={ () => this.setState({ showAddModal: true } )}>Add Item</button>
         </FixedFooter>
       </div>
     );

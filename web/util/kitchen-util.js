@@ -13,7 +13,7 @@ function filterItems(items, {
     if (item.category && categories.indexOf(item.category) === -1) {
       filtered = true;
     }
-    if (!includeOutOfStock && item.quantity.amount === 0) {
+    if (!includeOutOfStock && item.quantity && item.quantity.amount === 0) {
       filtered = true;
     }
     return !filtered;

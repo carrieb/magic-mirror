@@ -34,6 +34,8 @@ class KitchenItemEditor extends React.Component {
     // try looking it up in the kitchen index
     const loadedItem = this.lookupDetails(name);
 
+    //console.log(props, this.props.match.params.foodName, loadedItem);
+
     if (!_isEmpty(loadedItem)) {
       foodItem = loadedItem;
     } else {
@@ -55,7 +57,7 @@ class KitchenItemEditor extends React.Component {
   }
 
   lookupDetails = (name) => _find(this.props.kitchenIndex,
-      (item) => _lowerCase(item.description) === name);
+      (item) => item.name ? _lowerCase(item.name) === name : _lowerCase(item.description) === name);
 
   componentWillMount() {
     if (this.state.foodItem === null) {
@@ -64,7 +66,7 @@ class KitchenItemEditor extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    //console.log('did update', prevProps, this.props);
+    //console.log('did update', prevProps, this.props, this.state);
     if (this.state.editingName) {
       // focus on that span
       //console.log('focusing on name input');
@@ -78,7 +80,11 @@ class KitchenItemEditor extends React.Component {
        * }).sort())
        */
       const me = _find(this.props.kitchenIndex,
-        (item) => _lowerCase(item.description) === this.state.foodItem.description);
+        (item) => (item) =>  {
+          const myName = this.state.foodItem.description || this.state.foodItem.name;
+          const theirName = item.description || item.name;
+          return _lowerCase(myName) === _lowerCase(theirName);
+        });
       if (!_isEmpty(me)) {
         //console.log('found', me);
         this.setState({ foodItem: me });
@@ -87,15 +93,20 @@ class KitchenItemEditor extends React.Component {
 
     if (!_isEqual(prevProps.kitchenIndex, this.props.kitchenIndex)) {
       // attempt to look myself up
+      // console.log('looking myself up');
 
       //console.log(`kitchen index update, finding ${this.state.foodItem.description} in the kitchen index`)
       //console.log(_values(this.props.kitchenIndex).map((item) => {
       //  return item.description
       // }).sort())
       const me = _find(this.props.kitchenIndex,
-        (item) => _lowerCase(item.description) === _lowerCase(this.state.foodItem.description));
+        (item) =>  {
+          const myName = this.state.foodItem.description || this.state.foodItem.name;
+          const theirName = item.description || item.name;
+          return _lowerCase(myName) === _lowerCase(theirName);
+        });
       if (!_isEmpty(me)) {
-        //console.log('found', me);
+        console.log('found', me);
         this.setState({ foodItem: me });
       }
     }
@@ -145,33 +156,8 @@ class KitchenItemEditor extends React.Component {
   updateFields = () => {
     const food = this.state.foodItem;
     // console.log(food);
-    if (!food._id) {
-      // console.log('new new new');
-      // ensure that name is not new
-      if (this.state.foodItem.description === 'new') {
-        // console.log(this.state.foodItem.description);
-        this.setState({ error: 'Name must be provided to save!'});
-        return;
-      }
-    }
 
-    // TODO: move this to kitchen state
-    ApiWrapper.updateFood(food)
-      .done((insertedId) => {
-        const foodItem = this.state.foodItem;
-        LocalStorageUtil.saveZone(foodItem.zone);
-        LocalStorageUtil.saveCategory(foodItem.category);
-        if (_isEmpty(food._id)) {
-          // console.log('upserted food', insertedId);
-          foodItem._id = insertedId;
-          this.props.addItem(food);
-        } else {
-          this.props.updateItem(food._id, food);
-        }
-
-        // why did I want to do this? doesn't work if we're adding a new item because of how /new works
-        // this.props.history.goBack();
-      });
+    this.props.newUpdateItem(food);
   }
 
   showLinkUSDA = () => {
@@ -187,11 +173,12 @@ class KitchenItemEditor extends React.Component {
   editName() {
     const foodItem = this.state.foodItem;
     foodItem.description = this.nameInput.innerText;
-    this.setState({ editingName: false });
+    foodItem.name = this.nameInput.innerText;
+    this.setState({ editingName: false, foodItem });
     // TODO: add this item in the kitchen then navigate
 
     // TODO: WARN/FAIL if we already have an item named this
-    this.props.history.push(`/kitchen/item/${foodItem.description}`);
+    // this.props.history.push(`/kitchen/item/${foodItem.description}`);
   }
 
   handleKeypress(ev) {
@@ -203,6 +190,8 @@ class KitchenItemEditor extends React.Component {
 
   render() {
     const foodItem = this.state.foodItem;
+    // console.log(this.props, this.state);
+    // console.log(foodItem, this.props.kitchenIndex[foodItem._id]);
 
     // (<div className="ui transparent input">
     //   <input
@@ -216,15 +205,17 @@ class KitchenItemEditor extends React.Component {
 
     //console.log('render editor handler', foodItem, this.props);
 
+    const name = foodItem.description || foodItem.name;
+
     const headerContent = this.state.editingName
       ? <div>
           <span ref={(ref) => this.nameInput = ref}
             suppressContentEditableWarning={true}
             contentEditable="true" placeholder="AAA"
-            onKeyPress={(ev) => this.handleKeypress(ev)}>{foodItem.description}</span>
+            onKeyPress={(ev) => this.handleKeypress(ev)}>{ name }</span>
           <a onClick={() => this.editName()}><i className="check icon"></i></a>
         </div>
-    :  foodItem.description;
+    :  name;
     const header = (
       <h2 className="ui horizontal divider header" onDoubleClick={() => this.toggleNameEdit()}>
         { headerContent }
@@ -239,7 +230,7 @@ class KitchenItemEditor extends React.Component {
             <div className="center">
               <form encType="multipart/form-data" ref={(r) => this.handleFormRef(r)}>
                 <label htmlFor={this.state.id} className="ui button">Edit Image</label>
-                <input type="hidden" name="filename" value={foodItem.description}/>
+                <input type="hidden" name="filename" value={name}/>
                 <input id={this.state.id} className="hidden-file-input"
                        name="image" type="file" accept="image/*" capture="camera"
                        onChange={(ev) => this.updateImage(ev)}/>
@@ -264,7 +255,7 @@ class KitchenItemEditor extends React.Component {
           <i className="linkify icon"/>
           { foodItem.ndbno ? `Linked to USDA food ndbno: ${foodItem.ndbno }` : 'Link to USDA food database' }
         </button>
-        { this.state.showUSDA && <USDALinker itemId={foodItem._id} defaultQuery={foodItem.name || foodItem.description}/> }
+        { this.state.showUSDA && <USDALinker itemId={foodItem._id} defaultQuery={name}/> }
       </div>
     );
 
@@ -283,7 +274,7 @@ class KitchenItemEditor extends React.Component {
             <div className="content">{ content }</div>
           </div>
           <div className="sixteen wide column">
-            <RecipesForItem ingredient={this.state.foodItem.name || this.state.foodItem.description}/>
+            <RecipesForItem ingredient={name}/>
           </div>
         </div>
       </div>
