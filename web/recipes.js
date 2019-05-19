@@ -16,6 +16,8 @@ import ImportRecipeForm from 'components/recipes/import-recipe-form.react';
 import FullRecipeView from 'components/recipes/full-recipe-view.react';
 import CookingView from 'components/recipes/cooking-view.react';
 
+import DeleteModal from 'components/shared/delete-modal.react';
+
 import { ShoppingList, withShoppingList } from 'components/shared/shopping-list.react';
 
 import RecipeUtil from 'util/recipe-util';
@@ -29,12 +31,35 @@ import _clone from 'lodash/clone';
 // navigates incorrectly on screen size change
 
 class Recipes extends React.Component {
+  state = {
+    showDeleteModal: false,
+    deleteModalRecipe: null
+  }
+
+  showDeleteModal = (recipe) => {
+    return () => {
+      //console.log(recipe);
+      this.setState({
+        showDeleteModal: true,
+        deleteModalRecipe: recipe
+      });
+    }
+  }
+
+  onCancel = () => {
+    this.setState({
+      showDeleteModal: false,
+      deleteModalRecipe: null
+    });
+  }
+
   render() {
     return (
       <div className="ui container recipes-route-wrapper">
         <SearchRecipesByNameDropdown/>
         <FilterRecipesByCategoryTags/>
-        <RecipesList/>
+        <RecipesList showDeleteModal={ this.showDeleteModal }/>
+        { this.state.showDeleteModal && <DeleteModal recipe={this.state.deleteModalRecipe} onCancel={this.onCancel}/> }
       </div>
     );
   }

@@ -13,7 +13,7 @@ class Ingredient extends React.Component {
     const amountText = amountToText(quantity.amount);
     const name = item.name || item.description;
 
-    console.log(quantity.amount, quantity.unit, item.description);
+    //console.log(quantity.amount, quantity.unit, item.description);
 
     // TODO: this is actually a freaking pain of a translation. re-do it.
 

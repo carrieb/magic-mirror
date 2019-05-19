@@ -91,6 +91,7 @@ class RecipesList extends React.Component {
     const recipeCards = this.props.recipes.map((recipe, i) =>
       <div key={i}>
         <RecipeCard recipe={recipe}
+                  promptToDelete={ this.props.showDeleteModal(recipe) }
                   enableCollapse={false}/>
       </div>
     );

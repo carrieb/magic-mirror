@@ -3,16 +3,12 @@
 }
 
 .inventory-wrapper {
-  margin-bottom: 70px;
+  margin-bottom: 100px;
 
   > div.header {
     margin-bottom: 10px;
     padding-bottom: 10px;
     background-color: white;
-
-    > .buttons {
-      margin-bottom: 15px;
-    }
 
     .dropdown {
       margin-bottom: 5px;
@@ -55,16 +51,6 @@
 
 div.kitchen-inventory {
 
-  .header {
-    button {
-      margin: 1rem 0;
-    }
-
-    .buttons i {
-      padding-right: 1.5rem;
-    }
-  }
-
   > div.content {
     margin-bottom: 75px;
     text-align: center;
@@ -93,6 +79,8 @@ div.kitchen-inventory {
 }
 
 .inventory-options-wrapper {
+  margin-top: 1rem;
+
   .inline.fields {
     margin: 1rem 0 !important;
 
@@ -103,6 +91,8 @@ div.kitchen-inventory {
 }
 
 .inventory-filters-wrapper {
+  margin-top: 1rem;
+
   .ui.label {
     box-shadow: none !important;
   }

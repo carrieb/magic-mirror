@@ -10,7 +10,6 @@ class AddModal extends React.Component {
   }
 
   componentDidMount() {
-    console.log('hey');
     $('.add-modal')
       .modal({ detachable: false, transition: 'horizontal flip', onHidden: this.props.onCancel })
       .modal('show');

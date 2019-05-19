@@ -24,6 +24,16 @@ function getRecipeById(dbs, rawId, done, error=_noop) {
   });
 }
 
+function deleteRecipe(dbs, rawId, done, error=_noop) {
+  const db = dbs.recipes;
+  const coll = db.collection('documents');
+  const id = new mongo.ObjectID(rawId);
+  coll.deleteOne({ '_id': id }, (err, res) => {
+    if (err) error(err);
+    done();
+  });
+}
+
 function searchRecipesByIngredient(dbs, ingredient, done, error=_noop, limit=10) {
   const db = dbs.recipes;
   const coll = db.collection('documents');
@@ -70,7 +80,8 @@ const RecipesDb = {
   getAllRecipes,
   uploadRecipe,
   getRecipeById,
-  searchRecipesByIngredient
+  searchRecipesByIngredient,
+  deleteRecipe
 };
 
 module.exports = RecipesDb;

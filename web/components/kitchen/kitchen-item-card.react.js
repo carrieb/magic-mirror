@@ -13,6 +13,7 @@ import { withKitchen, DEFAULT_ITEM } from 'state/KitchenState';
 
 import { EatModal, showEatModal } from 'components/shared/eat-modal.react';
 
+import { CategoryImage } from 'util/kitchen-util';
 import { tr } from 'util/translation-util';
 
 import 'sass/kitchen/food-card.scss';
@@ -56,7 +57,8 @@ class KitchenItemCard extends React.Component {
     //console.log(foodItem);
     if (this.state.showEatModal) { console.log(this.props, this.state, foodItem); }
 
-    const out = foodItem.quantity.amount === 0;
+    const name = foodItem.name || foodItem.description;
+    const out = foodItem.quantity ? foodItem.quantity.amount === 0 : false;
 
     let imageUrl = foodItem.img ? `/food-images/${foodItem.img}` : '/images/no-image.svg';
     const image = (
@@ -69,16 +71,18 @@ class KitchenItemCard extends React.Component {
       </div>
     );
 
+
+
     const content = (
       <div className="content">
         <span className="left floated" data-tooltip={ tr(`ingredients.categories.${foodItem.category}`) } data-position="right center">
-          <img className="ui mini image category" src={`/images/kitchen/${_kebabCase(foodItem.category.toLowerCase())}.png`}/>
+          <CategoryImage category={foodItem.category}/>
         </span>
         <div className="header">
-          <span className="title">{_startCase(tr(`ingredients.names.${foodItem.description.toLowerCase()}`))}</span>
+          { name && <span className="title">{_startCase(tr(`ingredients.names.${name.toLowerCase()}`))}</span> }
         </div>
         <div className="meta">
-          <a>{ tr(`inventory.zones.${foodItem.zone.toLowerCase()}`) }</a><br/>
+          { foodItem.zone && <a>{ tr(`inventory.zones.${foodItem.zone.toLowerCase()}`) }</a> }<br/>
         </div>
 
         { out && <div style={{ color: 'red' }}>Out of stock</div>}

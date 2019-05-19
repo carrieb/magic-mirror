@@ -45,7 +45,7 @@ class TagsInput extends React.Component {
 }
 
 TagsInput.propTypes = {
-  onChange: PropTypes.function,
+  onChange: PropTypes.func,
   values: PropTypes.arrayOf(PropTypes.string)
 }
 

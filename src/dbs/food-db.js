@@ -33,7 +33,8 @@ const FoodDb = {
           quantity: item.quantity,
           category: item.category ? item.category.trim() : null,
           zone: item.zone ? item.zone.trim() : null,
-          ndbno: item.ndbno
+          ndbno: item.ndbno,
+          img: item.img ? item.img.trim() : null
         }
       })
       .then(callback)

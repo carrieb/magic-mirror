@@ -66,7 +66,7 @@ class Directions extends React.Component {
   }
 
   render() {
-    console.log('directions display keywords:', this.state.keywords);
+    //console.log('directions display keywords:', this.state.keywords);
     const directions = this.props.directions || [];
     //console.log(this.state.keywords);
     const directionEls = directions.map((directionsList, i) => {
@@ -78,7 +78,7 @@ class Directions extends React.Component {
         'whisk', 'microwave', 'rolling pin', 'bowl', 'baking sheet',
         'brush', 'bubble wrap', 'pan'];
       let tools = allTools.map((str) => tr(`recipes.tools.${str}`));
-      console.log(tools);
+      //console.log(tools);
 
       const stepEls = steps.map((step, idx) => {
         if ((this.props.enableCollapse) && (this.state.collapsed && idx >= MAX_ITEMS)) { return null };

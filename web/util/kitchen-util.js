@@ -1,4 +1,8 @@
+import React from 'react';
+
 import { ALL_ZONES, ALL_CATEGORIES } from 'state/kitchen/kitchen-constants';
+
+import _kebabCase from 'lodash/kebabCase';
 
 function filterItems(items, {
     zones=ALL_ZONES,
@@ -20,4 +24,12 @@ function filterItems(items, {
   });
 }
 
-module.exports = { filterItems };
+function CategoryImage({ category, size='mini'}) {
+  return category
+    ? <img className={`ui ${size} image category`}
+           src={`/images/kitchen/${_kebabCase(category.toLowerCase())}.png`}
+           style={{ marginRight: '.75rem' }}/>
+    : null;
+}
+
+module.exports = { filterItems, CategoryImage };

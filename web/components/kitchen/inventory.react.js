@@ -98,7 +98,9 @@ class KitchenInventory extends React.Component {
     const filteredItems = filterItems(this.props.kitchen, this.state);
 
     if (this.state.layout === 'Cards') {
-      inventory = <CardLayout items={filteredItems} categorize={this.state.groupByCategory}/>;
+      inventory = <CardLayout items={filteredItems}
+                              categorize={this.state.groupByCategory}
+                              zone={this.state.groupByZone}/>;
     }
 
     if (this.state.layout === 'List') {
@@ -208,6 +210,7 @@ class KitchenInventory extends React.Component {
       </div>
     );
 
+    console.log(this.props.kitchenIndex['5cd39468e2690b06fc88854a']);
     return (
       <div className="kitchen-inventory">
         { this.state.showAddModal && <AddModal onCancel={ () => this.setState({ showAddModal: false }) }/> }

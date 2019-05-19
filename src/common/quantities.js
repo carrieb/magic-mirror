@@ -18,7 +18,7 @@ const _isNumber = require('lodash/isNumber')
 
 function parseQuantity(string, lang='en') {
   const fractionsString = fractions.map(f => f.character).join('|');
-  let quantityRegex = `^([\\d+|${fractionsString}|\\d+\\/\\d+|\\s]+)`;
+  let quantityRegex = `^([\\d+|${fractionsString}|\\d+\\/\\d+|\\d+\\.\\d+|\\s]+)`;
   if (lang === 'en') {
     quantityRegex += `(${quantityUnits[lang].join('|')}|${quantityUnits[lang].map(q => q + 's').join('|')})?(.*)`;
   } else {

@@ -24,21 +24,23 @@ function parseIngredientDetails(str) {
 }
 
 function ingredientsToText(ingredients) {
-  let text = "";
+  let text = '';
   const sections = ingredients;
   sections.forEach((section) => {
     if (sections.length > 1) {
       text += `${section.name}\n`;
     }
 
-    section.items.forEach((item) => {
-      const quantity = item.quantity.unit ? `${item.quantity.amount} ${item.quantity.unit}` : `${item.quantity.amount}`;
-      text += `${quantity} ${item.description || item.name}`;
-      if (item.modifier) {
-        text += ` (${item.modifier})`;
-      }
-      text += '\n';
-    });
+    if (section.items) {
+      section.items.forEach((item) => {
+        const quantity = item.quantity.unit ? `${item.quantity.amount} ${item.quantity.unit}` : `${item.quantity.amount}`;
+        text += `${quantity} ${item.description || item.name}`;
+        if (item.modifier) {
+          text += ` (${item.modifier})`;
+        }
+        text += '\n';
+      });
+    }
 
     text += '\n';
   });
@@ -55,9 +57,11 @@ function directionsToText(directions) {
       text += `${section.name}\n`;
     }
 
-    section.steps.forEach((step, i) => {
-      text += `${i+1}. ${step.content}\n`;
-    });
+    if (section.steps) {
+      section.steps.forEach((step, i) => {
+        text += `${i+1}. ${step.content}\n`;
+      });
+    }
 
     text += '\n';
   });
@@ -106,83 +110,55 @@ const RecipeParser = {
     return result;
   },
 
-  parseIngredients(text, multisection=false, splitOverCommas=false) {
-    const result = [ { items: [] } ];
-    const lines = text ? text.trim().split('\n') : [];
-    const lang = getLocale() || 'en';
+  parseIngredientLines(lines, lang, splitOverCommas=false) {
+    const result = [];
 
-    //console.log(lines);
-    console.log('parsing ingredients:', multisection, lang);
-
-    let section = 0;
-    let itemIndex = 0;
-    let expectingHeader = multisection;
-
-    for (let i = 0; i< lines.length; i++) {
-      const line = lines[i];
-      //console.log(line, line.trim() === '');
-
-      if (line.trim() === '' && multisection) {
-        // progress to next section
-        result.push( { items: [] } );
-        section++;
-        expectingHeader = true;
-        itemIndex = 0;
-        continue;
-      }
-
-
-      // splitting by commans: by default doesn't happen
-      if (line.indexOf(',') > -1 && splitOverCommas) {
-          //console.log('splitting over commas');
-          const split = line.split(',');
-          //console.log(split);
-          split.forEach((ingr) => {
-            const ingredient = parseIngredientDetails(ingr.trim());
-            result[section].items.push({
-              quantity: {
-                amount: quantity.amount,
-                unit: quantity.unit
-              },
-              description: ingredient.name,
-              modifier: ingredient.modifier
-            });
-            itemIndex++;
-          });
-      } else {
+    if (lines) {
+      lines.forEach((line) => {
+        // TODO: handle splitting over commas
         const quantity = parseQuantity(line, lang);
-        // TODO: handle new lines for sections
         console.log(quantity);
+        const ingredient = parseIngredientDetails(quantity.rest);
 
-        if (quantity) {
-          const ingredient = parseIngredientDetails(quantity.rest);
+        const item = {
+          quantity: {
+            amount: quantity.amount,
+            unit: quantity.unit
+          },
+          description: ingredient.name,
+          modifier: ingredient.modifier
+        };
 
-          const item = {
-            quantity: {
-              amount: quantity.amount,
-              unit: quantity.unit
-            },
-            description: ingredient.name,
-            modifier: ingredient.modifier
-          };
-
-          console.log(item);
-          result[section].items.push(item);
-
-          expectingHeader = false;
-          itemIndex++;
-          //console.log(result);
-        } else {
-          // TODO: check if sections is working right
-          if (expectingHeader && itemIndex === 0) {
-            result[section].name = line;
-            expectingHeader = false;
-          }
-        }
-      }
+        console.log(item);
+        result.push(item);
+      });
     }
 
-    //console.log('parsed ingredients', result);
+    return result;
+  },
+
+  parseIngredients(text, splitOverCommas=false) {
+    const lang = getLocale() || 'en';
+    const result = [ ];
+    const textSections = text ? text.trim().split('\n\n') : [];
+
+    if (textSections.length > 0) {
+      textSections.forEach((section) => {
+        const lines = section ? section.split('\n') : [];
+        const header = lines[0].trim();
+        // parse rest as ingredient lines
+        const items = this.parseIngredientLines(lines.slice(1), lang, splitOverCommas);
+        result.push({ name: header, items });
+      });
+    } else {
+      const lines = text ? text.trim().split('\n') : [];
+      // parse as ingredient lines
+      const items = this.parseIngredientLines(lines, lang, splitOverCommas);
+      result.push({ name: 'default', items });
+    }
+
+
+    console.log('parsed ingredients:', result);
 
     return result;
   },

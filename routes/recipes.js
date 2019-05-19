@@ -28,6 +28,12 @@ router.post('/search', jsonParser, (req, res) => {
   }, (err) => res.status(500).send(`Failed to retrieve recipes for ingredient '${req.body.ingredient}': ${err}`));
 });
 
+router.delete('/:id', (req, res) => {
+  RecipesDb.deleteRecipe(res.app.locals.dbs, req.params.id, () => {
+    res.json('OK');
+  }, (err) => res.status(500).send(`Failed to delete recipe with id [${req.params.id}]: ${err.message}`));
+});
+
 router.get('/:id', (req, res) => {
   RecipesDb.getRecipeById(res.app.locals.dbs, req.params.id, (recipe) => {
     res.json(recipe);

@@ -30,7 +30,7 @@ class RecipeCard extends React.Component {
 
   render() {
     const recipe = this.props.recipe;
-    console.log('recipe card render:', recipe);
+    //console.log('recipe card render:', recipe);
     const ingredients = <Ingredients ingredients={recipe.ingredients}
                                      enableCollapse={this.props.enableCollapse}/>
     const directions = <Directions directions={recipe.directions}
@@ -84,6 +84,12 @@ class RecipeCard extends React.Component {
         { recipe.source && <div className="content">
           { recipe.source.indexOf('youtube.com') > -1 && <i className="ui red youtube play icon"/>}<a href={recipe.source}>{recipe.source}</a>
         </div> }
+        <div className="extra content">
+          <span className="right floated like" onClick={ this.props.promptToDelete }>
+            <i className="trash icon"></i>
+            Trash
+          </span>
+        </div>
       </div>
     );
 

@@ -18,11 +18,12 @@ import 'sass/recipes/ingredients-editor.scss';
 import _uniqueId from 'lodash/uniqueId';
 import _cloneDeep from 'lodash/cloneDeep';
 import _throttle from 'lodash/throttle';
+import _startCase from 'lodash/startCase';
 
 class IngredientsEditor extends React.Component {
   state = {
     showTextEditor: false,
-    text: RecipeParser.ingredientsToText(this.props.ingredients)
+    text: this.props.ingredients ? RecipeParser.ingredientsToText(this.props.ingredients) : ''
   }
 
   toggleShowTextEditor = () => {
@@ -43,7 +44,8 @@ class IngredientsEditor extends React.Component {
   };
 
   render() {
-    // console.log(this.state.text);
+    console.log('text:', this.state.text);
+    console.log('formatted:', this.props.ingredients);
     const toggleButton = (
       <button className="ui fluid basic button toggle-format"
               onClick={this.toggleShowTextEditor}>
@@ -55,19 +57,20 @@ class IngredientsEditor extends React.Component {
     if (this.state.showTextEditor) {
       content = (
         <div>
-          <h4 className="ui header">{ tr('recipes.fields.ingredients') }</h4>
-          { false && toggleButton }
+          <h4 className="ui header">{ _startCase(tr('recipes.fields.ingredients')) }</h4>
+          { toggleButton }
           <textarea value={this.state.text}
                     onChange={this.handleTextChange}/>
         </div>
       );
     } else {
-      content = <SectionedEditor title="Ingredients" showTitle={false}
+      content = <SectionedEditor
                        valuesKey="items"
                        emptyText="No ingredients."
                        component={IngredientsInputs}
                        updateSections={this.props.updateIngredients}
                        sections={this.props.ingredients}>
+         <h4 className="ui header">{ _startCase(tr('recipes.fields.ingredients')) }</h4>
          { toggleButton }
       </SectionedEditor>;
     }

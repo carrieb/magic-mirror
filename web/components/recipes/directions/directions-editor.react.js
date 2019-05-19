@@ -86,6 +86,7 @@ class DirectionsEditor extends React.Component {
                        valuesKey="steps"
                        title="Directions"
                        emptyText="No steps."
+                       addText="Add Step"
                        updateSections={this.props.updateDirections}
                        sections={this.props.directions}>
            { toggleButton }

@@ -168,7 +168,8 @@ class RecipeEditor extends React.Component {
 
   recipeInput = (key, transform=null, extra=null) => {
     //console.log(key, extra);
-    return <TextInput labelText={ _startCase(key) }
+    return <TextInput
+               labelText={ _startCase(key) }
                className={ key }
                value={ this.state.recipe[key] }
                onChange={ this.handleRecipeInputUpdate(key, transform) }>
@@ -242,7 +243,7 @@ class RecipeEditor extends React.Component {
     }
 
     // TODO: add image upload
-    console.log(LocalStorageUtil.getNewRecipeBeingEdited());
+    // console.log('in progress recipe:', LocalStorageUtil.getNewRecipeBeingEdited());
 
     return (
       <div className="ui basic segment recipe-editor" style={{ padding: 0 }}>

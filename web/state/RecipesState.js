@@ -3,6 +3,7 @@ import _uniqueId from 'lodash/uniqueId';
 import _find from 'lodash/find';
 import _debounce from 'lodash/debounce';
 import _assign from 'lodash/assign';
+import _filter from 'lodash/filter';
 
 import ApiWrapper from 'util/api-wrapper';
 
@@ -63,6 +64,14 @@ const RecipesState = {
     RecipesState.alertListeners();
   },
 
+  deleteRecipe(id) {
+    ApiWrapper.deleteRecipe(id)
+      .done(() => {
+        const recipes = _filter(loadedRecipes, (recipe) => recipe._id !== id);
+        this.done(recipes);
+      });
+  },
+
   addChangeListener(callback) {
     listeners.push(callback);
   },
@@ -105,10 +114,15 @@ function withRecipes(WrappedComponent) {
       });
     };
 
+    deleteRecipe = (recipe) => {
+      RecipesState.deleteRecipe(recipe._id);
+    }
+
     render() {
       return (
         <WrappedComponent recipes={this.state.recipes}
                           recipesIndex={this.state.recipesIndex}
+                          deleteRecipe={this.deleteRecipe}
                           {...this.props}/>
       );
     }

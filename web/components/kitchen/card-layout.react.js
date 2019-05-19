@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import KitchenItemCard from 'components/kitchen/kitchen-item-card.react';
 
 import { withCategories } from 'components/common/hoc/withCategories.react';
+import { withZones } from 'components/common/hoc/withZones.react';
 
 class CardLayout extends React.Component {
   render() {
@@ -25,4 +26,4 @@ class CardLayout extends React.Component {
   }
 }
 
-export default withCategories(CardLayout);
+export default withZones(withCategories(CardLayout));

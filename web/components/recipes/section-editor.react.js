@@ -63,7 +63,7 @@ class Section extends React.Component {
                                           onAdd={ this.addValue }
                                           onRemove={ this.deleteValue }
                                           emptyText={this.props.emptyText}
-                                          addText="Add Ingredient">
+                                          addText={this.props.addText || 'Add Ingredient'}>
         { this.props.totalSections > 1 && nameInput }
         <button type="button"
                 className="ui fluid basic mini red button remove-button"
@@ -153,7 +153,8 @@ class SectionedEditor extends React.Component {
                                            totalSections={sections.length}
                                            key={currentSection.id || '?'}
                                            updateSection={ this.updateSection(idx) }
-                                           deleteSection={ this.deleteSection(idx) }/>;
+                                           deleteSection={ this.deleteSection(idx) }
+                                           addText={ this.props.addText }/>;
 
     const content = (
       <div className="ui grid">

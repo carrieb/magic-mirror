@@ -145,6 +145,7 @@ class KitchenItemEditor extends React.Component {
       }).done((filename) => {
         //console.log('done', filename, this.props.match.params.foodName);
         const foodItem = this.state.foodItem;
+        toastr.success(`Successfully uploaded image for ${foodItem.name || foodItem.description}`);
         foodItem.img = filename;
         this.setState({ foodItem });
       }).fail(() => {

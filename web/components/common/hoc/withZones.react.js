@@ -5,6 +5,8 @@ import { tr } from 'util/translation-util';
 import _groupBy from 'lodash/groupBy';
 import _kebabCase from 'lodash/kebabCase';
 
+import 'sass/shared/zones.scss';
+
 function withZones(WrappedComponent, key='zone') {
   return class extends React.Component {
     render() {
@@ -18,7 +20,7 @@ function withZones(WrappedComponent, key='zone') {
 
           return (
             <div key={name}>
-              <div className="ui top attached block header zone-header" style={{ textTransform: 'capitalize' }}>
+              <div className="ui block header zone-header" style={{ textTransform: 'capitalize' }}>
                 <img className="ui small image" src={`/images/kitchen/${_kebabCase(name)}.png`}/>
                 { tr(`ingredients.zones.${name.toLowerCase()}`) }
               </div>

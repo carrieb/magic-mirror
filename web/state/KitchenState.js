@@ -71,6 +71,7 @@ const KitchenState = {
           KitchenState.done(loadedItems);
         } else {
           console.log('updated');
+          toastr.success(`Saved ${item.name || item.description}`)
           loadedKitchen[item._id] = item;
           // FIX: this won't work
         }
