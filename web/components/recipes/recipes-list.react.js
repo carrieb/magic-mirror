@@ -16,18 +16,33 @@ import _findIndex from 'lodash/findIndex';
 import 'sass/recipes/list.scss';
 
 class RecipesList extends React.Component {
+  state = {
+    layout: 'slick' /** options: [slick, table] */
+  }
+
   componentDidMount() {
-    if (!_isEmpty(this.props.recipes)) {
+    if (!_isEmpty(this.props.recipes) && this.state.layout === 'slick') {
       this.loadPreviewsSlick();
       this.loadFullCardSlick();
     }
   }
 
-  componentDidUpdate(prevProps) {
-    if (!_isEqual(prevProps.recipes, this.props.recipes)) {
+  componentDidUpdate(prevProps, prevState) {
+    if (!_isEqual(prevProps.recipes, this.props.recipes) && this.state.layout === 'slick') {
       this.loadPreviewsSlick();
       this.loadFullCardSlick();
     }
+
+    if (this.state.layout === 'slick' && prevState.layout !== 'slick') {
+      this.loadPreviewsSlick();
+      this.loadFullCardSlick();
+    }
+  }
+
+  toggleLayout = () => {
+    this.setState({
+      layout: this.state.layout === 'slick' ? 'table' : 'slick'
+    });
   }
 
   loadFullCardSlick = () => {
@@ -88,28 +103,44 @@ class RecipesList extends React.Component {
   }
 
   render() {
-    const recipeCards = this.props.recipes.map((recipe, i) =>
-      <div key={i}>
-        <RecipeCard recipe={recipe}
-                  promptToDelete={ this.props.showDeleteModal(recipe) }
-                  enableCollapse={false}/>
-      </div>
-    );
+    let content;
+    if (this.state.layout === 'slick') {
+      const recipeCards = this.props.recipes.map((recipe, i) =>
+        <div key={i}>
+          <RecipeCard recipe={recipe}
+                    promptToDelete={ this.props.showDeleteModal(recipe) }
+                    enableCollapse={false}/>
+        </div>
+      );
 
-    const previews = this.props.recipes.map((recipe, i) =>
-      <div key={i}>
-        <h3>{ recipe.name }</h3>
-      </div>
-    );
+      const previews = this.props.recipes.map((recipe, i) =>
+        <div key={i}>
+          <h3>{ recipe.name }</h3>
+        </div>
+      );
 
-    return (
-      <div>
+      content = <div>
         <div className="previews-list">
           { previews }
         </div>
         <div className="api-recipes-list">
           { recipeCards }
         </div>
+      </div>;
+    }
+
+    if (this.state.layout === 'table') {
+      content = <table/>
+    }
+
+
+    return (
+      <div>
+        <button onClick={this.toggleLayout}
+                className="ui fluid button">
+            Switch to { this.state.layout === 'table' ? 'slick' : 'table' } layout
+        </button>
+        { content }
       </div>
     );
   }

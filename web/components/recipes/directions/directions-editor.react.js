@@ -89,6 +89,7 @@ class DirectionsEditor extends React.Component {
                        addText="Add Step"
                        updateSections={this.props.updateDirections}
                        sections={this.props.directions}>
+           <h4 className="ui header">Directions</h4>
            { toggleButton }
        </SectionedEditor>;
     }

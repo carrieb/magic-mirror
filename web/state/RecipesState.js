@@ -17,8 +17,8 @@ const EMPTY_RECIPE = {
   source: '',
   category: '',
   servings: 0,
-  ingredients: [ {} ],
-  directions: [ {} ],
+  ingredients: [ { items: [  ] } ],
+  directions: [ { steps: [  ] } ],
   tags: [ ]
 }
 

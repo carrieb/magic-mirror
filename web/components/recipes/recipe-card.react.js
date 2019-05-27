@@ -85,7 +85,7 @@ class RecipeCard extends React.Component {
           { recipe.source.indexOf('youtube.com') > -1 && <i className="ui red youtube play icon"/>}<a href={recipe.source}>{recipe.source}</a>
         </div> }
         <div className="extra content">
-          <span className="right floated like" onClick={ this.props.promptToDelete }>
+          <span className="right floated trash" onClick={ this.props.promptToDelete }>
             <i className="trash icon"></i>
             Trash
           </span>

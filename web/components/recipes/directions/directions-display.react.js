@@ -20,10 +20,22 @@ class Directions extends React.Component {
     this.toggleCollapse = this.toggleCollapse.bind(this);
 
     const ingredients = this.props.ingredients || [];
+    const initialState = this.computeState(ingredients);
+    initialState.collapsed = true;
+    this.state = initialState;
+  }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.ingredients) {
+      this.setState(this.computeState(nextProps.ingredients));
+    }
+  }
+
+  computeState = (ingredients) => {
+    console.log(ingredients);
     const ingredientSections = ingredients.map(section => section.items);
-    let allIngredients = _flatten(ingredientSections)
-      .map(item => {
+    const allIngredients = _flatten(ingredientSections);
+    let allIngredientNames = allIngredients.map(item => {
         //return item.name;
         if (!item) return null;
         return item.name || item.description;
@@ -31,34 +43,13 @@ class Directions extends React.Component {
         //return nlp(item.name || item.description).nouns().toSingular().out('text').trim()
       });
     if (ingredients.length > 1) {
-      allIngredients = allIngredients.concat(ingredients.map(section => section.name.toLowerCase()))
+      allIngredientNames = allIngredientNames.concat(ingredients.map(section => section.name.toLowerCase()))
     }
     // console.log(allIngredients);
-    const keywords = _sortBy(_uniq(allIngredients), keyword => keyword ? -keyword.length : 0);
-
-    this.state = { collapsed: true, keywords };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.ingredients) {
-      const ingredients = nextProps.ingredients;
-
-      const ingredientSections = ingredients.map(section => section.items);
-      let allIngredients = _flatten(ingredientSections)
-        .map(item => {
-          //return item.name;
-          if (!item) return null;
-          return item.name || item.description;
-          // line below only works for 'en'
-          //return nlp(item.name || item.description).nouns().toSingular().out('text').trim()
-        });
-      if (ingredients.length > 1) {
-        allIngredients = allIngredients.concat(ingredients.map(section => section.name.toLowerCase()))
-      }
-      // console.log(allIngredients);
-      const keywords = _sortBy(_uniq(allIngredients), keyword => keyword ? -keyword.length : 0);
-      this.setState({ keywords });
-    }
+    const allIngredientsByName = {};
+    allIngredients.forEach((ingr) => { allIngredientsByName[ingr.name || ingr.description] = ingr });
+    const keywords = _sortBy(_uniq(allIngredientNames), keyword => keyword ? -keyword.length : 0);
+    return { keywords, allIngredientsByName };
   }
 
   toggleCollapse() {
@@ -66,6 +57,8 @@ class Directions extends React.Component {
   }
 
   render() {
+    console.log(this.state.allIngredientsByName, this.state.keywords);
+
     //console.log('directions display keywords:', this.state.keywords);
     const directions = this.props.directions || [];
     //console.log(this.state.keywords);
@@ -73,17 +66,15 @@ class Directions extends React.Component {
       const title = <div className="ui sub header">{ directionsList.name || tr('recipes.fields.directions') }</div>;
       const steps = directionsList.steps || [];
 
-      const allTools = ['pot', 'bag', 'heat',
-        'refridgerator', 'tea towel', 'plastic wrap',
-        'whisk', 'microwave', 'rolling pin', 'bowl', 'baking sheet',
-        'brush', 'bubble wrap', 'pan'];
-      let tools = allTools.map((str) => tr(`recipes.tools.${str}`));
-      //console.log(tools);
 
+      //console.log(tools);
       const stepEls = steps.map((step, idx) => {
         if ((this.props.enableCollapse) && (this.state.collapsed && idx >= MAX_ITEMS)) { return null };
         return <div className="item" key={idx}>
-          <SmartStep step={step.content} keywords={this.state.keywords} toolKeywords={tools}/>
+          <SmartStep step={step.content}
+                     ingredients={this.props.ingredients}
+                     keywords={this.state.keywords}
+                     ingredientsByName={this.state.allIngredientsByName}/>
         </div>
       });
 

@@ -1,5 +1,10 @@
 .recipe-card {
   .ui.card {
+    .trash:hover {
+      color: red;
+      cursor: pointer;
+    }
+
     .ingredients-wrapper {
       .header {
         color: #f75d5d;

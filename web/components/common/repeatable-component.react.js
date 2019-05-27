@@ -54,9 +54,9 @@ class RepeatableComponent extends React.Component {
         <div>
           { this.props.children }
           { components }
-          { values.length === 0 && <div><i className="orange exclamation circle icon"/>{ this.props.emptyText }</div> }
+          { values.length === 0 && <div className="ui negative message"><i className="exclamation circle icon"/>{ this.props.emptyText }</div> }
         </div>
-        <div className="ui fluid basic violet icon button" onClick={() => this.add()}>
+        <div className="ui fluid basic violet icon button" onClick={() => this.add()} style={{ marginTop: '1rem' }}>
           <i className="plus icon"></i>
           { this.props.addText }
         </div>

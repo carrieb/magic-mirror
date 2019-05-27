@@ -1,7 +1,14 @@
 import React from 'react';
 import nlp from 'compromise';
 
+import { ALL_TOOLS } from 'util/tool-util';
+
+import { tr } from 'util/translation-util';
+
 import _uniqueId from 'lodash/uniqueId';
+import _flatten from 'lodash/flatten';
+import _sortBy from 'lodash/sortBy';
+import _uniq from 'lodash/uniq';
 
 class SmartStep extends React.Component {
   highlightKeywords(text) {
@@ -10,11 +17,32 @@ class SmartStep extends React.Component {
     //   return text;
     // }
 
-    const keywords = this.props.keywords || [];
     let result = [];
     let matched = [];
-    keywords.forEach((keyword) => {
-      const regex = new RegExp(keyword, 'i');
+
+    const sections = this.props.ingredients || [];
+    const sectionNames = sections.map(section => section.name ? section.name.toLowerCase() : null);
+    const sectionedIngredients = sections.map(section => section.items);
+
+    const allIngredients = _flatten(sectionedIngredients);
+    let allIngredientNames = allIngredients.map(item => {
+        //return item.name;
+        if (!item) return null;
+        return item.name || item.description;
+        // line below only works for 'en'
+        //return nlp(item.name || item.description).nouns().toSingular().out('text').trim()
+      });
+
+    const sortedNames = _sortBy(_uniq(allIngredientNames), keyword => keyword ? -keyword.length : 0);
+    const sortedSections = _sortBy(_uniq(sectionNames), keyword => keyword ? -keyword.length : 0);
+
+    // console.log(allIngredients);
+    const allIngredientsByName = {};
+    allIngredients.forEach((ingr) => { allIngredientsByName[ingr.name || ingr.description] = ingr });
+
+
+    sortedNames.forEach((keyword) => {
+      const regex = new RegExp(`\\b${keyword}`, 'i');
       const match = text.match(regex);
       if (match) {
         //console.log(text, keyword);
@@ -25,9 +53,28 @@ class SmartStep extends React.Component {
       }
     });
 
-    const tools = this.props.toolKeywords || [];
+    sortedSections.forEach((keyword) => {
+      const regex = new RegExp(`\\b${keyword}`, 'i');
+      const match = text.match(regex);
+      if (match) {
+        //console.log(text, keyword);
+        matched.push({
+          keyword,
+          type: 'ingredient'
+        });
+      }
+    });
 
-    tools.forEach((toolKeyword) => {
+    const tools = ALL_TOOLS.map((str) => tr(`recipes.tools.${str}`));
+    const sortedTools = _sortBy(_uniq(tools),  keyword => keyword ? -keyword.length : 0);
+
+
+    // TODO (MAJOR): move the 'finding' of keywords to the recipe editing process
+    // when saving recipe, it will compute new tags, suggest to user
+    // user can save them, then this SmartStep just renders special tags
+    // e.g. @tool(...) @ingredient(...) @component(...)
+
+    sortedTools.forEach((toolKeyword) => {
       const regex = new RegExp(toolKeyword, 'i');
       const match = text.match(regex);
       if (match) {
@@ -36,7 +83,7 @@ class SmartStep extends React.Component {
           type: 'tool'
         });
 
-        // TODO: collect all matching tools to a section at the bottom? 
+        // TODO: collect all matching tools to a section at the bottom?
       }
     });
 
@@ -60,9 +107,20 @@ class SmartStep extends React.Component {
           const match = matched[idx];
           //console.log(idx, matched);
           if (match.type === 'ingredient') {
-            result.push(<a href={`/kitchen/${words.toLowerCase()}`} key={_uniqueId()}>{words}</a>);
+            // TODO: add smart label showing amount needed
+            // need to lookup in the ingredients for this recipe
+            const ingr = this.props.ingredientsByName[words];
+            if (ingr) {
+              console.log('smart step ingr', ingr);
+              result.push(<a href={`/kitchen/${words.toLowerCase()}`} key={_uniqueId()} data-tooltip={`${ingr.quantity.amount} ${ingr.quantity.unit}`}>{words}</a>);
+            } else {
+              result.push(<a href={`/kitchen/${words.toLowerCase()}`} key={_uniqueId()}>{words}</a>);
+            }
           } else if (match.type === 'tool') {
             result.push(<span style={{ paddingBottom: '1px', borderBottom: 'solid 1px #000'}} key={_uniqueId()}>{words}</span>);
+          } else if (match.type === 'section') {
+            // TODO: add more complicated tool tip listing all those pieces
+            result.push(<a href={`/kitchen/${words.toLowerCase()}`} key={_uniqueId()}>{words}</a>);
           }
         } else {
           result.push(words);
