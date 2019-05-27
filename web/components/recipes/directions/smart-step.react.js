@@ -111,7 +111,7 @@ class SmartStep extends React.Component {
             // need to lookup in the ingredients for this recipe
             const ingr = this.props.ingredientsByName[words];
             if (ingr) {
-              console.log('smart step ingr', ingr);
+              //console.log('smart step ingr', ingr);
               result.push(<a href={`/kitchen/${words.toLowerCase()}`} key={_uniqueId()} data-tooltip={`${ingr.quantity.amount} ${ingr.quantity.unit}`}>{words}</a>);
             } else {
               result.push(<a href={`/kitchen/${words.toLowerCase()}`} key={_uniqueId()}>{words}</a>);

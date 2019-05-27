@@ -155,6 +155,7 @@ function withKitchen(WrappedComponent) {
     };
 
     render() {
+      // TODO: provide a way to look up by name
       return (
         <WrappedComponent addItem={this.addItem}
                           updateItem={this.updateItem}
