@@ -8,16 +8,11 @@ import QuantityFormField from 'components/kitchen/item/form/QuantityFormField.re
 import ControlledItemEditor from 'components/kitchen/controlled-item-editor.react';
 
 class ItemInputs extends React.Component {
-  constructor(props) {
-    super(props);
-    this.toggleCollapsed = this.toggleCollapsed.bind(this);
-
-    this.state = {
-      collapsed: true
-    };
+  state = {
+    collapsed: true
   }
 
-  toggleCollapsed(ev) {
+  toggleCollapsed = (ev) => {
     this.setState({
       collapsed: !this.state.collapsed
     });
@@ -47,7 +42,9 @@ class ItemInputs extends React.Component {
           <div className="seven wide field">
             <div className="ui left labeled input right-aligned">
               <div className="ui label">$</div>
-              <input type="number" value={item.price} onChange={(ev) => this.props.onChange('price', ev.target.value)}/>
+              <input type="number"
+                       value={item.price} 
+                     onChange={(ev) => this.props.onChange('price', ev.target.value)}/>
               <button className="ui basic right floated icon button" onClick={this.toggleCollapsed}>
                 <i className={`chevron ${this.state.collapsed ? 'up' : 'down'} icon`}></i>
               </button>

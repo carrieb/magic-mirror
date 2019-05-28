@@ -12,6 +12,7 @@ import KitchenConstants from 'state/kitchen/kitchen-constants';
 import { tr } from 'util/translation-util';
 
 import _kebabCase from 'lodash/kebabCase';
+import _startCase from 'lodash/startCase';
 
 class ItemEditor extends React.Component {
   constructor(props) {
@@ -75,7 +76,7 @@ class ItemEditor extends React.Component {
         </div>
 
         <div className="five wide column">
-          <h5>{ tr('table.column.brand') }</h5>
+          <h5>{ _startCase(tr('table.column.brand')) }</h5>
         </div>
         <div className="eleven wide column">
           <div className="ui fluid input">

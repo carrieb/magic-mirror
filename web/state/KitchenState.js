@@ -25,7 +25,7 @@ const DEFAULT_ITEM = {
   },
   category: 'Dry Goods',
   zone: 'Pantry',
-  price: 1.00
+  price: 0
 };
 
 let listeners = [];

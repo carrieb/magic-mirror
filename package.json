@@ -25,10 +25,10 @@
     "express": "^4.16.4",
     "firebase": "^5.4.2",
     "googleapis": "^32.0.0",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.1",
     "js-quantities": "^1.7.2",
     "jsonfile": "^4.0.0",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.11",
     "mkdirp": "^0.5.1",
     "moment": "^2.17.1",
     "moment-timezone": "^0.5.11",
@@ -43,7 +43,7 @@
     "semantic-ui": "^2.4.2",
     "sharp": "^0.20.8",
     "slick-carousel": "^1.8.1",
-    "tesseract.js": "^1.0.10"
+    "tesseract.js": "^2.0.0-alpha.10"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -56,7 +56,7 @@
     "fast-levenshtein": "^2.0.6",
     "json-loader": "^0.5.4",
     "node-polyglot": "^2.3.0",
-    "node-sass": "^4.9.4",
+    "node-sass": "^4.12.0",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.21.0",
     "webpack": "^4.23.1",

@@ -89,7 +89,7 @@ const ApiWrapper = {
   submitCrop(filename, crop, callback) {
     let data = { filename };
     data = assign(data, crop);
-    $.ajax('/crop', {
+    $.ajax('/api/receipts/crop', {
       type: 'POST',
       data: JSON.stringify(data),
       contentType: 'application/json; charset=utf-8'
@@ -101,11 +101,11 @@ const ApiWrapper = {
   },
 
   extractText(filename) {
-    return $.ajax('/extract', { data: { filename }});
+    return $.ajax('/api/receipts/extract', { data: { filename }});
   },
 
-  submitItems(items) {
-    return $.ajax('/items', {
+  submitReceiptItems(items) {
+    return $.ajax('/api/receipts/items', {
       data: JSON.stringify({ items }),
       type: 'POST',
       contentType: 'application/json; charset=utf-8'

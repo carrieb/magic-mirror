@@ -8,7 +8,6 @@ import { getLocale } from 'util/translation-util';
 const history = createHistory();
 
 import KitchenItemEditor from 'components/kitchen/kitchen-item-editor.react';
-import AddItemsForm from 'components/kitchen/AddItemsForm.react';
 
 import KitchenNavigation from 'components/kitchen/navigation.react';
 import KitchenInventory from 'components/kitchen/inventory.react';
@@ -25,7 +24,6 @@ window.onload = function() {
         <KitchenNavigation/>
         <Route exact path="/kitchen" component={KitchenDashboard}/>
         <Route path="/kitchen/inventory" component={KitchenInventory}/>
-        <Route path="/kitchen/unpack" component={AddItemsForm}/>
         <Route path="/kitchen/item/:foodName" component={KitchenItemEditor}/>
       </div>
     </Router>,

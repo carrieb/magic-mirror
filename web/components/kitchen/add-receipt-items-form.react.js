@@ -5,26 +5,20 @@ import ItemInputs from '../receipts/item-inputs';
 
 import ControlledItemEditor from 'components/kitchen/controlled-item-editor.react';
 
-import KitchenState from 'state/KitchenState';
+import { DEFAULT_ITEM } from 'state/KitchenState';
 
 import _clone from 'lodash/clone';
 
 class AddItemsForm extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.addItem = this.addItem.bind(this);
-  }
-
   updateItemFieldAtIndex(index, field, value) {
     const items = this.props.items;
     items[index][field] = value;
     this.props.update(items);
   }
 
-  addItem(ev) {
+  addItem = (ev) => {
     const items = this.props.items;
-    items.push(_clone(KitchenState.DEFAULT_ITEM));
+    items.push(_clone(DEFAULT_ITEM));
     this.props.update(items);
     ev.preventDefault();
   }
@@ -38,10 +32,13 @@ class AddItemsForm extends React.Component {
 
   render() {
     const items = this.props.items.map((item, idx) =>
-      <ItemInputs key={idx}
-                  item={item}
-                  onDelete={(ev) => this.removeItem(ev, idx)}
-                  onChange={(field, value) => this.updateItemFieldAtIndex(idx, field, value)}/>
+      <div key={idx}>
+        <p>{ item.line }</p>
+        <ItemInputs key={idx}
+                    item={item}
+                    onDelete={(ev) => this.removeItem(ev, idx)}
+                    onChange={(field, value) => this.updateItemFieldAtIndex(idx, field, value)}/>
+      </div>
     );
 
     return (

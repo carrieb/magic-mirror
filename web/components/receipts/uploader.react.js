@@ -3,20 +3,12 @@ import React from 'react';
 import ApiWrapper from 'util/api-wrapper';
 
 class Uploader extends React.Component {
-  constructor(props) {
-    super(props);
-    this.readImage = this.readImage.bind(this);
-    this.submit = this.submit.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleFormRef = this.handleFormRef.bind(this);
-
-    this.state =  {
-      uploading: false,
-      selected: false
-    };
+  state = {
+    uploading: false,
+    selected: false
   }
 
-  readImage(ev) {
+  readImage = (ev) => {
     // View image in 'image-result'
     if (ev.target.files && ev.target.files[0]) {
         var reader = new FileReader();
@@ -32,18 +24,18 @@ class Uploader extends React.Component {
     });
   }
 
-  submit() {
+  submit = () => {
     console.log('submit', this.form);
     $(this.form).submit();
-  }
+  };
 
-  handleSubmit() {
+  handleSubmit = () => {
     this.setState({
       uploading: true
     });
   }
 
-  handleFormRef(ref) {
+  handleFormRef = (ref) => {
     this.form = ref;
   }
 
@@ -60,7 +52,7 @@ class Uploader extends React.Component {
           </div>
         </div>
         <form method="post"
-          action="/receipt"
+          action="/api/receipts/upload"
           encType="multipart/form-data"
           onSubmit={this.handleSubmit}
           ref={this.handleFormRef}>

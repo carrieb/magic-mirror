@@ -3,9 +3,9 @@ import React from 'react';
 import ApiWrapper from '../../util/api-wrapper';
 import ItemInputs from './item-inputs';
 
-import AddItemsForm from '../kitchen/AddItemsForm.react';
+import AddReceiptItemsForm from '../kitchen/add-receipt-items-form.react';
 
-import KitchenState from 'state/KitchenState';
+import { DEFAULT_ITEM } from 'state/KitchenState';
 
 import 'sass/receipts/verifier.scss';
 
@@ -17,9 +17,6 @@ import _clone from 'lodash/clone';
 class Verifier extends React.Component {
   constructor(props) {
     super(props);
-    this.submitItems = this.submitItems.bind(this);
-    this.toggleCollapsed = this.toggleCollapsed.bind(this);
-    this.updateItems = this.updateItems.bind(this);
 
     this.state = {
       filename: this.props.match.params.filename,
@@ -37,7 +34,7 @@ class Verifier extends React.Component {
       ApiWrapper.extractText(filename)
         .done((partialItems) => {
           const items = partialItems.map((item) => {
-            const def = _clone(KitchenState.DEFAULT_ITEM);
+            const def = _clone(DEFAULT_ITEM);
             const result = _assign(def, item);
             return result;
           });
@@ -49,19 +46,19 @@ class Verifier extends React.Component {
     }
   }
 
-  submitItems(ev) {
-    ApiWrapper.submitItems(this.state.items)
+  submitItems = (ev) => {
+    ApiWrapper.submitReceiptItems(this.state.items)
       .done(() => {
         this.setState({ submitted: true });
       });
     ev.preventDefault();
   }
 
-  updateItems(items) {
+  updateItems = (items) => {
     this.setState({ items });
   }
 
-  toggleCollapsed() {
+  toggleCollapsed = () => {
     this.setState({ collapsed: !this.state.collapsed });
   }
 
@@ -74,7 +71,7 @@ class Verifier extends React.Component {
         <div>
           <img className="ui centered bordered image"
                src={`/processed-images/${this.state.filename}`}/>
-          <AddItemsForm update={this.updateItems} items={this.state.items}/>
+          <AddReceiptItemsForm update={this.updateItems} items={this.state.items}/>
           <button type="submit"
             className={`ui massive fluid primary toggle button ${this.state.submitted ? 'active disabled' : ''}`}
             onClick={this.submitItems}>

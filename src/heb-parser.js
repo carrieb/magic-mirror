@@ -1,16 +1,17 @@
 const util = require('util');
 
 const parseItem = (idx, line) => {
-    const itemRegex = `^(${idx}) (.*) (\\d{1,2}\\.\\d{2})$`;
+    const itemRegex = `^(${idx}|\\d) (.*) (\\d{0,2}?\\.\\d{2})$`;
     const regex = new RegExp(itemRegex);
     const match = line.match(regex);
+    console.log(regex);
     if (match) {
       const description = match[2];
       const price = match[3];
-      return { description, price }
+      return { description, price, line }
     } else {
       // handle error?
-      return { description: line.replace(`${idx} `, ''), price: "???" }
+      return { description: line.replace(`${idx} `, ''), line }
     }
 }
 
@@ -25,7 +26,7 @@ const processLines = (lines) => {
     // const firstChar = line.words[0].symbols[0];
     // console.log(firstChar.text);
     // console.log(util.inspect(firstChar.choices, false, 1));
-    const nextLineRegexStr = `^(${nextItemIdx}) (.*)$`;
+    const nextLineRegexStr = `^(${nextItemIdx}|\\d) (.*)$`; // added some wiggle room in case # is parsed wrong
     const regex = new RegExp(nextLineRegexStr);
     const matches = lineText.match(regex);
     //console.log(nextLineRegexStr);

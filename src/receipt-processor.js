@@ -4,6 +4,11 @@ const path = require('path')
 const dir = path.dirname(require.main.filename);
 
 const Tesseract = require('tesseract.js')
+
+const worker = new Tesseract.TesseractWorker({
+  langPath: 'https://tessdata.projectnaptha.com/4.0.0'
+});
+
 const HebParser = require('./heb-parser');
 
 const jsonfile = require('jsonfile')
@@ -15,8 +20,8 @@ const saveJSONFile = (outputPath, content) => {
   jsonfile.writeFile(outputPath, content, (err) => console.error('error', err));
 }
 
-const saveTessaractOutput = (filename, obj) => {
-  const outputPath = path.join(Config.getBaseDir(), 'tmp', 'tesseract-output', filename + '.json');
+const saveTesseractOutput = (filename, obj) => {
+  const outputPath = path.join(Config.RECEIPT_IMAGES_DIR, 'tesseract-output', filename + '.json');
   jsonfile.writeFile(outputPath, obj.lines.map((line) => {
     return {
       text: line.text.trim()
@@ -28,15 +33,16 @@ const saveTessaractOutput = (filename, obj) => {
 
 const extractText = (filename) => {
   // TODO: look up these dirs from somewhere
-  const fullPath = '/Users/carolyn/projects/magic-mirror/tmp/processed-images/' + filename;
-  const jsonPath = '/Users/carolyn/projects/magic-mirror/tmp/tesseract-output/' + filename + '.json';
+  const fullPath = path.join(Config.RECEIPT_IMAGES_DIR, 'processed', filename);
+  const jsonPath = path.join(Config.RECEIPT_IMAGES_DIR, 'tesseract-output', filename + '.json');
+
   fs.stat(jsonPath, (err, stats) => {
     if (err) {
       // doesn't exist, do processing
-      Tesseract.recognize(fullPath)
+      worker.recognize(fullPath)
           .then(function (result) {
-            saveTessaractOutput(filename, result);
-            console.log('successfully got text with Tesseract');
+            saveTesseractOutput(filename, result);
+            console.log('Successfully extracted with Tesseract');
             HebParser.parseTessaract(result);
           });
     } else {
@@ -49,7 +55,7 @@ const extractText = (filename) => {
 }
 
 const prepareImage = (file) => {
-  const outputPath = '/Users/carolyn/projects/magic-mirror/tmp/processed-images/' + file.filename;
+  const outputPath = path.join(Config.RECEIPT_IMAGES_DIR, 'processed', file.filename);
   console.log(file.path);
   sharp(file.path)
   .rotate()
@@ -68,9 +74,23 @@ const ReceiptProcessor = {
     return [];
   },
 
+  /**
+   * @param filename
+   * @param x
+   * @param y
+   * @param width
+   * @param height
+   * @param rotate
+   * @param callback
+   * @param error
+   * Takes input image at /raw/filename
+   * Rotates and crops based off x, y, width, height & rotate
+   * Resizes to 600
+   * Saves to /processed/filename
+   */
   cropAndProcess(filename, x, y, width, height, rotate, callback, error) {
-    const inputPath = path.join(Config.getBaseDir(), 'tmp', 'images', filename);
-    const outputPath = path.join(Config.getBaseDir(), 'tmp', 'processed-images', filename);
+    const inputPath = path.join(Config.RECEIPT_IMAGES_DIR, 'raw', filename);
+    const outputPath = path.join(Config.RECEIPT_IMAGES_DIR, 'processed', filename);
 
     // TODO: trigger a python processing script?
     // OR: update threshold to be around 40? (based on python otsu/iso/min)
@@ -93,25 +113,35 @@ const ReceiptProcessor = {
     });
   },
 
+  /**
+   * @param filename
+   * @param callback
+   * @param error
+   * Checks for existing extracted text at /tesseract-output/filename
+   * If it doesn't exist
+   * Takes image at /processed/filename
+   * And sends through Tesseract
+   * Saves output to /tesseract-output/filename
+   */
   extractText(filename, callback, error) {
-    console.log(filename);
-    // TODO: separate out file name & path
-    const inputPath = path.join(Config.getBaseDir(), 'tmp', 'processed-images', filename);
-    const jsonOutputPath = path.join(Config.getBaseDir(), 'tmp', 'tesseract-output', filename + '.json');
+    const inputPath = path.join(Config.RECEIPT_IMAGES_DIR, 'processed', filename);
+    const jsonOutputPath = path.join(Config.RECEIPT_IMAGES_DIR, 'tesseract-output', filename + '.json');
+
+    console.log('Extracting text...');
     console.log(`input: ${inputPath}`);
     console.log(`output: ${jsonOutputPath}`);
+
     fs.stat(jsonOutputPath, (err, stats) => {
       if (err) {
-        //output doesn't already exist, do processing
-        //ensure that processed image exists first
+        // tesseract output doesn't already exist, do processing
+        // ensure that processed image exists first
         fs.stat(inputPath, (err, stats) => {
           if (err) error();
           else {
-            Tesseract.create({ langPath: '/Users/carolyn/projects/magic-mirror/'})
-            .recognize(inputPath)
+            worker.recognize(inputPath)
             .then((result) => {
-              saveTessaractOutput(filename, result);
-              console.log('successfully got text with Tesseract');
+              saveTesseractOutput(filename, result);
+              console.log('successfully extracted with Tesseract');
               const items = HebParser.parseTessaract(result);
               callback(items);
             });
@@ -131,7 +161,6 @@ const ReceiptProcessor = {
     fs.stat(outputPath, (err, stats) => {
 
       if (err) {
-
         Tesseract
         .recognize(path)
         .progress((p) => console.log('progress', p))
